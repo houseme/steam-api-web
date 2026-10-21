@@ -11,7 +11,7 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    client::{Access, Endpoint, Params, param},
+    request::{Access, Endpoint, Params},
     types::{nonzero, text},
     user_auth::OpaqueResponse,
 };
@@ -114,14 +114,12 @@ impl Leaderboards<'_> {
     pub async fn delete_leaderboard(&self, appid: u32, name: &str) -> Result<OpaqueResponse> {
         validate_name(appid, name)?;
         self.0
-            .call(
-                Endpoint::auth(
+            .call_opaque(
+                Endpoint::post(
                     "ISteamLeaderboards/DeleteLeaderboard/v1/",
                     Access::Publisher,
-                    true,
                 ),
-                vec![param("appid", appid), param("name", name)],
-                &[],
+                Params::new().with("appid", appid).with("name", name),
             )
             .await
     }
@@ -135,16 +133,14 @@ impl Leaderboards<'_> {
     ) -> Result<OpaqueResponse> {
         let mut params = leaderboard_params(appid, leaderboardid)?;
         nonzero(steamid.raw(), "steamid must not be zero")?;
-        params.push(param("steamid", steamid));
+        params.push("steamid", steamid);
         self.0
-            .call(
-                Endpoint::auth(
+            .call_opaque(
+                Endpoint::post(
                     "ISteamLeaderboards/DeleteLeaderboardScore/v1/",
                     Access::Publisher,
-                    true,
                 ),
                 params,
-                &[],
             )
             .await
     }
@@ -158,14 +154,14 @@ impl Leaderboards<'_> {
         options: FindLeaderboardOptions<'_>,
     ) -> Result<OpaqueResponse> {
         validate_name(appid, name)?;
-        let mut params = vec![param("appid", appid), param("name", name)];
+        let mut params = Params::new().with("appid", appid).with("name", name);
         if let Some(value) = options.sortmethod {
             text(value, "sortmethod must be nonempty and contain no NUL")?;
-            params.push(param("sortmethod", value));
+            params.push("sortmethod", value);
         }
         if let Some(value) = options.displaytype {
             text(value, "displaytype must be nonempty and contain no NUL")?;
-            params.push(param("displaytype", value));
+            params.push("displaytype", value);
         }
         for (name, value) in [
             ("createifnotfound", options.createifnotfound),
@@ -173,18 +169,16 @@ impl Leaderboards<'_> {
             ("onlyfriendsreads", options.onlyfriendsreads),
         ] {
             if let Some(value) = value {
-                params.push(param(name, value));
+                params.push(name, value);
             }
         }
         self.0
-            .call(
-                Endpoint::auth(
+            .call_opaque(
+                Endpoint::post(
                     "ISteamLeaderboards/FindOrCreateLeaderboard/v2/",
                     Access::Publisher,
-                    true,
                 ),
                 params,
-                &[],
             )
             .await
     }
@@ -213,25 +207,23 @@ impl Leaderboards<'_> {
                 "steamid required for friend and around-user reads",
             ));
         }
-        let mut params = vec![
-            param("appid", request.appid),
-            param("leaderboardid", request.leaderboardid),
-            param("rangestart", request.rangestart),
-            param("rangeend", request.rangeend),
-            param("datarequest", request.datarequest.wire_name()),
-        ];
+        let mut params = Params::new()
+            .with("appid", request.appid)
+            .with("leaderboardid", request.leaderboardid)
+            .with("rangestart", request.rangestart)
+            .with("rangeend", request.rangeend)
+            .with("datarequest", request.datarequest.wire_name());
         if let Some(steamid) = request.steamid {
             nonzero(steamid.raw(), "steamid must not be zero")?;
-            params.push(param("steamid", steamid));
+            params.push("steamid", steamid);
         }
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get(
                     "ISteamLeaderboards/GetLeaderboardEntries/v1/",
                     Access::Publisher,
                 ),
                 params,
-                &[],
             )
             .await
     }
@@ -240,13 +232,12 @@ impl Leaderboards<'_> {
     pub async fn get_leaderboards_for_game(&self, appid: u32) -> Result<OpaqueResponse> {
         nonzero(appid.into(), "appid must not be zero")?;
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get(
                     "ISteamLeaderboards/GetLeaderboardsForGame/v2/",
                     Access::Publisher,
                 ),
-                vec![param("appid", appid)],
-                &[],
+                Params::new().with("appid", appid),
             )
             .await
     }
@@ -259,14 +250,9 @@ impl Leaderboards<'_> {
     ) -> Result<OpaqueResponse> {
         let params = leaderboard_params(appid, leaderboardid)?;
         self.0
-            .call(
-                Endpoint::auth(
-                    "ISteamLeaderboards/ResetLeaderboard/v1/",
-                    Access::Publisher,
-                    true,
-                ),
+            .call_opaque(
+                Endpoint::post("ISteamLeaderboards/ResetLeaderboard/v1/", Access::Publisher),
                 params,
-                &[],
             )
             .await
     }
@@ -278,26 +264,22 @@ impl Leaderboards<'_> {
     ) -> Result<OpaqueResponse> {
         let mut params = leaderboard_params(update.appid, update.leaderboardid)?;
         nonzero(update.steamid.raw(), "steamid must not be zero")?;
-        params.extend([
-            param("steamid", update.steamid),
-            param("score", update.score),
-            param("scoremethod", update.scoremethod.wire_name()),
-        ]);
+        params.push("steamid", update.steamid);
+        params.push("score", update.score);
+        params.push("scoremethod", update.scoremethod.wire_name());
         if let Some(details) = update.details {
             if details.len() > 256 {
                 return Err(Error::InvalidParameter("details must not exceed 256 bytes"));
             }
-            params.push(("details".to_owned(), details.to_vec()));
+            params.push_bytes("details", details);
         }
         self.0
-            .call(
-                Endpoint::auth(
+            .call_opaque(
+                Endpoint::post(
                     "ISteamLeaderboards/SetLeaderboardScore/v1/",
                     Access::Publisher,
-                    true,
                 ),
                 params,
-                &[],
             )
             .await
     }
@@ -311,8 +293,7 @@ fn validate_name(appid: u32, name: &str) -> Result<()> {
 fn leaderboard_params(appid: u32, leaderboardid: u32) -> Result<Params> {
     nonzero(appid.into(), "appid must not be zero")?;
     nonzero(leaderboardid.into(), "leaderboardid must not be zero")?;
-    Ok(vec![
-        param("appid", appid),
-        param("leaderboardid", leaderboardid),
-    ])
+    Ok(Params::new()
+        .with("appid", appid)
+        .with("leaderboardid", leaderboardid))
 }

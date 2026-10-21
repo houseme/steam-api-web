@@ -4,9 +4,20 @@
 // See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 use crate::{
-    Error, Result, apps::Apps, game_server_stats::GameServerStats, game_servers::GameServers,
-    leaderboards::Leaderboards, news::News, player::PlayerService, reviews::UserReviewsService,
-    store::StoreService, user::User, user_auth::UserAuth, user_stats::UserStats,
+    Error, Result,
+    apps::Apps,
+    game_server_stats::GameServerStats,
+    game_servers::GameServers,
+    leaderboards::Leaderboards,
+    news::News,
+    player::PlayerService,
+    request::{Access, BodyPolicy, Endpoint, Operation, Params},
+    response::Response,
+    reviews::UserReviewsService,
+    store::StoreService,
+    user::User,
+    user_auth::{OpaqueResponse, UserAuth},
+    user_stats::UserStats,
     web_api_util::WebApiUtil,
 };
 use reqwest::{
@@ -368,51 +379,6 @@ struct Metrics {
     failed: AtomicU64,
 }
 
-#[derive(Clone, Copy)]
-pub(crate) enum Access {
-    Anonymous,
-    User,
-    Publisher,
-}
-/// Only internal, fixed paths can be sent, preventing arbitrary URL injection.
-#[derive(Clone, Copy)]
-pub(crate) struct Endpoint {
-    pub path: &'static str,
-    pub access: Access,
-    pub replay_safe: bool,
-    pub post: bool,
-    allow_empty_created: bool,
-}
-impl Endpoint {
-    pub const fn get(path: &'static str, access: Access) -> Self {
-        Self {
-            path,
-            access,
-            replay_safe: true,
-            post: false,
-            allow_empty_created: false,
-        }
-    }
-    pub const fn auth(path: &'static str, access: Access, post: bool) -> Self {
-        Self {
-            path,
-            access,
-            replay_safe: false,
-            post,
-            allow_empty_created: false,
-        }
-    }
-    /// Only HTTP 201 may omit its body, representing a pending confirmation.
-    pub const fn allow_empty_response(mut self) -> Self {
-        self.allow_empty_created = true;
-        self
-    }
-}
-pub(crate) type Params = Vec<(String, Vec<u8>)>;
-pub(crate) fn param(name: &str, value: impl ToString) -> (String, Vec<u8>) {
-    (name.to_owned(), value.to_string().into_bytes())
-}
-
 impl SteamClient {
     /// Start configuring a client. The default permits anonymous public reads.
     pub fn builder() -> ClientBuilder {
@@ -482,16 +448,36 @@ impl SteamClient {
         params: Params,
         envelope: &[&str],
     ) -> Result<T> {
-        self.call_with_status(endpoint, params, envelope)
+        self.call_with(endpoint, params, |response| {
+            response
+                .decode(endpoint.path, envelope)
+                .map(|(_, payload)| payload)
+        })
+        .await
+    }
+    pub(crate) async fn call_opaque(
+        &self,
+        endpoint: Endpoint,
+        params: Params,
+    ) -> Result<OpaqueResponse> {
+        self.call_opaque_with_status(endpoint, params)
             .await
             .map(|(_, response)| response)
     }
-    pub(crate) async fn call_with_status<T: DeserializeOwned>(
+    pub(crate) async fn call_opaque_with_status(
+        &self,
+        endpoint: Endpoint,
+        params: Params,
+    ) -> Result<(u16, OpaqueResponse)> {
+        self.call_with(endpoint, params, |response| response.opaque(endpoint.path))
+            .await
+    }
+    async fn call_with<T>(
         &self,
         endpoint: Endpoint,
         mut params: Params,
-        envelope: &[&str],
-    ) -> Result<(u16, T)> {
+        decode: impl FnOnce(Response) -> Result<T>,
+    ) -> Result<T> {
         match (endpoint.access, self.inner.kind) {
             (Access::Publisher, Some(KeyKind::Publisher))
             | (Access::Anonymous, _)
@@ -499,24 +485,10 @@ impl SteamClient {
             (Access::Publisher, _) => return Err(Error::MissingApiKey("publisher")),
             _ => return Err(Error::MissingApiKey("user or publisher")),
         }
-        params.push(param("format", "json"));
-        let encoded = encode_form(&params);
+        params.push("format", "json");
+        let encoded = params.finish();
         let result = tokio::time::timeout(self.inner.operation_timeout, async {
-            let (status, value) = self.execute(endpoint, &encoded).await?;
-            let mut payload = &value;
-            check_api(endpoint.path, payload)?;
-            for key in envelope {
-                payload = payload.get(*key).ok_or(Error::Decode {
-                    endpoint: endpoint.path,
-                    line: 0,
-                    column: 0,
-                })?;
-                check_api(endpoint.path, payload)?;
-            }
-            // serde's untrusted error text is never retained.
-            T::deserialize(payload)
-                .map(|response| (status, response))
-                .map_err(|error| Error::decode(endpoint.path, error))
+            decode(self.execute(endpoint, encoded).await?)
         })
         .await
         .unwrap_or(Err(Error::Deadline {
@@ -529,20 +501,21 @@ impl SteamClient {
         }
         result
     }
-    async fn execute(&self, endpoint: Endpoint, encoded: &str) -> Result<(u16, Value)> {
+    async fn execute(&self, endpoint: Endpoint, encoded: String) -> Result<Response> {
         let mut url = self
             .inner
             .base_url
             .join(endpoint.path)
             .map_err(|_| Error::Configuration("invalid endpoint URL"))?;
-        if !endpoint.post {
-            url.set_query(Some(encoded));
+        if endpoint.operation != Operation::Post {
+            url.set_query(Some(&encoded));
         }
-        let limit = if endpoint.replay_safe {
+        let limit = if endpoint.operation == Operation::Read {
             self.inner.retry.max_retries
         } else {
             0
         };
+        let mut body = (endpoint.operation == Operation::Post).then_some(encoded);
         for attempt in 0..=limit {
             let permit = self
                 .inner
@@ -552,17 +525,20 @@ impl SteamClient {
                 .map_err(|_| Error::Configuration("client closed"))?;
             self.pace().await;
             let mut request = self.inner.http.request(
-                if endpoint.post {
+                if endpoint.operation == Operation::Post {
                     Method::POST
                 } else {
                     Method::GET
                 },
                 url.clone(),
             );
-            if endpoint.post {
+            if endpoint.operation == Operation::Post {
                 request = request
                     .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
-                    .body(encoded.to_owned());
+                    .body(
+                        body.take()
+                            .ok_or(Error::Configuration("POST cannot be replayed"))?,
+                    );
             }
             self.inner.metrics.attempts.fetch_add(1, Ordering::Relaxed);
             if attempt > 0 {
@@ -612,7 +588,7 @@ impl SteamClient {
         &self,
         endpoint: Endpoint,
         request: reqwest::RequestBuilder,
-    ) -> Result<(u16, Value)> {
+    ) -> Result<Response> {
         let transport = |error: reqwest::Error| Error::Transport {
             endpoint: endpoint.path,
             timeout: error.is_timeout(),
@@ -649,7 +625,8 @@ impl SteamClient {
                 limit,
             });
         }
-        let mut bytes = Vec::new();
+        let mut bytes =
+            Vec::with_capacity(response.content_length().unwrap_or(0).min(64 * 1024) as usize);
         while let Some(chunk) = response.chunk().await.map_err(transport)? {
             if chunk.len() > limit.saturating_sub(bytes.len()) {
                 return Err(Error::ResponseTooLarge {
@@ -659,8 +636,11 @@ impl SteamClient {
             }
             bytes.extend_from_slice(&chunk);
         }
-        if bytes.is_empty() && endpoint.allow_empty_created && status.as_u16() == 201 {
-            return Ok((201, Value::Null));
+        if bytes.is_empty() && endpoint.body == BodyPolicy::EmptyCreated && status.as_u16() == 201 {
+            return Ok(Response {
+                status: 201,
+                payload: Value::Null,
+            });
         }
         let value: Value =
             serde_json::from_slice(&bytes).map_err(|error| Error::decode(endpoint.path, error))?;
@@ -671,80 +651,13 @@ impl SteamClient {
                 column: 0,
             });
         }
-        Ok((status.as_u16(), value))
+        Ok(Response {
+            status: status.as_u16(),
+            payload: value,
+        })
     }
 }
 
-fn check_api(endpoint: &'static str, value: &Value) -> Result<()> {
-    if value.get("error").is_some_and(|error| !error.is_null()) {
-        let code = value
-            .get("error")
-            .and_then(|e| e.get("errorcode"))
-            .and_then(as_i64);
-        return Err(Error::Api { endpoint, code });
-    }
-    if let Some(success) = value.get("success") {
-        match (success.as_bool(), as_i64(success)) {
-            (Some(true), _) | (_, Some(1)) => (),
-            (Some(false), _) => {
-                return Err(Error::Api {
-                    endpoint,
-                    code: None,
-                });
-            }
-            (_, Some(code)) => {
-                return Err(Error::Api {
-                    endpoint,
-                    code: Some(code),
-                });
-            }
-            _ => {
-                return Err(Error::Decode {
-                    endpoint,
-                    line: 0,
-                    column: 0,
-                });
-            }
-        }
-    }
-    for key in ["result", "eresult"] {
-        if let Some(result) = value.get(key) {
-            match (as_i64(result), result.as_str()) {
-                (Some(1), _) | (_, Some("OK")) => (),
-                (Some(code), _) => {
-                    return Err(Error::Api {
-                        endpoint,
-                        code: Some(code),
-                    });
-                }
-                (_, Some(_)) => {
-                    return Err(Error::Api {
-                        endpoint,
-                        code: None,
-                    });
-                }
-                _ => {
-                    return Err(Error::Decode {
-                        endpoint,
-                        line: 0,
-                        column: 0,
-                    });
-                }
-            }
-        }
-    }
-    // Some methods with undocumented response schemas return opaque JSON.
-    // Still inspect their standard error envelopes before handing it to callers.
-    for key in ["response", "params", "playerstats"] {
-        if let Some(child) = value.get(key) {
-            check_api(endpoint, child)?;
-        }
-    }
-    Ok(())
-}
-fn as_i64(value: &Value) -> Option<i64> {
-    value.as_i64().or_else(|| value.as_str()?.parse().ok())
-}
 fn retryable_status(status: u16) -> bool {
     matches!(status, 408 | 429 | 500 | 502 | 503 | 504)
 }
@@ -765,36 +678,6 @@ fn jitter(cap: Duration) -> Result<Duration> {
     let mut random = [0_u8; 8];
     aws_lc_rs::rand::fill(&mut random).map_err(|_| Error::Random)?;
     Ok(cap.mul_f64(0.5 + (u64::from_le_bytes(random) as f64 / u64::MAX as f64) * 0.5))
-}
-
-/// Byte-preserving form encoding, including rawbinary (not UTF-8 conversion).
-fn encode_form(params: &Params) -> String {
-    fn component(output: &mut String, bytes: &[u8]) {
-        const HEX: &[u8; 16] = b"0123456789ABCDEF";
-        for &byte in bytes {
-            match byte {
-                b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'*' => {
-                    output.push(char::from(byte))
-                }
-                b' ' => output.push('+'),
-                _ => {
-                    output.push('%');
-                    output.push(char::from(HEX[(byte >> 4) as usize]));
-                    output.push(char::from(HEX[(byte & 15) as usize]));
-                }
-            }
-        }
-    }
-    let mut output = String::new();
-    for (index, (key, value)) in params.iter().enumerate() {
-        if index != 0 {
-            output.push('&');
-        }
-        component(&mut output, key.as_bytes());
-        output.push('=');
-        component(&mut output, value);
-    }
-    output
 }
 
 #[cfg(test)]

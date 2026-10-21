@@ -47,6 +47,10 @@ zeroize = "1.9.1"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread", "test-util", "net", "io-util"] }
 wiremock = "0.6.5"
 
+[[bench]]
+name = "codec"
+harness = false
+
 [lints.rust]
 unsafe_code = "forbid"
 missing_docs = "warn"

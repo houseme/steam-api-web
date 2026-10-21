@@ -7,7 +7,7 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    client::{Access, Endpoint, Params, param},
+    request::{Access, Endpoint, Params},
     types::{StatValue, nonzero, text},
     user::validate_user_app,
     user_auth::OpaqueResponse,
@@ -203,7 +203,7 @@ impl UserStats<'_> {
                     "ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/",
                     Access::Anonymous,
                 ),
-                vec![param("gameid", gameid)],
+                Params::new().with("gameid", gameid),
                 &["achievementpercentages"],
             )
             .await
@@ -224,15 +224,15 @@ impl UserStats<'_> {
         {
             return Err(Error::InvalidParameter("startdate must not exceed enddate"));
         }
-        let mut params = vec![param("appid", appid), param("count", count)];
+        let mut params = Params::new().with("appid", appid).with("count", count);
         for (index, name) in names.iter().enumerate() {
-            params.push(param(&format!("name[{index}]"), name));
+            params.push(&format!("name[{index}]"), name);
         }
         if let Some(start) = range.startdate {
-            params.push(param("startdate", start));
+            params.push("startdate", start);
         }
         if let Some(end) = range.enddate {
-            params.push(param("enddate", end));
+            params.push("enddate", end);
         }
         self.0
             .call(
@@ -254,7 +254,7 @@ impl UserStats<'_> {
                     "ISteamUserStats/GetNumberOfCurrentPlayers/v1/",
                     Access::Anonymous,
                 ),
-                vec![param("appid", appid)],
+                Params::new().with("appid", appid),
                 &["response"],
             )
             .await
@@ -268,7 +268,7 @@ impl UserStats<'_> {
     ) -> Result<PlayerAchievements> {
         let steamid = steamid.into();
         validate_user_app(steamid, appid)?;
-        let mut params = vec![param("steamid", steamid), param("appid", appid)];
+        let mut params = Params::new().with("steamid", steamid).with("appid", appid);
         add_language(&mut params, language)?;
         self.0
             .call(
@@ -285,7 +285,7 @@ impl UserStats<'_> {
         language: Option<&str>,
     ) -> Result<GameSchema> {
         nonzero(appid.into(), "appid must not be zero")?;
-        let mut params = vec![param("appid", appid)];
+        let mut params = Params::new().with("appid", appid);
         add_language(&mut params, language)?;
         self.0
             .call(
@@ -306,7 +306,7 @@ impl UserStats<'_> {
         self.0
             .call(
                 Endpoint::get("ISteamUserStats/GetUserStatsForGame/v2/", Access::User),
-                vec![param("steamid", steamid), param("appid", appid)],
+                Params::new().with("steamid", steamid).with("appid", appid),
                 &["playerstats"],
             )
             .await
@@ -324,24 +324,18 @@ impl UserStats<'_> {
         let steamid = steamid.into();
         validate_user_app(steamid, appid)?;
         let count = validate_names(updates.iter().map(|u| u.name), updates.len())?;
-        let mut params = vec![
-            param("steamid", steamid),
-            param("appid", appid),
-            param("count", count),
-        ];
+        let mut params = Params::new()
+            .with("steamid", steamid)
+            .with("appid", appid)
+            .with("count", count);
         for (index, update) in updates.iter().enumerate() {
-            params.push(param(&format!("name[{index}]"), update.name));
-            params.push(param(&format!("value[{index}]"), update.value));
+            params.push(&format!("name[{index}]"), update.name);
+            params.push(&format!("value[{index}]"), update.value);
         }
         self.0
-            .call(
-                Endpoint::auth(
-                    "ISteamUserStats/SetUserStatsForGame/v1/",
-                    Access::Publisher,
-                    true,
-                ),
+            .call_opaque(
+                Endpoint::post("ISteamUserStats/SetUserStatsForGame/v1/", Access::Publisher),
                 params,
-                &[],
             )
             .await
     }
@@ -349,7 +343,7 @@ impl UserStats<'_> {
 fn add_language(params: &mut Params, language: Option<&str>) -> Result<()> {
     if let Some(language) = language {
         text(language, "language must not be empty or contain NUL")?;
-        params.push(param("l", language));
+        params.push("l", language);
     }
     Ok(())
 }

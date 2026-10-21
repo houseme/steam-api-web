@@ -7,7 +7,7 @@
 
 use crate::{
     Error, Result, SteamClient,
-    client::{Access, Endpoint, param},
+    request::{Access, Endpoint, Params},
     types::nonzero,
     user_auth::OpaqueResponse,
 };
@@ -60,23 +60,21 @@ impl GameServerStats<'_> {
         {
             return Err(Error::InvalidParameter("maxresults must be in 1..=1000"));
         }
-        let mut params = vec![
-            param("gameid", request.gameid),
-            param("appid", request.appid),
-            param("rangestart", request.rangestart),
-            param("rangeend", request.rangeend),
-        ];
+        let mut params = Params::new()
+            .with("gameid", request.gameid)
+            .with("appid", request.appid)
+            .with("rangestart", request.rangestart)
+            .with("rangeend", request.rangeend);
         if let Some(maxresults) = request.maxresults {
-            params.push(param("maxresults", maxresults));
+            params.push("maxresults", maxresults);
         }
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get(
                     "ISteamGameServerStats/GetGameServerPlayerStatsForGame/v1/",
                     Access::Publisher,
                 ),
                 params,
-                &[],
             )
             .await
     }

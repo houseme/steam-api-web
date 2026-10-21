@@ -7,7 +7,7 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    client::{Access, Endpoint, param},
+    request::{Access, Endpoint, Params},
     types::{nonzero, text, u64_string},
     user_auth::OpaqueResponse,
 };
@@ -217,7 +217,7 @@ impl User<'_> {
         self.0
             .call(
                 Endpoint::get("ISteamUser/CheckAppOwnership/v4/", Access::Publisher),
-                vec![param("steamid", steamid), param("appid", appid)],
+                Params::new().with("steamid", steamid).with("appid", appid),
                 &["appownership"],
             )
             .await
@@ -237,10 +237,9 @@ impl User<'_> {
         self.0
             .call(
                 Endpoint::get("ISteamUser/GetAppPriceInfo/v1/", Access::Publisher),
-                vec![
-                    param("steamid", steamid),
-                    param("appids", comma_list(appids)),
-                ],
+                Params::new()
+                    .with("steamid", steamid)
+                    .with("appids", comma_list(appids)),
                 &["price_info"],
             )
             .await
@@ -251,10 +250,9 @@ impl User<'_> {
     /// rather than inventing a typed pagination envelope or termination rule.
     pub async fn get_deleted_steam_ids(&self, rowversion: u64) -> Result<OpaqueResponse> {
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("ISteamUser/GetDeletedSteamIDs/v1/", Access::Publisher),
-                vec![param("rowversion", rowversion)],
-                &[],
+                Params::new().with("rowversion", rowversion),
             )
             .await
     }
@@ -266,10 +264,10 @@ impl User<'_> {
     ) -> Result<FriendList> {
         let steamid = steamid.into();
         nonzero(steamid.0, "steamid must not be zero")?;
-        let mut params = vec![param("steamid", steamid)];
+        let mut params = Params::new().with("steamid", steamid);
         if let Some(value) = relationship {
             text(value, "relationship must not be empty or contain NUL")?;
-            params.push(param("relationship", value));
+            params.push("relationship", value);
         }
         self.0
             .call(
@@ -286,7 +284,7 @@ impl User<'_> {
             .0
             .call(
                 Endpoint::get("ISteamUser/GetPlayerBans/v1/", Access::User),
-                vec![param("steamids", comma_list(steamids))],
+                Params::new().with("steamids", comma_list(steamids)),
                 &[],
             )
             .await?;
@@ -299,7 +297,7 @@ impl User<'_> {
             .0
             .call(
                 Endpoint::get("ISteamUser/GetPlayerSummaries/v2/", Access::User),
-                vec![param("steamids", comma_list(steamids))],
+                Params::new().with("steamids", comma_list(steamids)),
                 &["response"],
             )
             .await?;
@@ -346,7 +344,7 @@ impl User<'_> {
         self.0
             .call(
                 Endpoint::get(path, Access::Publisher),
-                vec![param("steamid", steamid)],
+                Params::new().with("steamid", steamid),
                 &["appownership"],
             )
             .await
@@ -359,7 +357,7 @@ impl User<'_> {
             .0
             .call(
                 Endpoint::get("ISteamUser/GetUserGroupList/v1/", Access::Publisher),
-                vec![param("steamid", steamid)],
+                Params::new().with("steamid", steamid),
                 &["response"],
             )
             .await?;
@@ -382,7 +380,9 @@ impl User<'_> {
             .0
             .call(
                 Endpoint::get(PATH, Access::User),
-                vec![param("vanityurl", vanity), param("url_type", kind.value())],
+                Params::new()
+                    .with("vanityurl", vanity)
+                    .with("url_type", kind.value()),
                 &["response"],
             )
             .await;

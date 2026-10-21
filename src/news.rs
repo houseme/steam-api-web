@@ -7,7 +7,7 @@
 
 use crate::{
     Result, SteamClient,
-    client::{Access, Endpoint, Params, param},
+    request::{Access, Endpoint, Params},
     types::{nonzero, text},
     user_auth::OpaqueResponse,
 };
@@ -38,10 +38,9 @@ impl News<'_> {
         options: NewsOptions<'_>,
     ) -> Result<OpaqueResponse> {
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("ISteamNews/GetNewsForApp/v2/", Access::Anonymous),
                 options.params(appid)?,
-                &[],
             )
             .await
     }
@@ -54,10 +53,9 @@ impl News<'_> {
         options: NewsOptions<'_>,
     ) -> Result<OpaqueResponse> {
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("ISteamNews/GetNewsForAppAuthed/v2/", Access::Publisher),
                 options.params(appid)?,
-                &[],
             )
             .await
     }
@@ -66,19 +64,19 @@ impl News<'_> {
 impl NewsOptions<'_> {
     fn params(self, appid: u32) -> Result<Params> {
         nonzero(appid.into(), "appid must not be zero")?;
-        let mut params = vec![param("appid", appid)];
+        let mut params = Params::new().with("appid", appid);
         if let Some(value) = self.maxlength {
-            params.push(param("maxlength", value));
+            params.push("maxlength", value);
         }
         if let Some(value) = self.enddate {
-            params.push(param("enddate", value));
+            params.push("enddate", value);
         }
         if let Some(value) = self.count {
-            params.push(param("count", value));
+            params.push("count", value);
         }
         if let Some(value) = self.feeds {
             text(value, "feeds must not be empty or contain NUL")?;
-            params.push(param("feeds", value));
+            params.push("feeds", value);
         }
         Ok(params)
     }

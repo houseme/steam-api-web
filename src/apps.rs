@@ -10,7 +10,7 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    client::{Access, Endpoint, Params, param},
+    request::{Access, Endpoint, Params},
     types::{nonzero, text},
     user_auth::OpaqueResponse,
 };
@@ -104,14 +104,14 @@ pub struct SetAppBuildLiveResponse {
 impl Apps<'_> {
     /// Read all beta branches for an owned application (publisher GET v1).
     pub async fn get_app_betas(&self, appid: u32) -> Result<OpaqueResponse> {
-        self.app_read("ISteamApps/GetAppBetas/v1/", appid, Vec::new())
+        self.app_read("ISteamApps/GetAppBetas/v1/", appid, Params::new())
             .await
     }
 
     /// Read an owned application's build history (publisher GET v1).
     /// Omit `count` to use Steam's default of ten; an explicit count must be nonzero.
     pub async fn get_app_builds(&self, appid: u32, count: Option<u32>) -> Result<OpaqueResponse> {
-        let mut params = Vec::new();
+        let mut params = Params::new();
         optional_count(&mut params, "count", count)?;
         self.app_read("ISteamApps/GetAppBuilds/v1/", appid, params)
             .await
@@ -119,7 +119,7 @@ impl Apps<'_> {
 
     /// Read every depot version for an owned application (publisher GET v1).
     pub async fn get_app_depot_versions(&self, appid: u32) -> Result<OpaqueResponse> {
-        self.app_read("ISteamApps/GetAppDepotVersions/v1/", appid, Vec::new())
+        self.app_read("ISteamApps/GetAppDepotVersions/v1/", appid, Params::new())
             .await
     }
 
@@ -131,10 +131,9 @@ impl Apps<'_> {
     #[deprecated(note = "Valve recommends IStoreService/GetAppList for catalog pagination")]
     pub async fn get_app_list(&self) -> Result<OpaqueResponse> {
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("ISteamApps/GetAppList/v2/", Access::Anonymous),
-                Vec::new(),
-                &[],
+                Params::new(),
             )
             .await
     }
@@ -156,16 +155,16 @@ impl Apps<'_> {
             ));
         }
         let params = if type_filter.is_empty() {
-            Vec::new()
+            Params::new()
         } else {
-            vec![param(
+            Params::new().with(
                 "type_filter",
                 type_filter
                     .iter()
                     .map(|kind| kind.as_str())
                     .collect::<Vec<_>>()
                     .join(","),
-            )]
+            )
         };
         self.0
             .call(
@@ -181,7 +180,7 @@ impl Apps<'_> {
 
     /// Read an application's banned players (publisher GET v1).
     pub async fn get_players_banned(&self, appid: u32) -> Result<OpaqueResponse> {
-        self.app_read("ISteamApps/GetPlayersBanned/v1/", appid, Vec::new())
+        self.app_read("ISteamApps/GetPlayersBanned/v1/", appid, Params::new())
             .await
     }
 
@@ -192,19 +191,18 @@ impl Apps<'_> {
         filter: Option<&str>,
         limit: Option<u32>,
     ) -> Result<OpaqueResponse> {
-        let mut params = Vec::new();
+        let mut params = Params::new();
         if let Some(filter) = filter {
             if filter.contains('\0') {
                 return Err(Error::InvalidParameter("filter must not contain NUL"));
             }
-            params.push(param("filter", filter));
+            params.push("filter", filter);
         }
         optional_count(&mut params, "limit", limit)?;
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("ISteamApps/GetServerList/v1/", Access::Publisher),
                 params,
-                &[],
             )
             .await
     }
@@ -222,10 +220,9 @@ impl Apps<'_> {
             ));
         }
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("ISteamApps/GetServersAtAddress/v1/", Access::Anonymous),
-                vec![param("addr", addr)],
-                &[],
+                Params::new().with("addr", addr),
             )
             .await
     }
@@ -245,28 +242,26 @@ impl Apps<'_> {
         nonzero(request.appid.into(), "appid must not be zero")?;
         nonzero(request.buildid.into(), "buildid must not be zero")?;
         text(request.betakey, "betakey must not be empty or contain NUL")?;
-        let mut params = vec![
-            param("appid", request.appid),
-            param("buildid", request.buildid),
-            param("betakey", request.betakey),
-        ];
+        let mut params = Params::new()
+            .with("appid", request.appid)
+            .with("buildid", request.buildid)
+            .with("betakey", request.betakey);
         if let Some(steamid) = request.steamid {
             nonzero(steamid.raw(), "steamid must not be zero")?;
-            params.push(param("steamid", steamid));
+            params.push("steamid", steamid);
         }
         if let Some(description) = request.description {
             if description.contains('\0') {
                 return Err(Error::InvalidParameter("description must not contain NUL"));
             }
-            params.push(param("description", description));
+            params.push("description", description);
         }
         let (http_status, response) = self
             .0
-            .call_with_status(
-                Endpoint::auth("ISteamApps/SetAppBuildLive/v2/", Access::Publisher, true)
-                    .allow_empty_response(),
+            .call_opaque_with_status(
+                Endpoint::post("ISteamApps/SetAppBuildLive/v2/", Access::Publisher)
+                    .allow_empty_created(),
                 params,
-                &[],
             )
             .await?;
         Ok(SetAppBuildLiveResponse {
@@ -276,7 +271,8 @@ impl Apps<'_> {
             } else {
                 BuildLiveState::RequestAccepted
             },
-            response,
+            // Only the explicitly allowed empty HTTP 201 produces JSON null.
+            response: (!response.as_json().is_null()).then_some(response),
         })
     }
 
@@ -285,10 +281,9 @@ impl Apps<'_> {
     pub async fn up_to_date_check(&self, appid: u32, version: u32) -> Result<OpaqueResponse> {
         nonzero(appid.into(), "appid must not be zero")?;
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("ISteamApps/UpToDateCheck/v1/", Access::Anonymous),
-                vec![param("appid", appid), param("version", version)],
-                &[],
+                Params::new().with("appid", appid).with("version", version),
             )
             .await
     }
@@ -300,9 +295,9 @@ impl Apps<'_> {
         mut params: Params,
     ) -> Result<OpaqueResponse> {
         nonzero(appid.into(), "appid must not be zero")?;
-        params.push(param("appid", appid));
+        params.push("appid", appid);
         self.0
-            .call(Endpoint::get(path, Access::Publisher), params, &[])
+            .call_opaque(Endpoint::get(path, Access::Publisher), params)
             .await
     }
 }
@@ -310,7 +305,7 @@ impl Apps<'_> {
 fn optional_count(params: &mut Params, name: &'static str, value: Option<u32>) -> Result<()> {
     if let Some(value) = value {
         nonzero(value.into(), "count and limit must not be zero")?;
-        params.push(param(name, value));
+        params.push(name, value);
     }
     Ok(())
 }

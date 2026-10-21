@@ -11,8 +11,7 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    client::{Access, Endpoint},
-    player::input_json,
+    request::{Access, Endpoint, Params},
     types::{nonzero, text, u64_string},
 };
 use serde::{Deserialize, Serialize, Serializer};
@@ -273,7 +272,7 @@ impl UserReviewsService<'_> {
         self.0
             .call(
                 Endpoint::get("IUserReviewsService/GetAppReviews/v1/", Access::Anonymous),
-                input_json(&Request { appid, options })?,
+                Params::json(&Request { appid, options })?,
                 &["response"],
             )
             .await

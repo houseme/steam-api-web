@@ -28,6 +28,11 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - 使用 Rust xtask 取代全部 Python 维护/发布脚本及 workflow 内嵌 Python，保留版本/标签/changelog/归档/registry 发布保护。
 - 发布包显式白名单，将仓库工具、工作流、集成测试、规划资料和参考 JSON 保留在 GitHub；校验归档及独立构建。
 
+### 调整
+
+- 统一端点策略及表单/Service JSON 直接编码，类型化响应转移数据所有权，不透明 JSON 直接传递，保留公开 API 与可用性行为。
+- 增加对照重构前算法的离线优化编解码基准，以及双语 Review 结论、可复跑测量和所有权回归测试。
+
 ### 验证边界
 
 - 新接口通过本地协议测试；未执行 Steam Publisher 管理写入，未获得实际凭据验证或生产负载证据。

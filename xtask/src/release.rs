@@ -700,6 +700,8 @@ mod tests {
             "scripts/release.py",
             ".github/workflows/ci.yml",
             "tests/api.rs",
+            "benches/codec.rs",
+            "benches/support/baseline.rs",
             "docs/api-inventory.json",
             "src/../secret.rs",
         ] {

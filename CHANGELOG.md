@@ -28,6 +28,11 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Rust xtask replaces every Python maintenance/release script and inline workflow Python while retaining version/tag/changelog/archive/registry guards.
 - Explicit package allowlist keeps tooling, workflows, integration tests, planning documents and reference JSON on GitHub; archive contents and independent builds are verified.
 
+### Changed
+
+- Centralize endpoint policies and direct form/Service JSON encoding; move typed response data and forward opaque JSON without rebuilding it, preserving public APIs and resilience behavior.
+- Add an offline optimized codec benchmark against the pre-refactor algorithms, with bilingual review findings, reproducible measurements and ownership regression tests.
+
 ### Validation boundaries
 
 - New methods have local protocol tests; no live Steam Publisher administrative writes, credentialed integration or production load evidence was obtained.

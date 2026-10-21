@@ -225,6 +225,7 @@ rc/beta。显式按客户端设置 AWS-LC provider，不受宿主 Rustls 全局 
 cargo fmt --all --check
 cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 cargo test --workspace --all-features --locked
+cargo bench --bench codec --locked --offline
 cargo doc --no-deps --locked
 cargo xtask check-repository
 cargo xtask release verify-package
@@ -235,6 +236,8 @@ cargo run --example current_players -- 480
 key，需要允许监听本地端口。离线测试通过不代表 Publisher 认证、写入及生产并发已获 Steam 实测验证。
 
 ## 路线图
+
+[传输层 Review 与编解码测量](https://github.com/houseme/steam-api-web/blob/main/docs/performance_ZH.md)记录 0.2 重构依据与可复跑的离线基准。
 
 P1 的 39 个请求封装及本地契约测试已加入 0.2.0 开发版；公开 schema 有对应类型，未公开响应显式保留原始 JSON。凭据环境和生产验证仍需单独完成。
 

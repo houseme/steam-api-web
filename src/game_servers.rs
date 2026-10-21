@@ -12,11 +12,11 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    client::{Access, Endpoint, param},
+    request::{Access, Endpoint, Params},
     types::{nonzero, text},
     user_auth::OpaqueResponse,
 };
-use serde_json::{Value, json};
+use serde::Serialize;
 use std::{
     fmt,
     net::{IpAddr, SocketAddr},
@@ -54,9 +54,9 @@ impl fmt::Debug for GameServerLoginToken {
 impl GameServers<'_> {
     /// Get the current account's server list and secret login tokens.
     pub async fn get_account_list(&self) -> Result<OpaqueResponse> {
-        self.call(
+        self.call_service(
             Endpoint::get("IGameServersService/GetAccountList/v1/", Access::User),
-            json!({}),
+            &EmptyRequest {},
         )
         .await
     }
@@ -66,9 +66,9 @@ impl GameServers<'_> {
     pub async fn create_account(&self, appid: u32, memo: &str) -> Result<OpaqueResponse> {
         nonzero(appid.into(), "appid must not be zero")?;
         validate_memo(memo)?;
-        self.call(
-            Endpoint::auth("IGameServersService/CreateAccount/v1/", Access::User, true),
-            json!({"appid": appid, "memo": memo}),
+        self.call_service(
+            Endpoint::post("IGameServersService/CreateAccount/v1/", Access::User),
+            &CreateRequest { appid, memo },
         )
         .await
     }
@@ -77,9 +77,9 @@ impl GameServers<'_> {
     pub async fn set_memo(&self, steamid: SteamId, memo: &str) -> Result<OpaqueResponse> {
         nonzero(steamid.raw(), "steamid must not be zero")?;
         validate_memo(memo)?;
-        self.call(
-            Endpoint::auth("IGameServersService/SetMemo/v1/", Access::User, true),
-            json!({"steamid": steamid, "memo": memo}),
+        self.call_service(
+            Endpoint::post("IGameServersService/SetMemo/v1/", Access::User),
+            &MemoRequest { steamid, memo },
         )
         .await
     }
@@ -88,13 +88,9 @@ impl GameServers<'_> {
     /// second successful call could invalidate the token from the first call.
     pub async fn reset_login_token(&self, steamid: SteamId) -> Result<OpaqueResponse> {
         nonzero(steamid.raw(), "steamid must not be zero")?;
-        self.call(
-            Endpoint::auth(
-                "IGameServersService/ResetLoginToken/v1/",
-                Access::User,
-                true,
-            ),
-            json!({"steamid": steamid}),
+        self.call_service(
+            Endpoint::post("IGameServersService/ResetLoginToken/v1/", Access::User),
+            &ServerRequest { steamid },
         )
         .await
     }
@@ -102,9 +98,9 @@ impl GameServers<'_> {
     /// Delete a persistent account without automatic replay.
     pub async fn delete_account(&self, steamid: SteamId) -> Result<OpaqueResponse> {
         nonzero(steamid.raw(), "steamid must not be zero")?;
-        self.call(
-            Endpoint::auth("IGameServersService/DeleteAccount/v1/", Access::User, true),
-            json!({"steamid": steamid}),
+        self.call_service(
+            Endpoint::post("IGameServersService/DeleteAccount/v1/", Access::User),
+            &ServerRequest { steamid },
         )
         .await
     }
@@ -112,9 +108,9 @@ impl GameServers<'_> {
     /// Read an account's public information using an authenticated request.
     pub async fn get_account_public_info(&self, steamid: SteamId) -> Result<OpaqueResponse> {
         nonzero(steamid.raw(), "steamid must not be zero")?;
-        self.call(
+        self.call_service(
             Endpoint::get("IGameServersService/GetAccountPublicInfo/v1/", Access::User),
-            json!({"steamid": steamid}),
+            &ServerRequest { steamid },
         )
         .await
     }
@@ -124,9 +120,11 @@ impl GameServers<'_> {
         &self,
         login_token: &GameServerLoginToken,
     ) -> Result<OpaqueResponse> {
-        self.call(
+        self.call_service(
             Endpoint::get("IGameServersService/QueryLoginToken/v1/", Access::User),
-            json!({"login_token": login_token.expose_secret()}),
+            &TokenRequest {
+                login_token: login_token.expose_secret(),
+            },
         )
         .await
     }
@@ -145,12 +143,12 @@ impl GameServers<'_> {
                 "server_ips must contain IP literals with optional ports",
             ));
         }
-        self.call(
+        self.call_service(
             Endpoint::get(
                 "IGameServersService/GetServerSteamIDsByIP/v1/",
                 Access::User,
             ),
-            json!({"server_ips": server_ips}),
+            &IpsRequest { server_ips },
         )
         .await
     }
@@ -166,20 +164,22 @@ impl GameServers<'_> {
                 "server_steamids must contain nonzero Steam IDs",
             ));
         }
-        self.call(
+        self.call_service(
             Endpoint::get(
                 "IGameServersService/GetServerIPsBySteamID/v1/",
                 Access::User,
             ),
-            json!({"server_steamids": server_steamids}),
+            &IdsRequest { server_steamids },
         )
         .await
     }
 
-    async fn call(&self, endpoint: Endpoint, payload: Value) -> Result<OpaqueResponse> {
-        self.0
-            .call(endpoint, vec![param("input_json", payload)], &[])
-            .await
+    async fn call_service(
+        &self,
+        endpoint: Endpoint,
+        payload: &impl Serialize,
+    ) -> Result<OpaqueResponse> {
+        self.0.call_opaque(endpoint, Params::json(payload)?).await
     }
 }
 
@@ -189,4 +189,39 @@ fn validate_memo(memo: &str) -> Result<()> {
     } else {
         Ok(())
     }
+}
+
+#[derive(Serialize)]
+struct EmptyRequest {}
+
+#[derive(Serialize)]
+struct CreateRequest<'a> {
+    appid: u32,
+    memo: &'a str,
+}
+
+#[derive(Serialize)]
+struct MemoRequest<'a> {
+    steamid: SteamId,
+    memo: &'a str,
+}
+
+#[derive(Serialize)]
+struct ServerRequest {
+    steamid: SteamId,
+}
+
+#[derive(Serialize)]
+struct TokenRequest<'a> {
+    login_token: &'a str,
+}
+
+#[derive(Serialize)]
+struct IpsRequest<'a, 'b> {
+    server_ips: &'a [&'b str],
+}
+
+#[derive(Serialize)]
+struct IdsRequest<'a> {
+    server_steamids: &'a [SteamId],
 }

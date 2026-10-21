@@ -250,6 +250,7 @@ the [dependency record](https://github.com/houseme/steam-api-web/blob/main/docs/
 cargo fmt --all --check
 cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 cargo test --workspace --all-features --locked
+cargo bench --bench codec --locked --offline
 cargo doc --no-deps --all-features --locked
 cargo xtask check-repository
 cargo xtask release verify-package
@@ -262,6 +263,9 @@ permission. Passing them does not establish live Publisher authentication, write
 checks cover bilingual links, licensing, reference inventory, and the AWS-LC dependency graph.
 
 ## Roadmap
+
+The [transport review and codec measurements](https://github.com/houseme/steam-api-web/blob/main/docs/performance.md)
+record the 0.2 refactor and its reproducible offline benchmarks.
 
 The 39 P1 request bindings and local contract tests are implemented in the 0.2.0 development version. Published response schemas have types; undocumented results explicitly retain raw JSON. Credentialed integration and production validation remain separate.
 

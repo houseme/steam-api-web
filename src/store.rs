@@ -7,8 +7,7 @@
 
 use crate::{
     Error, Result, SteamClient,
-    client::{Access, Endpoint},
-    player::input_json,
+    request::{Access, Endpoint, Params},
     types::text,
     user_auth::OpaqueResponse,
 };
@@ -70,10 +69,9 @@ impl StoreService<'_> {
             )?;
         }
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("IStoreService/GetAppList/v1/", Access::User),
-                input_json(&options)?,
-                &[],
+                Params::json(&options)?,
             )
             .await
     }

@@ -23,6 +23,12 @@ Local validation checks the declared credential kind and parameters. Steam still
 
 ## Request lifecycle
 
+Private `request` and `response` modules own encoding, endpoint policy and
+decoding. Typed responses consume selected JSON; opaque responses retain the
+original containers. Service JSON is serialized through the form encoder from
+borrowed request fields. The [transport review and codec measurements](performance.md)
+explain the refactor, compatibility checks and reproducible local benchmarks.
+
 1. Validate IDs, text, batch counts, date ranges, stat names, and credential kinds.
 2. Acquire a concurrency permit and wait for shared pacing and cooldown inside the overall deadline.
 3. Send through the connection pool with separate connection and per-attempt timeouts.

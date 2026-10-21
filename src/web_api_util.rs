@@ -10,7 +10,7 @@
 
 use crate::{
     Result, SteamClient,
-    client::{Access, Endpoint},
+    request::{Access, Endpoint, Params},
     user_auth::OpaqueResponse,
 };
 
@@ -22,10 +22,9 @@ impl WebApiUtil<'_> {
     /// Read server metadata without requiring an API key.
     pub async fn get_server_info(&self) -> Result<OpaqueResponse> {
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("ISteamWebAPIUtil/GetServerInfo/v1/", Access::Anonymous),
-                vec![],
-                &[],
+                Params::new(),
             )
             .await
     }
@@ -34,13 +33,12 @@ impl WebApiUtil<'_> {
     /// and may expose restricted methods; anonymous calls return public methods.
     pub async fn get_supported_api_list(&self) -> Result<OpaqueResponse> {
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get(
                     "ISteamWebAPIUtil/GetSupportedAPIList/v1/",
                     Access::Anonymous,
                 ),
-                vec![],
-                &[],
+                Params::new(),
             )
             .await
     }

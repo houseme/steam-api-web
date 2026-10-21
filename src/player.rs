@@ -10,8 +10,8 @@
 //! distinctions between hidden game details, empty results, and absent fields.
 
 use crate::{
-    Error, Result, SteamClient, SteamId,
-    client::{Access, Endpoint, Params, param},
+    Result, SteamClient, SteamId,
+    request::{Access, Endpoint, Params},
     types::nonzero,
     user::validate_user_app,
     user_auth::OpaqueResponse,
@@ -44,10 +44,9 @@ impl PlayerService<'_> {
         let steamid = steamid.into();
         nonzero(steamid.0, "steamid must not be zero")?;
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("IPlayerService/GetRecentlyPlayedGames/v1/", Access::User),
-                input_json(&serde_json::json!({"steamid": steamid, "count": count}))?,
-                &[],
+                Params::json(&RecentGamesRequest { steamid, count })?,
             )
             .await
     }
@@ -62,10 +61,9 @@ impl PlayerService<'_> {
         let steamid = steamid.into();
         validate_user_app(steamid, appid)?;
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("IPlayerService/GetSingleGamePlaytime/v1/", Access::User),
-                input_json(&serde_json::json!({"steamid": steamid, "appid": appid}))?,
-                &[],
+                Params::json(&PlaytimeRequest { steamid, appid })?,
             )
             .await
     }
@@ -89,10 +87,9 @@ impl PlayerService<'_> {
             options: OwnedGamesOptions<'a>,
         }
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("IPlayerService/GetOwnedGames/v1/", Access::User),
-                input_json(&Request { steamid, options })?,
-                &[],
+                Params::json(&Request { steamid, options })?,
             )
             .await
     }
@@ -102,10 +99,9 @@ impl PlayerService<'_> {
         let steamid = steamid.into();
         nonzero(steamid.0, "steamid must not be zero")?;
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("IPlayerService/GetSteamLevel/v1/", Access::User),
-                input_json(&serde_json::json!({"steamid": steamid}))?,
-                &[],
+                Params::json(&UserRequest { steamid })?,
             )
             .await
     }
@@ -115,10 +111,9 @@ impl PlayerService<'_> {
         let steamid = steamid.into();
         nonzero(steamid.0, "steamid must not be zero")?;
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("IPlayerService/GetBadges/v1/", Access::User),
-                input_json(&serde_json::json!({"steamid": steamid}))?,
-                &[],
+                Params::json(&UserRequest { steamid })?,
             )
             .await
     }
@@ -133,17 +128,33 @@ impl PlayerService<'_> {
         let steamid = steamid.into();
         nonzero(steamid.0, "steamid must not be zero")?;
         self.0
-            .call(
+            .call_opaque(
                 Endpoint::get("IPlayerService/GetCommunityBadgeProgress/v1/", Access::User),
-                input_json(&serde_json::json!({"steamid": steamid, "badgeid": badgeid}))?,
-                &[],
+                Params::json(&BadgeRequest { steamid, badgeid })?,
             )
             .await
     }
 }
 
-pub(crate) fn input_json(value: &impl Serialize) -> Result<Params> {
-    let json = serde_json::to_string(value)
-        .map_err(|_| Error::InvalidParameter("service request must serialize as JSON"))?;
-    Ok(vec![param("input_json", json)])
+#[derive(Serialize)]
+struct RecentGamesRequest {
+    steamid: SteamId,
+    count: u32,
+}
+
+#[derive(Serialize)]
+struct PlaytimeRequest {
+    steamid: SteamId,
+    appid: u32,
+}
+
+#[derive(Serialize)]
+struct UserRequest {
+    steamid: SteamId,
+}
+
+#[derive(Serialize)]
+struct BadgeRequest {
+    steamid: SteamId,
+    badgeid: i32,
 }

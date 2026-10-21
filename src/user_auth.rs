@@ -7,7 +7,7 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    client::{Access, Endpoint, param},
+    request::{Access, Endpoint, Params},
     types::{nonzero, text},
 };
 use serde::Deserialize;
@@ -96,6 +96,10 @@ impl fmt::Debug for OpaqueResponse {
     }
 }
 impl OpaqueResponse {
+    pub(crate) fn from_json(value: Value) -> Self {
+        Self(value)
+    }
+
     /// Inspect Steam's original result explicitly. It may contain secrets.
     pub fn as_json(&self) -> &Value {
         &self.0
@@ -150,12 +154,11 @@ impl UserAuth<'_> {
         let response: Verified = self
             .0
             .call(
-                Endpoint::auth(PATH, Access::User, false),
-                vec![
-                    param("appid", appid),
-                    param("ticket", ticket.expose_hex()),
-                    param("identity", identity),
-                ],
+                Endpoint::get_once(PATH, Access::User),
+                Params::new()
+                    .with("appid", appid)
+                    .with("ticket", ticket.expose_hex())
+                    .with("identity", identity),
                 &["response", "params"],
             )
             .await?;
@@ -180,22 +183,13 @@ impl UserAuth<'_> {
                 "encrypted login material must not be empty",
             ));
         }
+        let mut params = Params::new().with("steamid", request.steamid);
+        params.push_bytes("sessionkey", request.sessionkey);
+        params.push_bytes("encrypted_loginkey", request.encrypted_loginkey);
         self.0
-            .call(
-                Endpoint::auth(
-                    "ISteamUserAuth/AuthenticateUser/v1/",
-                    Access::Anonymous,
-                    true,
-                ),
-                vec![
-                    param("steamid", request.steamid),
-                    ("sessionkey".into(), request.sessionkey.to_vec()),
-                    (
-                        "encrypted_loginkey".into(),
-                        request.encrypted_loginkey.to_vec(),
-                    ),
-                ],
-                &[],
+            .call_opaque(
+                Endpoint::post("ISteamUserAuth/AuthenticateUser/v1/", Access::Anonymous),
+                params,
             )
             .await
     }
