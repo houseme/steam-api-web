@@ -16,7 +16,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 English | [简体中文](README_ZH.md)
 
 An independent asynchronous Rust client for Steam's Web API — no Steam client,
-no native SDK. The **0.4.0 development version** binds **161 method routes
+no native SDK. Version **0.4.0** binds **161 method routes
 across 30 interfaces** (P0–P3), from authentication and stats to Cloud,
 inventory, trading, Workshop, microtransactions and anti-cheat.
 
@@ -35,8 +35,10 @@ inventory, trading, Workshop, microtransactions and anti-cheat.
 
 ## Quick start
 
-Version 0.4.0 is unreleased; until it reaches the registry, use a
-`{ path = "../steam-api-web" }` dependency from a GitHub checkout.
+The manifest below targets 0.4.0. Source tags, crates.io publication and
+docs.rs builds are separate steps. If this version is not yet available in the
+registry, use `{ path = "../steam-api-web" }` from a GitHub checkout. Registry
+and documentation badges reflect published versions.
 
 ```toml
 [dependencies]

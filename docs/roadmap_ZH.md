@@ -11,7 +11,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 核对日期：2026-10-21。范围覆盖[官方 Web API 索引](https://partner.steamgames.com/doc/webapi)的全部 **33 个接口**，包含 **157 个显式 HTTP 签名**，以及 Sandbox 从 ISteamMicroTxn 继承的 **10 个签名**。这是文档快照清单，不包含私有或未公开方法，也不是已实现覆盖率声明。
 
-共享机器清单：[api-inventory.json](api-inventory.json)。0.4.0 开发版已封装 P0–P3，共 30 个接口、161 条路径，包含 151 条显式文档路径及 10 条继承 Sandbox 路径，并有本地契约测试。未公开响应结构保持 opaque，Publisher 实测尚未完成。
+共享机器清单：[api-inventory.json](api-inventory.json)。0.4.0 版本已封装 P0–P3，共 30 个接口、161 条路径，包含 151 条显式文档路径及 10 条继承 Sandbox 路径，并有本地契约测试。未公开响应结构保持 opaque，Publisher 实测尚未完成。
 
 ## 推进阶段
 

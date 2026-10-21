@@ -15,7 +15,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](README.md) | 简体中文
 
-独立异步 Rust Steam Web API 客户端——无需 Steam 客户端与原生 SDK。**0.4.0 开发版**绑定 P0–P3 共 **30 个接口、161 条方法路径**，覆盖认证、统计、Cloud、库存、交易、Workshop、微交易与反作弊。
+独立异步 Rust Steam Web API 客户端——无需 Steam 客户端与原生 SDK。版本 **0.4.0** 绑定 P0–P3 共 **30 个接口、161 条方法路径**，覆盖认证、统计、Cloud、库存、交易、Workshop、微交易与反作弊。
 
 **为什么选择这个 crate**
 
@@ -27,7 +27,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ## 快速开始
 
-0.4.0 尚未发布；在版本进入 registry 之前，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。
+以下配置面向 0.4.0。源码标签、crates.io 发布和 docs.rs 构建是独立步骤；该版本尚未在 registry 可用时，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。crates.io 和 docs.rs 徽章以实际发布版本为准。
 
 ```toml
 [dependencies]

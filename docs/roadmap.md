@@ -11,7 +11,7 @@ English | [简体中文](roadmap_ZH.md)
 
 Reviewed on 2026-10-21 against every interface in the [official Web API index](https://partner.steamgames.com/doc/webapi): **33 interfaces**, **157 explicit HTTP signatures**, and **10 Sandbox signatures inherited from ISteamMicroTxn**. This is a documentation snapshot, not an inventory of private methods or a claim that all bindings are implemented.
 
-The shared machine inventory is [api-inventory.json](api-inventory.json). The 0.4.0 development version binds P0–P3 (161 routes across 30 interfaces, comprising 151 explicit documented routes and ten inherited Sandbox routes), with local contract tests. Undocumented response contracts remain opaque, and Publisher validation is pending.
+The shared machine inventory is [api-inventory.json](api-inventory.json). Version 0.4.0 binds P0–P3 (161 routes across 30 interfaces, comprising 151 explicit documented routes and ten inherited Sandbox routes), with local contract tests. Undocumented response contracts remain opaque, and Publisher validation is pending.
 
 ## Delivery phases
 

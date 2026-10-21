@@ -94,4 +94,4 @@ ResponsePolicy 负责 result header、空响应及 JSON 根结构，客户端负
 
 ## 0.4 P3 与业务状态
 
-0.4 开发版新增 38 条路径，累计 30 个接口、161 条路径，其中 10 条为 Sandbox 继承镜像。生产与 Sandbox 显式选择且不自动切换；微交易 result=OK 是 API 确认，实际交易状态保留在响应中。ResponsePolicy 将确认规则和 VAC 未就绪例外限定到对应接口，在成功计数前校验；其他 success=false 仍失败。详见 [P3 契约](p3_ZH.md)中的金额、对账、权限、通知替换和原生 SDK 边界。
+0.4.0 版本新增 38 条路径，累计 30 个接口、161 条路径，其中 10 条为 Sandbox 继承镜像。生产与 Sandbox 显式选择且不自动切换；微交易 result=OK 是 API 确认，实际交易状态保留在响应中。ResponsePolicy 将确认规则和 VAC 未就绪例外限定到对应接口，在成功计数前校验；其他 success=false 仍失败。详见 [P3 契约](p3_ZH.md)中的金额、对账、权限、通知替换和原生 SDK 边界。

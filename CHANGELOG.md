@@ -18,7 +18,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
-## [0.4.0] - Unreleased
+## [0.4.0] - 2026-10-22
 
 ### Added
 
@@ -39,7 +39,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 ### Validation boundaries
 
 - No live billing/anti-cheat authorization or real payments, refunds, bans, reports, notifications or lobby writes were used. Permissions, callbacks and persistence require independent validation.
-- Version 0.4.0 is unreleased; existing version tags are unchanged.
+- Existing version tags remain unchanged; registry publication completes only after the release workflow's registry checksum verification succeeds.
 
 ## [0.3.0] - 2026-10-21
 
