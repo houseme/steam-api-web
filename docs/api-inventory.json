@@ -41,10 +41,10 @@
       "commit_sha": "d8114185613be4dbfe4897c8484d0b2670fd3cd7",
       "tree_sha": "4c43e2a86462b070f9c92758123efac23efb6318"
     },
-    "binding_version": "0.2.0",
-    "bound_interfaces": 12,
-    "bound_methods": 57,
-    "binding_validation": "Local protocol contracts; live Publisher operations remain unverified."
+    "binding_version": "0.3.0",
+    "bound_interfaces": 24,
+    "bound_methods": 123,
+    "binding_validation": "Local protocol contracts; live OAuth and Publisher operations remain unverified."
   },
   "interfaces": [
     {
@@ -112,37 +112,44 @@
         {
           "name": "EnumerateUserFiles",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "enumerate_user_files"
         },
         {
           "name": "BeginAppUploadBatch",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "begin_app_upload_batch"
         },
         {
           "name": "CompleteAppUploadBatch",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "complete_app_upload_batch"
         },
         {
           "name": "BeginHTTPUpload",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "begin_http_upload"
         },
         {
           "name": "CommitHTTPUpload",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "commit_http_upload"
         },
         {
           "name": "Delete",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "delete"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "cloud"
     },
     {
       "interface": "IEconMarketService",
@@ -151,27 +158,32 @@
         {
           "name": "GetMarketEligibility",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_market_eligibility"
         },
         {
           "name": "CancelAppListingsForUser",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "cancel_app_listings_for_user"
         },
         {
           "name": "GetAssetID",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_asset_id"
         },
         {
           "name": "GetPopular",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_popular"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "econ_market"
     },
     {
       "interface": "IEconService",
@@ -180,42 +192,50 @@
         {
           "name": "GetTradeHistory",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_trade_history"
         },
         {
           "name": "FlushInventoryCache",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "flush_inventory_cache"
         },
         {
           "name": "FlushAssetAppearanceCache",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "flush_asset_appearance_cache"
         },
         {
           "name": "FlushContextCache",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "flush_context_cache"
         },
         {
           "name": "GetTradeOffers",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_trade_offers"
         },
         {
           "name": "GetTradeOffer",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_trade_offer"
         },
         {
           "name": "GetTradeOffersSummary",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_trade_offers_summary"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "econ"
     },
     {
       "interface": "IGameInventory",
@@ -224,32 +244,39 @@
         {
           "name": "GetHistoryCommandDetails",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_history_command_details"
         },
         {
           "name": "GetUserHistory",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_user_history"
         },
         {
           "name": "HistoryExecuteCommands",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "history_execute_commands"
         },
         {
           "name": "SupportGetAssetHistory",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "support_get_asset_history"
         },
         {
           "name": "UpdateItemDefs",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "update_item_defs",
+          "path_version": "v0001"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "game_inventory"
     },
     {
       "interface": "IGameNotificationsService",
@@ -347,7 +374,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "game_servers"
     },
     {
       "interface": "IInventoryService",
@@ -356,57 +384,68 @@
         {
           "name": "AddItem",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "add_item"
         },
         {
           "name": "AddPromoItem",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "add_promo_item"
         },
         {
           "name": "ConsumeItem",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "consume_item"
         },
         {
           "name": "ExchangeItem",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "exchange_item"
         },
         {
           "name": "GetInventory",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_inventory"
         },
         {
           "name": "GetItemDefs",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_item_defs"
         },
         {
           "name": "GetPriceSheet",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_price_sheet"
         },
         {
           "name": "Consolidate",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "consolidate"
         },
         {
           "name": "GetQuantity",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_quantity"
         },
         {
           "name": "ModifyItems",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "modify_items"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "inventory"
     },
     {
       "interface": "ILobbyMatchmakingService",
@@ -493,7 +532,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "player"
     },
     {
       "interface": "IPublishedFileModerationService",
@@ -502,17 +542,20 @@
         {
           "name": "GetAllApprovalRequests",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_all_approval_requests"
         },
         {
           "name": "ProcessApprovalRequest",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "process_approval_request"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "published_file_moderation"
     },
     {
       "interface": "IPublishedFileService",
@@ -521,42 +564,50 @@
         {
           "name": "Delete",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "delete"
         },
         {
           "name": "QueryFiles",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "query_files"
         },
         {
           "name": "SetDeveloperMetadata",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "set_developer_metadata"
         },
         {
           "name": "UpdateAppUGCBan",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "update_app_ugc_ban"
         },
         {
           "name": "UpdateBanStatus",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "update_ban_status"
         },
         {
           "name": "UpdateIncompatibleStatus",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "update_incompatible_status"
         },
         {
           "name": "UpdateTags",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "update_tags"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "published_file"
     },
     {
       "interface": "ISiteLicenseService",
@@ -634,7 +685,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "apps"
     },
     {
       "interface": "ISteamCommunity",
@@ -657,47 +709,56 @@
         {
           "name": "CanTrade",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "can_trade"
         },
         {
           "name": "FinalizeAssetTransaction",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "finalize_asset_transaction"
         },
         {
           "name": "GetAssetClassInfo",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_asset_class_info"
         },
         {
           "name": "GetAssetPrices",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_asset_prices"
         },
         {
           "name": "GetExportedAssetsForUser",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_exported_assets_for_user"
         },
         {
           "name": "GetMarketPrices",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_market_prices"
         },
         {
           "name": "StartAssetTransaction",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "start_asset_transaction"
         },
         {
           "name": "StartTrade",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "start_trade"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "economy"
     },
     {
       "interface": "ISteamGameServerStats",
@@ -711,7 +772,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "game_server_stats"
     },
     {
       "interface": "ISteamLeaderboards",
@@ -755,7 +817,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "leaderboards"
     },
     {
       "interface": "ISteamMicroTxn",
@@ -902,7 +965,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "news"
     },
     {
       "interface": "ISteamPublishedItemSearch",
@@ -911,27 +975,32 @@
         {
           "name": "RankedByPublicationOrder",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "ranked_by_publication_order"
         },
         {
           "name": "RankedByTrend",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "ranked_by_trend"
         },
         {
           "name": "RankedByVote",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "ranked_by_vote"
         },
         {
           "name": "ResultSetSummary",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "result_set_summary"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "published_item_search"
     },
     {
       "interface": "ISteamPublishedItemVoting",
@@ -940,17 +1009,20 @@
         {
           "name": "ItemVoteSummary",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "item_vote_summary"
         },
         {
           "name": "UserVoteSummary",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "user_vote_summary"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "published_item_voting"
     },
     {
       "interface": "ISteamRemoteStorage",
@@ -959,42 +1031,50 @@
         {
           "name": "EnumerateUserSubscribedFiles",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "enumerate_user_subscribed_files"
         },
         {
           "name": "GetCollectionDetails",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "get_collection_details"
         },
         {
           "name": "GetPublishedFileDetails",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "get_published_file_details"
         },
         {
           "name": "GetUGCFileDetails",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_ugc_file_details"
         },
         {
           "name": "SetUGCUsedByGC",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "set_ugc_used_by_gc"
         },
         {
           "name": "SubscribePublishedFile",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "subscribe_published_file"
         },
         {
           "name": "UnsubscribePublishedFile",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "unsubscribe_published_file"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "remote_storage"
     },
     {
       "interface": "ISteamUser",
@@ -1048,7 +1128,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P0",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "user"
     },
     {
       "interface": "ISteamUserAuth",
@@ -1067,7 +1148,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P0",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "user_auth"
     },
     {
       "interface": "ISteamUserStats",
@@ -1111,7 +1193,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P0",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "user_stats"
     },
     {
       "interface": "ISteamWebAPIUtil",
@@ -1130,7 +1213,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "web_api_util"
     },
     {
       "interface": "IStoreService",
@@ -1144,7 +1228,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "store"
     },
     {
       "interface": "IUserReviewsService",
@@ -1158,7 +1243,8 @@
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
-      "binding_status": "bound_contract_tests_only"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "reviews"
     },
     {
       "interface": "IWorkshopService",
@@ -1167,27 +1253,32 @@
         {
           "name": "SetItemPaymentRules",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "set_item_payment_rules"
         },
         {
           "name": "GetFinalizedContributors",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_finalized_contributors"
         },
         {
           "name": "GetItemDailyRevenue",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_item_daily_revenue"
         },
         {
           "name": "PopulateItemDescriptions",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "populate_item_descriptions"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "workshop"
     }
   ]
 }

@@ -11,7 +11,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 核对日期：2026-10-21。范围覆盖[官方 Web API 索引](https://partner.steamgames.com/doc/webapi)的全部 **33 个接口**，包含 **157 个显式 HTTP 签名**，以及 Sandbox 从 ISteamMicroTxn 继承的 **10 个签名**。这是文档快照清单，不包含私有或未公开方法，也不是已实现覆盖率声明。
 
-共享机器清单：[api-inventory.json](api-inventory.json)。0.2.0 已封装 P0 的 18 个和 P1 的 39 个方法，共 12 个接口、57 个方法，并有本地契约测试。未公开响应结构保持 opaque，Publisher 实测尚未完成。
+共享机器清单：[api-inventory.json](api-inventory.json)。0.3.0 开发版已封装 P0 的 18 个、P1 的 39 个及 P2 的 66 个方法，共 24 个接口、123 个方法，并有本地契约测试。未公开响应结构保持 opaque，Publisher 实测尚未完成。
 
 ## 推进阶段
 
@@ -24,7 +24,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | P4 / 0.5 | 财务、站点许可、广播及覆盖收敛 | 数据访问权限、账期/时间范围、所有 33 个接口的覆盖报告 |
 | P5 / 单独提案 | 可选原生 SDK 互操作 companion crate | 生命周期/线程/回调契约；基础 HTTP crate 继续不依赖原生 SDK |
 
-版本是规划顺序，不是发布日期；P0/P1 已有封装实现，P2–P5 仍处于规划阶段。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
+版本是规划顺序，不是发布日期；P0/P1/P2 已有封装实现，P3–P5 仍处于规划阶段。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
 
 ## 全部 Web API 接口
 
@@ -42,18 +42,18 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | [IGameServersService](https://partner.steamgames.com/doc/webapi/IGameServersService) | 9 | P1 | 已封装；本地契约测试 |
 | [ISteamGameServerStats](https://partner.steamgames.com/doc/webapi/ISteamGameServerStats) | 1 | P1 | 已封装；本地契约测试 |
 | [ISteamLeaderboards](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards) | 7 | P1 | 已封装；本地契约测试 |
-| [ICloudService](https://partner.steamgames.com/doc/webapi/ICloudService) | 6 | P2 | 规划中 |
-| [IInventoryService](https://partner.steamgames.com/doc/webapi/IInventoryService) | 10 | P2 | 规划中 |
-| [IGameInventory](https://partner.steamgames.com/doc/webapi/IGameInventory) | 5 | P2 | 规划中 |
-| [ISteamEconomy](https://partner.steamgames.com/doc/webapi/ISteamEconomy) | 8 | P2 | 规划中 |
-| [IEconService](https://partner.steamgames.com/doc/webapi/IEconService) | 7 | P2 | 规划中 |
-| [IEconMarketService](https://partner.steamgames.com/doc/webapi/IEconMarketService) | 4 | P2 | 规划中 |
-| [IPublishedFileService](https://partner.steamgames.com/doc/webapi/IPublishedFileService) | 7 | P2 | 规划中 |
-| [ISteamPublishedItemSearch](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch) | 4 | P2 | 规划中 |
-| [ISteamPublishedItemVoting](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemVoting) | 2 | P2 | 规划中 |
-| [ISteamRemoteStorage](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage) | 7 | P2 | 规划中 |
-| [IPublishedFileModerationService](https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService) | 2 | P2 | 规划中 |
-| [IWorkshopService](https://partner.steamgames.com/doc/webapi/IWorkshopService) | 4 | P2 | 规划中 |
+| [ICloudService](https://partner.steamgames.com/doc/webapi/ICloudService) | 6 | P2 | 已封装；本地契约测试 |
+| [IInventoryService](https://partner.steamgames.com/doc/webapi/IInventoryService) | 10 | P2 | 已封装；本地契约测试 |
+| [IGameInventory](https://partner.steamgames.com/doc/webapi/IGameInventory) | 5 | P2 | 已封装；本地契约测试 |
+| [ISteamEconomy](https://partner.steamgames.com/doc/webapi/ISteamEconomy) | 8 | P2 | 已封装；本地契约测试 |
+| [IEconService](https://partner.steamgames.com/doc/webapi/IEconService) | 7 | P2 | 已封装；本地契约测试 |
+| [IEconMarketService](https://partner.steamgames.com/doc/webapi/IEconMarketService) | 4 | P2 | 已封装；本地契约测试 |
+| [IPublishedFileService](https://partner.steamgames.com/doc/webapi/IPublishedFileService) | 7 | P2 | 已封装；本地契约测试 |
+| [ISteamPublishedItemSearch](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch) | 4 | P2 | 已封装；本地契约测试 |
+| [ISteamPublishedItemVoting](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemVoting) | 2 | P2 | 已封装；本地契约测试 |
+| [ISteamRemoteStorage](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage) | 7 | P2 | 已封装；本地契约测试 |
+| [IPublishedFileModerationService](https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService) | 2 | P2 | 已封装；本地契约测试 |
+| [IWorkshopService](https://partner.steamgames.com/doc/webapi/IWorkshopService) | 4 | P2 | 已封装；本地契约测试 |
 | [ISteamMicroTxnSandbox](https://partner.steamgames.com/doc/webapi/ISteamMicroTxnSandbox) | 10（继承） | P3 | 规划中 |
 | [ISteamMicroTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn) | 10 | P3 | 规划中 |
 | [ICheatReportingService](https://partner.steamgames.com/doc/webapi/ICheatReportingService) | 7 | P3 | 规划中 |
@@ -93,7 +93,7 @@ Sandbox 页面仅说明与生产微交易相同的方法，本清单将继承关
 | [`timeline.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/timeline.rs) | 时间线事件依赖原生 SDK 状态，没有文档化的 Web API 等价接口。 | P5 |
 | [`ugc.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/ugc.rs) | Workshop、发布文件、搜索和审核接口提供服务端 UGC 流程。 | P2 |
 | [`user.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user.rs) | 当前 ISteamUser/ISteamUserAuth 桥接 ID 与 Web API 票据；原生会话回调保留本地。 | P0 / P5 |
-| [`user_stats.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user_stats.rs) | 当前用户统计加规划中的排行榜封装；原生异步通知需要 SDK 集成。 | P0 / P1 / P5 |
+| [`user_stats.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user_stats.rs) | 用户统计与排行榜 Web 封装；原生异步通知需要 SDK 集成。 | P0 / P1 / P5 |
 | [`user_stats/stat_callback.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user_stats/stat_callback.rs) | 统计回调保留原生；在可选适配器中记录顺序与生命周期。 | P5 |
 | [`user_stats/stats.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user_stats/stats.rs) | 保留读取数值类型；Web 写入接受 uint32，不假定等价于 SDK 浮点 setter。 | P0 / P5 |
 | [`utils.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/utils.rs) | ISteamWebAPIUtil 覆盖服务器信息/发现；原生工具对话框与运行时状态保留本地。 | P1 / P5 |

@@ -11,7 +11,7 @@ English | [简体中文](roadmap_ZH.md)
 
 Reviewed on 2026-10-21 against every interface in the [official Web API index](https://partner.steamgames.com/doc/webapi): **33 interfaces**, **157 explicit HTTP signatures**, and **10 Sandbox signatures inherited from ISteamMicroTxn**. This is a documentation snapshot, not an inventory of private methods or a claim that all bindings are implemented.
 
-The shared machine inventory is [api-inventory.json](api-inventory.json). Version 0.2.0 binds all 18 P0 and 39 P1 methods (57 total across 12 interfaces), with local contract tests. Undocumented response contracts remain opaque, and Publisher validation is pending.
+The shared machine inventory is [api-inventory.json](api-inventory.json). The 0.3.0 development version binds all 18 P0, 39 P1 and 66 P2 methods (123 total across 24 interfaces), with local contract tests. Undocumented response contracts remain opaque, and Publisher validation is pending.
 
 ## Delivery phases
 
@@ -24,7 +24,7 @@ The shared machine inventory is [api-inventory.json](api-inventory.json). Versio
 | P4 / 0.5 | Finance, site licenses, broadcasts and coverage closure | Data access controls, reporting periods and coverage report for all 33 interfaces |
 | P5 / separate proposal | Optional native SDK interoperability companion crate | Lifecycle/thread/callback contracts; base HTTP crate stays SDK-independent |
 
-Versions describe sequencing, not release dates. P0/P1 bindings are implemented; P2–P5 remain planned. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
+Versions describe sequencing, not release dates. P0/P1/P2 bindings are implemented; P3–P5 remain planned. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
 
 ## Complete Web API interface matrix
 
@@ -42,18 +42,18 @@ Versions describe sequencing, not release dates. P0/P1 bindings are implemented;
 | [IGameServersService](https://partner.steamgames.com/doc/webapi/IGameServersService) | 9 | P1 | Bound; local contract tests |
 | [ISteamGameServerStats](https://partner.steamgames.com/doc/webapi/ISteamGameServerStats) | 1 | P1 | Bound; local contract tests |
 | [ISteamLeaderboards](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards) | 7 | P1 | Bound; local contract tests |
-| [ICloudService](https://partner.steamgames.com/doc/webapi/ICloudService) | 6 | P2 | Planned |
-| [IInventoryService](https://partner.steamgames.com/doc/webapi/IInventoryService) | 10 | P2 | Planned |
-| [IGameInventory](https://partner.steamgames.com/doc/webapi/IGameInventory) | 5 | P2 | Planned |
-| [ISteamEconomy](https://partner.steamgames.com/doc/webapi/ISteamEconomy) | 8 | P2 | Planned |
-| [IEconService](https://partner.steamgames.com/doc/webapi/IEconService) | 7 | P2 | Planned |
-| [IEconMarketService](https://partner.steamgames.com/doc/webapi/IEconMarketService) | 4 | P2 | Planned |
-| [IPublishedFileService](https://partner.steamgames.com/doc/webapi/IPublishedFileService) | 7 | P2 | Planned |
-| [ISteamPublishedItemSearch](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch) | 4 | P2 | Planned |
-| [ISteamPublishedItemVoting](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemVoting) | 2 | P2 | Planned |
-| [ISteamRemoteStorage](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage) | 7 | P2 | Planned |
-| [IPublishedFileModerationService](https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService) | 2 | P2 | Planned |
-| [IWorkshopService](https://partner.steamgames.com/doc/webapi/IWorkshopService) | 4 | P2 | Planned |
+| [ICloudService](https://partner.steamgames.com/doc/webapi/ICloudService) | 6 | P2 | Bound; local contract tests |
+| [IInventoryService](https://partner.steamgames.com/doc/webapi/IInventoryService) | 10 | P2 | Bound; local contract tests |
+| [IGameInventory](https://partner.steamgames.com/doc/webapi/IGameInventory) | 5 | P2 | Bound; local contract tests |
+| [ISteamEconomy](https://partner.steamgames.com/doc/webapi/ISteamEconomy) | 8 | P2 | Bound; local contract tests |
+| [IEconService](https://partner.steamgames.com/doc/webapi/IEconService) | 7 | P2 | Bound; local contract tests |
+| [IEconMarketService](https://partner.steamgames.com/doc/webapi/IEconMarketService) | 4 | P2 | Bound; local contract tests |
+| [IPublishedFileService](https://partner.steamgames.com/doc/webapi/IPublishedFileService) | 7 | P2 | Bound; local contract tests |
+| [ISteamPublishedItemSearch](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch) | 4 | P2 | Bound; local contract tests |
+| [ISteamPublishedItemVoting](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemVoting) | 2 | P2 | Bound; local contract tests |
+| [ISteamRemoteStorage](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage) | 7 | P2 | Bound; local contract tests |
+| [IPublishedFileModerationService](https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService) | 2 | P2 | Bound; local contract tests |
+| [IWorkshopService](https://partner.steamgames.com/doc/webapi/IWorkshopService) | 4 | P2 | Bound; local contract tests |
 | [ISteamMicroTxnSandbox](https://partner.steamgames.com/doc/webapi/ISteamMicroTxnSandbox) | 10 inherited | P3 | Planned |
 | [ISteamMicroTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn) | 10 | P3 | Planned |
 | [ICheatReportingService](https://partner.steamgames.com/doc/webapi/ICheatReportingService) | 7 | P3 | Planned |
@@ -93,7 +93,7 @@ Reference tree: [`d8114185613be4dbfe4897c8484d0b2670fd3cd7`](https://github.com/
 | [`timeline.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/timeline.rs) | Timeline events require native SDK state; no documented Web API equivalent. | P5 |
 | [`ugc.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/ugc.rs) | Workshop, published-file, search and moderation interfaces provide server-side UGC workflows. | P2 |
 | [`user.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user.rs) | Current ISteamUser/ISteamUserAuth bindings bridge IDs and Web API tickets; native session callbacks stay local. | P0 / P5 |
-| [`user_stats.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user_stats.rs) | Current user stats plus planned leaderboard bindings; native asynchronous notifications need SDK integration. | P0 / P1 / P5 |
+| [`user_stats.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user_stats.rs) | User stats and leaderboard Web bindings; native asynchronous notifications need SDK integration. | P0 / P1 / P5 |
 | [`user_stats/stat_callback.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user_stats/stat_callback.rs) | Stat callbacks remain native; document ordering and lifetime in an optional adapter. | P5 |
 | [`user_stats/stats.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/user_stats/stats.rs) | Preserve numeric read types; Web writes accept uint32 rather than assuming SDK float setters are equivalent. | P0 / P5 |
 | [`utils.rs`](https://github.com/Noxime/steamworks-rs/blob/d8114185613be4dbfe4897c8484d0b2670fd3cd7/src/utils.rs) | ISteamWebAPIUtil covers server info/discovery; native utility dialogs and runtime state remain local. | P1 / P5 |

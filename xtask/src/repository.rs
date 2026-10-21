@@ -81,6 +81,29 @@ fn check_markdown(path: &Path, text: &str, errors: &mut Vec<String>) -> Result<(
     Ok(())
 }
 
+fn binding_coverage(inventory: &Value) -> Result<(u64, u64)> {
+    let mut interface_count = 0;
+    let mut method_count = 0;
+    for interface in inventory["interfaces"]
+        .as_array()
+        .ok_or("missing interfaces")?
+    {
+        if interface["binding_status"] == "bound_contract_tests_only" {
+            interface_count += 1;
+            method_count += interface["methods"]
+                .as_array()
+                .ok_or("bound interface has no methods")?
+                .len() as u64;
+        }
+    }
+    if inventory["_metadata"]["bound_interfaces"].as_u64() != Some(interface_count)
+        || inventory["_metadata"]["bound_methods"].as_u64() != Some(method_count)
+    {
+        return Err("bound interface/method totals disagree with the inventory".into());
+    }
+    Ok((interface_count, method_count))
+}
+
 pub(crate) fn check() -> Result<()> {
     let mut errors = Vec::new();
     let names = output(
@@ -156,6 +179,12 @@ pub(crate) fn check() -> Result<()> {
     }
     let inventory: Value =
         serde_json::from_str(&fs::read_to_string(root().join("docs/api-inventory.json"))?)?;
+    let (bound_interfaces, bound_methods) = binding_coverage(&inventory)?;
+    let package_metadata = crate::metadata()?;
+    if inventory["_metadata"]["binding_version"] != crate::package(&package_metadata)?["version"] {
+        errors.push("binding inventory version must match the public crate".to_owned());
+    }
+    let exports = fs::read_to_string(root().join("src/lib.rs"))?;
     let interfaces = inventory["interfaces"]
         .as_array()
         .ok_or("missing interface inventory")?;
@@ -168,6 +197,32 @@ pub(crate) fn check() -> Result<()> {
     }
     let mut explicit = 0;
     for interface in interfaces {
+        if interface["binding_status"] == "bound_contract_tests_only" {
+            let module = interface["rust_module"]
+                .as_str()
+                .ok_or("bound interface has no Rust module")?;
+            if module.is_empty()
+                || !module
+                    .bytes()
+                    .all(|byte| byte.is_ascii_lowercase() || byte == b'_')
+            {
+                return Err("invalid bound Rust module name".into());
+            }
+            if !exports.contains(&format!("pub mod {module};")) {
+                errors.push(format!("bound module {module} is not publicly exported"));
+            }
+            let source = fs::read_to_string(root().join(format!("src/{module}.rs")))?;
+            for method in interface["methods"]
+                .as_array()
+                .ok_or("bound interface has no methods")?
+            {
+                if let Some(name) = method["rust_method"].as_str()
+                    && !source.contains(&format!("pub async fn {name}("))
+                {
+                    errors.push(format!("bound method {module}::{name} is absent"));
+                }
+            }
+        }
         for method in interface["methods"]
             .as_array()
             .ok_or("missing interface methods")?
@@ -221,7 +276,7 @@ pub(crate) fn check() -> Result<()> {
         return Err(errors.join("\n").into());
     }
     println!(
-        "Repository checks passed: legal headers, bilingual links, 33 interfaces, SDK modules, no Python and AWS-LC graph"
+        "Repository checks passed: legal headers, bilingual links, 33 interfaces ({bound_interfaces} bound, {bound_methods} methods), SDK modules, no Python and AWS-LC graph"
     );
     Ok(())
 }
@@ -229,6 +284,24 @@ pub(crate) fn check() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn binding_counts_cannot_inflate_planned_interfaces_or_missing_methods() -> Result<()> {
+        let mut inventory = serde_json::json!({
+            "_metadata": {"bound_interfaces": 1, "bound_methods": 2},
+            "interfaces": [
+                {"binding_status": "bound_contract_tests_only", "methods": [{}, {}]},
+                {"binding_status": "planned", "methods": [{}]}
+            ]
+        });
+        assert_eq!(binding_coverage(&inventory)?, (1, 2));
+        inventory["_metadata"]["bound_methods"] = serde_json::json!(3);
+        assert!(binding_coverage(&inventory).is_err());
+        inventory["_metadata"]["bound_methods"] = serde_json::json!(2);
+        inventory["interfaces"][0]["methods"] = Value::Null;
+        assert!(binding_coverage(&inventory).is_err());
+        Ok(())
+    }
 
     #[test]
     fn local_links_decode_paths_and_ignore_remote_urls_and_fragments() -> Result<()> {
