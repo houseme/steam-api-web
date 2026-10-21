@@ -826,3 +826,28 @@ async fn game_server_stats_accept_century_leap_day_and_an_equal_range() {
         .await
         .unwrap();
 }
+
+#[tokio::test]
+async fn public_build_without_confirmation_account_preserves_unknown_release_state() {
+    let server = MockServer::start().await;
+    Mock::given(method("POST"))
+        .and(path("/ISteamApps/SetAppBuildLive/v2/"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({"response":{"result":1}})))
+        .expect(1)
+        .mount(&server)
+        .await;
+    let client = publisher(&server);
+    let request = SetAppBuildLiveRequest {
+        betakey: "public",
+        steamid: None,
+        ..build_request()
+    };
+    let response = client.apps().set_app_build_live(&request).await.unwrap();
+    assert_eq!(response.http_status, 200);
+    let requests = server.received_requests().await.unwrap();
+    let fields: BTreeMap<_, _> = url::form_urlencoded::parse(&requests[0].body)
+        .into_owned()
+        .collect();
+    assert_eq!(fields["betakey"], "public");
+    assert!(!fields.contains_key("steamid"));
+}

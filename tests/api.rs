@@ -1059,3 +1059,64 @@ async fn malformed_json_and_wrong_root_shape_are_not_retried() {
         ));
     }
 }
+
+#[tokio::test]
+async fn public_game_server_user_key_verifies_tickets_without_replaying_failures() {
+    let server = MockServer::start().await;
+    let endpoint = "/ISteamUserAuth/AuthenticateUserTicket/v1/";
+    for (identity, response) in [
+        (
+            "game-server",
+            ResponseTemplate::new(200).set_body_json(
+                json!({"response":{"params":{"result":"OK","steamid":ID.to_string()}}}),
+            ),
+        ),
+        (
+            "game-server-retry",
+            ResponseTemplate::new(503).insert_header("retry-after", "0"),
+        ),
+    ] {
+        Mock::given(method("GET"))
+            .and(path(endpoint))
+            .and(header("x-webapi-key", "game-server-user-key"))
+            .and(query_param("appid", "480"))
+            .and(query_param("ticket", "0080ff"))
+            .and(query_param("identity", identity))
+            .and(query_param("format", "json"))
+            .respond_with(response)
+            .expect(1)
+            .mount(&server)
+            .await;
+    }
+    let client = SteamClient::builder()
+        .host(Host::Public)
+        .base_url(server.uri())
+        .api_key(ApiKey::user("game-server-user-key").unwrap())
+        .retry_policy(no_backoff(2))
+        .build()
+        .unwrap();
+    let ticket = WebApiTicket::from_bytes(&[0, 128, 255]).unwrap();
+    assert_eq!(
+        client
+            .user_auth()
+            .authenticate_user_ticket(480, &ticket, "game-server")
+            .await
+            .unwrap()
+            .steamid
+            .raw(),
+        ID
+    );
+    assert!(matches!(
+        client
+            .user_auth()
+            .authenticate_user_ticket(480, &ticket, "game-server-retry")
+            .await,
+        Err(Error::Http { status: 503, .. })
+    ));
+    assert_eq!(client.metrics().attempts, 2);
+    assert_eq!(client.metrics().retries, 0);
+    for request in server.received_requests().await.unwrap() {
+        assert!(request.body.is_empty());
+        assert!(!request.url.query_pairs().any(|(name, _)| name == "key"));
+    }
+}
