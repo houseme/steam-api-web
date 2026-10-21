@@ -22,17 +22,22 @@
 //! ```
 
 pub mod apps;
+pub mod cheat_reporting;
 mod client;
 pub mod cloud;
+pub mod community;
 pub mod econ;
 pub mod econ_market;
 pub mod economy;
 mod error;
 pub mod game_inventory;
+pub mod game_notifications;
 pub mod game_server_stats;
 pub mod game_servers;
 pub mod inventory;
 pub mod leaderboards;
+pub mod lobby_matchmaking;
+pub mod micro_txn;
 pub mod news;
 pub mod player;
 pub mod published_file;

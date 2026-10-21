@@ -95,6 +95,7 @@ fn service_new() -> String {
 }
 fn parsed(bytes: &[u8]) -> response::Response {
     response::Response {
+        policy: response::ResponsePolicy::Json,
         status: 200,
         payload: serde_json::from_slice(bytes).unwrap(),
     }

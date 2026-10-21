@@ -71,6 +71,18 @@ impl Endpoint {
         self.response = ResponsePolicy::CloudAcknowledgement;
         self
     }
+
+    /// Payment replies must explicitly acknowledge the request with result=OK.
+    pub const fn micro_transaction(mut self) -> Self {
+        self.response = ResponsePolicy::MicroTransaction;
+        self
+    }
+
+    /// VAC can report success=false while session readiness is still pending.
+    pub const fn vac_status(mut self) -> Self {
+        self.response = ResponsePolicy::VacStatus;
+        self
+    }
 }
 
 /// Encode directly into the final form, without owning each key/value pair.

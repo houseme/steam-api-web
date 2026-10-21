@@ -27,6 +27,8 @@ mod response {
         BuildConfirmation,
         CloudJson,
         CloudAcknowledgement,
+        MicroTransaction,
+        VacStatus,
     }
 }
 

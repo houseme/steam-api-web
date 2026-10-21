@@ -15,6 +15,8 @@ pub(crate) enum ResponsePolicy {
     BuildConfirmation,
     CloudJson,
     CloudAcknowledgement,
+    MicroTransaction,
+    VacStatus,
 }
 
 impl ResponsePolicy {
@@ -47,7 +49,11 @@ impl ResponsePolicy {
             }
             value
         };
-        Ok(Response { status, payload })
+        Ok(Response {
+            status,
+            payload,
+            policy: self,
+        })
     }
 
     pub fn validate_headers(self, endpoint: &'static str, headers: &HeaderMap) -> Result<()> {
@@ -81,6 +87,54 @@ impl ResponsePolicy {
             })
         }
     }
+
+    fn validate_business(self, endpoint: &'static str, value: &Value) -> Result<()> {
+        if self == Self::VacStatus {
+            check_local(endpoint, value, Self::Json)?;
+            let body = value
+                .get("response")
+                .filter(|body| body.is_object())
+                .ok_or(Error::Decode {
+                    endpoint,
+                    line: 0,
+                    column: 0,
+                })?;
+            if body.get("success").and_then(Value::as_bool).is_none() {
+                return Err(Error::Decode {
+                    endpoint,
+                    line: 0,
+                    column: 0,
+                });
+            }
+            check_local(endpoint, body, Self::VacStatus)?;
+            check_envelopes(endpoint, body)?;
+            // Only the canonical VAC response may use false as pending. Root
+            // markers, sibling envelopes and nested failures remain strict.
+            for key in ERROR_ENVELOPES {
+                if key != "response"
+                    && let Some(child) = value.get(key)
+                {
+                    check_api(endpoint, child)?;
+                }
+            }
+        } else {
+            check_api(endpoint, value)?;
+        }
+        if self == Self::MicroTransaction
+            && value
+                .get("response")
+                .and_then(|body| body.get("result"))
+                .and_then(Value::as_str)
+                != Some("OK")
+        {
+            return Err(Error::Decode {
+                endpoint,
+                line: 0,
+                column: 0,
+            });
+        }
+        Ok(())
+    }
 }
 
 const ERROR_ENVELOPES: [&str; 4] = ["response", "params", "playerstats", "result"];
@@ -88,11 +142,12 @@ const ERROR_ENVELOPES: [&str; 4] = ["response", "params", "playerstats", "result
 pub(crate) struct Response {
     pub status: u16,
     pub payload: Value,
+    pub policy: ResponsePolicy,
 }
 
 impl Response {
     pub fn opaque(self, endpoint: &'static str) -> Result<(u16, OpaqueResponse)> {
-        check_api(endpoint, &self.payload)?;
+        self.policy.validate_business(endpoint, &self.payload)?;
         Ok((self.status, OpaqueResponse::from_json(self.payload)))
     }
 
@@ -102,7 +157,7 @@ impl Response {
         envelope: &[&str],
     ) -> Result<(u16, T)> {
         let mut payload = self.payload;
-        check_api(endpoint, &payload)?;
+        self.policy.validate_business(endpoint, &payload)?;
         for key in envelope {
             payload = payload
                 .as_object_mut()
@@ -127,6 +182,11 @@ impl Response {
 }
 
 fn check_api(endpoint: &'static str, value: &Value) -> Result<()> {
+    check_local(endpoint, value, ResponsePolicy::Json)?;
+    check_envelopes(endpoint, value)
+}
+
+fn check_local(endpoint: &'static str, value: &Value, policy: ResponsePolicy) -> Result<()> {
     if value.get("error").is_some_and(|error| !error.is_null()) {
         let code = value
             .get("error")
@@ -137,6 +197,7 @@ fn check_api(endpoint: &'static str, value: &Value) -> Result<()> {
     if let Some(success) = value.get("success") {
         match (success.as_bool(), as_i64(success)) {
             (Some(true), _) | (_, Some(1)) => (),
+            (Some(false), _) if policy == ResponsePolicy::VacStatus => (),
             (Some(false), _) => {
                 return Err(Error::Api {
                     endpoint,
@@ -189,6 +250,10 @@ fn check_api(endpoint: &'static str, value: &Value) -> Result<()> {
             }
         }
     }
+    Ok(())
+}
+
+fn check_envelopes(endpoint: &'static str, value: &Value) -> Result<()> {
     // Some methods with undocumented response schemas return opaque JSON.
     // Still inspect their standard error envelopes before handing it to callers.
     for key in ERROR_ENVELOPES {
@@ -211,6 +276,89 @@ mod tests {
     use serde_json::json;
 
     const ENDPOINT: &str = "test/response/v1/";
+
+    #[test]
+    fn microtransactions_require_explicit_acknowledgement_without_inventing_settlement() {
+        let policy = ResponsePolicy::MicroTransaction;
+        for payload in [
+            json!({}),
+            json!({"response": {}}),
+            json!({"response": {"result": 1}}),
+            json!({"response": {"result": true}}),
+        ] {
+            let response = policy
+                .parse(ENDPOINT, 200, &serde_json::to_vec(&payload).unwrap())
+                .unwrap();
+            assert!(matches!(
+                response.opaque(ENDPOINT),
+                Err(Error::Decode { .. })
+            ));
+        }
+        let payload =
+            json!({"response": {"result": "OK", "params": {"status": "Failed", "orderid": "0"}}});
+        let (_, response) = policy
+            .parse(ENDPOINT, 200, &serde_json::to_vec(&payload).unwrap())
+            .unwrap()
+            .opaque(ENDPOINT)
+            .unwrap();
+        assert_eq!(response.as_json()["response"]["params"]["status"], "Failed");
+        let payload = json!({"response": {"result": "Failure", "error": {"errorcode": 56, "errordesc": "private payment"}}});
+        assert!(matches!(
+            policy
+                .parse(ENDPOINT, 200, &serde_json::to_vec(&payload).unwrap())
+                .unwrap()
+                .opaque(ENDPOINT),
+            Err(Error::Api { code: Some(56), .. })
+        ));
+    }
+
+    #[test]
+    fn vac_pending_is_scoped_to_its_canonical_body_and_never_hides_errors() {
+        let policy = ResponsePolicy::VacStatus;
+        let payload = json!({"response": {"success": false}});
+        let bytes = serde_json::to_vec(&payload).unwrap();
+        assert!(
+            policy
+                .parse(ENDPOINT, 200, &bytes)
+                .unwrap()
+                .opaque(ENDPOINT)
+                .is_ok()
+        );
+        assert!(matches!(
+            ResponsePolicy::Json
+                .parse(ENDPOINT, 200, &bytes)
+                .unwrap()
+                .opaque(ENDPOINT),
+            Err(Error::Api { .. })
+        ));
+        for payload in [
+            json!({"success": false, "response": {"success": false}}),
+            json!({"response": {"success": false, "error": "private"}}),
+            json!({"response": {"success": false, "params": {"success": false}}}),
+            json!({"response": {"success": false}, "playerstats": {"success": false}}),
+        ] {
+            assert!(matches!(
+                policy
+                    .parse(ENDPOINT, 200, &serde_json::to_vec(&payload).unwrap())
+                    .unwrap()
+                    .opaque(ENDPOINT),
+                Err(Error::Api { .. })
+            ));
+        }
+        for payload in [
+            json!({}),
+            json!({"response": {}}),
+            json!({"response": {"success": 0}}),
+        ] {
+            assert!(matches!(
+                policy
+                    .parse(ENDPOINT, 200, &serde_json::to_vec(&payload).unwrap())
+                    .unwrap()
+                    .opaque(ENDPOINT),
+                Err(Error::Decode { .. })
+            ));
+        }
+    }
 
     #[test]
     fn response_contracts_distinguish_cloud_acknowledgements_and_build_confirmation() {
@@ -274,6 +422,7 @@ mod tests {
     fn object_result_envelopes_preserve_success_and_reject_nested_failures() {
         let payload = json!({"result": {"updated": ["418"], "failed": [], "success": true}});
         let (_, response) = Response {
+            policy: ResponsePolicy::Json,
             status: 200,
             payload,
         }
@@ -288,6 +437,7 @@ mod tests {
         ] {
             assert!(matches!(
                 Response {
+                    policy: ResponsePolicy::Json,
                     status: 200,
                     payload
                 }
@@ -297,6 +447,7 @@ mod tests {
         }
         assert!(matches!(
             Response {
+                policy: ResponsePolicy::Json,
                 status: 200,
                 payload: json!({"result": []})
             }
@@ -317,6 +468,7 @@ mod tests {
             .unwrap()
             .as_ptr();
         let (_, decoded): (_, Payload) = Response {
+            policy: ResponsePolicy::Json,
             status: 200,
             payload,
         }
@@ -330,6 +482,7 @@ mod tests {
         let payload = json!({"response": {"games": [1, 2, 3]}, "cursor": "next"});
         let original = payload["response"]["games"].as_array().unwrap().as_ptr();
         let (status, decoded) = Response {
+            policy: ResponsePolicy::Json,
             status: 200,
             payload,
         }
@@ -363,6 +516,7 @@ mod tests {
             ),
         ] {
             let result: Result<(u16, Value)> = Response {
+                policy: ResponsePolicy::Json,
                 status: 200,
                 payload,
             }
@@ -370,6 +524,7 @@ mod tests {
             assert!(matches!(result, Err(Error::Api { .. })));
         }
         let result: Result<(u16, Value)> = Response {
+            policy: ResponsePolicy::Json,
             status: 200,
             payload: json!({"response": {}}),
         }

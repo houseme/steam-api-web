@@ -6,15 +6,20 @@
 use crate::{
     Error, Result,
     apps::Apps,
+    cheat_reporting::CheatReportingService,
     cloud::Cloud,
+    community::Community,
     econ::EconService,
     econ_market::EconMarketService,
     economy::Economy,
     game_inventory::GameInventory,
+    game_notifications::GameNotificationsService,
     game_server_stats::GameServerStats,
     game_servers::GameServers,
     inventory::Inventory,
     leaderboards::Leaderboards,
+    lobby_matchmaking::LobbyMatchmakingService,
+    micro_txn::MicroTxn,
     news::News,
     player::PlayerService,
     published_file::PublishedFileService,
@@ -495,6 +500,30 @@ impl SteamClient {
     /// Workshop payments, contributors, revenue and descriptions.
     pub fn workshop(&self) -> WorkshopService<'_> {
         WorkshopService(self)
+    }
+    /// Test microtransactions against Steam's Sandbox database. This never switches to production.
+    pub fn micro_txn_sandbox(&self) -> MicroTxn<'_> {
+        MicroTxn::sandbox(self)
+    }
+    /// Explicitly select production microtransactions. Mutations can affect real funds.
+    pub fn micro_txn_production(&self) -> MicroTxn<'_> {
+        MicroTxn::production(self)
+    }
+    /// Publisher cheating reports, game bans and opt-in secure sessions.
+    pub fn cheat_reporting(&self) -> CheatReportingService<'_> {
+        CheatReportingService(self)
+    }
+    /// Publisher community abuse reports.
+    pub fn community(&self) -> Community<'_> {
+        Community(self)
+    }
+    /// Game notification sessions and explicit notification requests.
+    pub fn game_notifications(&self) -> GameNotificationsService<'_> {
+        GameNotificationsService(self)
+    }
+    /// Documented server-side lobby operations, separate from native SDK callbacks.
+    pub fn lobby_matchmaking(&self) -> LobbyMatchmakingService<'_> {
+        LobbyMatchmakingService(self)
     }
     /// Inspect counters without logging sensitive requests or responses.
     pub fn metrics(&self) -> ClientMetrics {
