@@ -33,14 +33,16 @@ The normal dependency graph uses AWS-LC without ring or native-tls. The provider
 Cargo.lock was refreshed with online cargo update to the newest versions compatible with existing constraints and the compiler. Cargo does not automatically cross incompatible major versions or opt into unrequested transitive prereleases; forcing every transitive dependency to a globally highest version would break upstream contracts. ICU 2.3 requires Rust 1.88. Local checks used stable 1.99.1.
 
 ```sh
-python3 scripts/check_dependencies.py
+cargo xtask check-dependencies
 cargo update
-cargo tree --edges normal -i aws-lc-rs
+cargo tree --package steam-api-web --edges normal -i aws-lc-rs
 cargo fmt --all --check
-cargo clippy --all-targets --all-features --locked -- -D warnings
-cargo test --all-features --locked
+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+cargo test --workspace --all-features --locked
 ```
 
-The read-only audit uses Python's standard library and cargo metadata, includes new prereleases, and marks the known incompatible Rustls preview separately. Other updates or a newer preview produce a nonzero exit. It does not modify manifests, lockfiles, or snapshots. Generate a reviewed snapshot with `python3 scripts/check_dependencies.py --json > docs/dependency-versions.json`, then inspect changes and validate. If cargo update regenerates the lockfile, retain its repository copyright/license header.
+The read-only audit uses the Rust xtask, cargo metadata, bounded worker threads, and an explicit AWS-LC HTTP client, includes new prereleases, and marks the known incompatible Rustls preview separately. Other updates or a newer preview produce a nonzero exit. It does not modify manifests, lockfiles, or snapshots. Generate a reviewed snapshot with `cargo xtask check-dependencies --json > docs/dependency-versions.json`, then inspect changes and validate. If cargo update regenerates the lockfile, retain its repository copyright/license header.
 
-Workflow actions follow the reference project's structure while using the currently checked major versions: checkout v7, setup-python v7, upload-artifact v7, download-artifact v8, and action-gh-release v3. Go's actionlint latest is used in CI for current workflow syntax; local validation used actionlint 1.7.12. These build tools do not change the crate's runtime dependency graph.
+Workflow actions follow the reference project's structure while using the currently checked major versions: checkout v7, upload-artifact v7, download-artifact v8, and action-gh-release v3. Go's actionlint latest is used in CI for current workflow syntax; local validation used actionlint 1.7.12. These build tools do not change the crate's runtime dependency graph.
+
+`xtask` is a separate publish=false workspace member. Its blocking HTTP and audit dependencies do not enter the published library dependency graph. Repository source and workflows no longer require Python.

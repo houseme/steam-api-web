@@ -16,7 +16,7 @@ The workflows adapt the structure of [rustfs-mimalloc CI](https://github.com/hou
 CI runs on main pushes, pull requests, manual dispatch, and reusable workflow calls. A release passes an exact source revision to the reusable workflow. Every checkout uses that revision with credentials disabled.
 
 - Stable Linux, macOS and Windows build all targets and run all Rust tests, including doctests and the isolated provider process.
-- The lint job runs fmt, strict Clippy, bilingual/link/license/inventory checks, AWS-LC graph checks, offline Python release tests, and actionlint.
+- The lint job runs fmt, strict Clippy, bilingual/link/license/inventory checks, AWS-LC graph checks, offline Rust release tests, and actionlint.
 - The documentation job rejects rustdoc warnings.
 - Packaging waits for every preceding gate, runs cargo package with its independent build verification, and uploads the crate plus SHA256SUMS as the steam-api-web-package artifact.
 
@@ -30,13 +30,13 @@ Existing security audit and SARIF workflows remain separate. CI concurrency canc
 4. Run local checks and inspect the package contents. Before publishing, ensure CI passes for the exact revision.
 
 ```sh
-python3 scripts/release.py check --version 0.1.0
-python3 scripts/check_repository.py
-python3 -m unittest discover -s scripts/tests -v
+cargo xtask release check --version 0.2.0
+cargo xtask check-repository
+cargo test --package xtask --locked
 cargo fmt --all --check
-cargo clippy --all-targets --all-features --locked -- -D warnings
-cargo test --all-features --locked
-cargo package --locked
+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+cargo test --workspace --all-features --locked
+cargo package --package steam-api-web --locked
 ```
 
 Local work-in-progress packaging can use --allow-dirty for inspection. CI publication requires a clean checkout and does not use that flag.
@@ -52,8 +52,8 @@ Create a repository secret named CARGO_REGISTRY_TOKEN with permission to publish
 Publish by pushing an immutable v<VERSION> tag after reviewing the exact commit, or manually dispatch with dry_run disabled and an existing matching tag. Example commands, to be run only when publication is intended:
 
 ```sh
-git tag v0.1.0
-git push origin v0.1.0
+git tag -s v0.2.0
+git push origin v0.2.0
 ```
 
 Tag pushes resolve the version from the tag; manual publication checks out the existing requested tag. Preparation validates strict SemVer, Cargo package version/license/edition, both changelogs, and that HEAD is the exact tagged commit. Leading-zero versions and command-like inputs are rejected. rc/beta versions are supported and create prereleases.
@@ -64,4 +64,20 @@ Release runs are serialized and are not automatically canceled. Retrying an inte
 
 ## File headers and machine data
 
-Repository Rust, Python, TOML, YAML, Markdown, ignore/lock files and LICENSE include English copyright and Apache-2.0 notices. Markdown uses HTML comments. Python preserves its interpreter shebang; Cargo.lock may retain Cargo's generated banner before its legal notice. JSON has a first _metadata object containing copyright and license fields because JSON does not support comments. api-inventory.json and dependency-versions.json are shared language-neutral evidence, while every prose document has an English/Chinese pair.
+Repository Rust, TOML, YAML, Markdown, ignore/lock files and LICENSE include English copyright and Apache-2.0 notices. Markdown uses HTML comments. Cargo.lock may retain Cargo's generated banner before its legal notice. JSON has a first _metadata object containing copyright and license fields because JSON does not support comments. api-inventory.json and dependency-versions.json are shared language-neutral evidence, while every prose document has an English/Chinese pair.
+
+## 0.2 tooling and package boundary
+
+All repository maintenance and release commands now use Rust `cargo xtask`, without Python. Workflows explicitly select `--package steam-api-web` for packaging/publishing; the tool itself is publish=false. The library archive excludes `.github/`, `.cargo/`, `xtask/`, `scripts/`, `tests/`, `docs/`, and reference JSON, all retained on GitHub. It contains library sources, examples, LICENSE, bilingual READMEs/changelogs, and Cargo's automatically included/generated metadata.
+
+```sh
+cargo xtask release verify-package
+cargo package --package steam-api-web --allow-dirty --locked
+cargo xtask release verify-package --archive target/package/steam-api-web-0.2.0.crate
+cargo xtask release checksum --archive target/package/steam-api-web-0.2.0.crate --output target/package/SHA256SUMS
+cargo xtask release verify-archive --archive target/package/steam-api-web-0.2.0.crate --checksums target/package/SHA256SUMS
+```
+
+verify-package checks actual members and the normalized manifest, rejecting targets that point to excluded tests/tools. Cargo independently verifies that the archive builds. Warnings about ignored excluded integration tests are expected; complete workspace tests remain in source-checkout CI. README repository links use GitHub URLs, preventing missing local documentation links for crate consumers.
+
+The historical 0.1.0 tag and archive remain unchanged. To retry an older release, select the workflow definition from that tag; Rust tooling is not retroactively added to old tags. Version 0.2.0 remains Unreleased and development commits do not automatically publish it; an actual version-tag release is a separate user action.

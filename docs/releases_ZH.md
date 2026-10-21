@@ -16,7 +16,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 CI 支持 main push、PR、手动执行和可复用 workflow 调用。发布流程传入固定源码 revision，每个 checkout 使用该 revision，并关闭凭据保留。
 
 - Linux、macOS、Windows stable 编译所有 target，并执行 Rust 测试、文档测试和独立 provider 测试进程。
-- lint job 运行 fmt、严格 Clippy、双语/链接/版权/清单检查、AWS-LC 依赖图检查、离线 Python 发布保护测试和 actionlint。
+- lint job 运行 fmt、严格 Clippy、双语/链接/版权/清单检查、AWS-LC 依赖图检查、离线 Rust 发布保护测试和 actionlint。
 - 文档 job 拒绝 rustdoc 警告。
 - 打包等待全部门禁，运行包含独立构建验证的 cargo package，将 crate 和 SHA256SUMS 上传为 steam-api-web-package artifact。
 
@@ -30,13 +30,13 @@ CI 支持 main push、PR、手动执行和可复用 workflow 调用。发布流�
 4. 运行本地检查并查看包内容，真正发布前确认固定 revision 的 CI 已通过。
 
 ```sh
-python3 scripts/release.py check --version 0.1.0
-python3 scripts/check_repository.py
-python3 -m unittest discover -s scripts/tests -v
+cargo xtask release check --version 0.2.0
+cargo xtask check-repository
+cargo test --package xtask --locked
 cargo fmt --all --check
-cargo clippy --all-targets --all-features --locked -- -D warnings
-cargo test --all-features --locked
-cargo package --locked
+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+cargo test --workspace --all-features --locked
+cargo package --package steam-api-web --locked
 ```
 
 本地工作区未提交时可以用 --allow-dirty 查看打包结果；CI 发布必须干净检出，不使用该参数。
@@ -52,8 +52,8 @@ cargo package --locked
 审阅固定提交后推送不可变 v<VERSION> 标签，或手动关闭 dry_run 并指定已存在的匹配标签。以下命令只应在确实决定发布时执行：
 
 ```sh
-git tag v0.1.0
-git push origin v0.1.0
+git tag -s v0.2.0
+git push origin v0.2.0
 ```
 
 标签 push 从标签解析版本；手动真正发布则检出已存在的目标标签。准备阶段校验严格 SemVer、Cargo 包版本/许可/edition、双语 changelog 和 HEAD 与标签提交完全一致，拒绝前导零及命令式输入。支持 rc/beta，并标记为 prerelease。
@@ -64,4 +64,20 @@ git push origin v0.1.0
 
 ## 文件版权头与机器数据
 
-Rust、Python、TOML、YAML、Markdown、ignore/lock 文件及 LICENSE 均包含英文版权和 Apache-2.0 声明。Markdown 用 HTML 注释，Python 保留解释器 shebang；Cargo.lock 可以在版权声明前保留 Cargo 自动生成的说明。JSON 不支持注释，因此第一个 _metadata 对象保存版权及许可字段。api-inventory.json 与 dependency-versions.json 是共享的语言无关证据；所有说明文档均有中英文版本。
+Rust、TOML、YAML、Markdown、ignore/lock 文件及 LICENSE 均包含英文版权和 Apache-2.0 声明。Markdown 用 HTML 注释；Cargo.lock 可以在版权声明前保留 Cargo 自动生成的说明。JSON 不支持注释，因此第一个 _metadata 对象保存版权及许可字段。api-inventory.json 与 dependency-versions.json 是共享的语言无关证据；所有说明文档均有中英文版本。
+
+## 0.2 工具和打包边界
+
+所有仓库维护和发布命令已迁移为 Rust `cargo xtask`，无需 Python。工作流显式选择 `--package steam-api-web` 打包及发布，工具本身 `publish=false`。库归档不含 `.github/`、`.cargo/`、`xtask/`、`scripts/`、`tests/`、`docs/` 或参考 JSON；这些内容仍保留在 GitHub。归档仅保留库源码、示例、LICENSE、双语 README/changelog 和 Cargo 自动生成/包含的元数据。
+
+```sh
+cargo xtask release verify-package
+cargo package --package steam-api-web --allow-dirty --locked
+cargo xtask release verify-package --archive target/package/steam-api-web-0.2.0.crate
+cargo xtask release checksum --archive target/package/steam-api-web-0.2.0.crate --output target/package/SHA256SUMS
+cargo xtask release verify-archive --archive target/package/steam-api-web-0.2.0.crate --checksums target/package/SHA256SUMS
+```
+
+`verify-package` 检查实际文件清单和规范化 manifest，不允许残留指向未打包测试/工具的 target；Cargo 自身验证归档可独立构建。Cargo 提示忽略未打包集成测试属于预期，完整测试仍在 GitHub checkout 的 workspace CI 中运行。README 的仓库文档链接使用 GitHub URL，避免下载 crate 后出现缺失的本地文档链接。
+
+旧版 0.1.0 标签和发布包保持不变。重试旧版流程时，应选择对应标签中的 workflow 定义；0.2 的 Rust 工具不会被追加入已发布的旧标签。当前 0.2.0 仍为 Unreleased，不会因开发提交而自动发布；正式发布仍由用户决定推送版本标签。

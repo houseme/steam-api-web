@@ -69,9 +69,17 @@ Legacy AuthenticateUser does not document its RSA public key, padding, AES mode,
 
 ## Verification layers
 
-- Local contract tests cover all 18 methods, fixed versions, GET/POST, headers, envelopes, indexed forms, all 256 byte values, integer precision, optional fields, business failures, replay policy, retry budgets, cooldowns, timeouts, cancellation, batching, response limits, redirects, and provider isolation.
+- The original P0 contract tests cover its 18 methods, fixed versions, GET/POST, headers, envelopes, indexed forms, all 256 byte values, integer precision, optional fields, business failures, replay policy, retry budgets, cooldowns, timeouts, cancellation, batching, response limits, redirects, and provider isolation.
 - Local static validation uses stable Rust, fmt, strict Clippy, rustdoc, and example compilation.
 - On 2026-10-21, current_players retrieved 23944 for AppID 480 from the Public host. This is one observation, demonstrating that anonymous HTTPS/response path at that time, not ongoing availability or Publisher validation.
 - Credentialed Publisher checks remain necessary for mismatched/expired/banned tickets, AppID authorization, write/read-back, deletion cursors, v5 expiry, and actual quotas. No local credentials were searched and no live stat writes were performed.
 
 CI targets Linux/macOS/Windows while retaining the existing audit and SARIF workflows. Remote CI results are distinct from local checks. The locked ICU dependencies declare Rust 1.88 as their minimum; local checks used stable 1.99.1 without installing an older toolchain.
+
+## 0.2 P1 extension and repository boundary
+
+The development version adds nine P1 interfaces and 39 methods for discovery, apps, players, store, reviews, news, game servers, server stats and leaderboards: 57 methods across 12 interfaces with P0. Service requests use input_json. Administrative POSTs never automatically replay. Server login-token inputs and response Debug output are redacted, and leaderboard details preserve raw bytes with a 256-byte bound.
+
+SetAppBuildLive preserves HTTP status to distinguish accepted requests from pending mobile confirmation on 201. Only explicitly allowed 201 responses may omit a body; empty 200 remains Decode. Shared error checks recognize result/eresult and reject fractional result codes. Reviews and Partner app lists model officially published fields; unspecified schemas retain OpaqueResponse rather than inventing empty collections or success.
+
+Maintenance and release guards move to a separate, nonpublishable Rust xtask; workflows no longer require Python. Cargo's include allowlist keeps repository tools, integration tests and reference material on GitHub. The public library does not depend on xtask. Complete workspace testing and independent minimal-archive builds validate both graphs, preventing tooling feature unification from hiding library dependency errors. Local P1 tests are not evidence of live Steam Publisher writes.

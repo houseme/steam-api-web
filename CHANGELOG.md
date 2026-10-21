@@ -18,6 +18,21 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
+## [0.2.0] - Unreleased
+
+### Added
+
+- All 39 P1 methods for API discovery, app administration, players, store, reviews, news, game servers and leaderboards; 57 methods across 12 interfaces in total.
+- Service input_json, review filtering/pagination, raw leaderboard bytes, redacted server tokens, and per-method credential/retry policies.
+- Distinct HTTP 200/201 build-switch outcomes, empty-body acceptance only for pending-confirmation 201, and shared EResult validation.
+- Rust xtask replaces every Python maintenance/release script and inline workflow Python while retaining version/tag/changelog/archive/registry guards.
+- Explicit package allowlist keeps tooling, workflows, integration tests, planning documents and reference JSON on GitHub; archive contents and independent builds are verified.
+
+### Validation boundaries
+
+- New methods have local protocol tests; no live Steam Publisher administrative writes, credentialed integration or production load evidence was obtained.
+- Version 0.2.0 is unreleased. The historical 0.1.0 tag and published archive are unchanged.
+
 ## [0.1.0] - 2026-10-21
 
 ### Added

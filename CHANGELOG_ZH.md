@@ -18,6 +18,21 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - 按完整 Web API 与原生 SDK 互操作路线图扩展覆盖范围。
 - 使用有权限的凭据验证 Publisher 接口、删除游标、写入结果和所有权 v5。
 
+## [0.2.0] - Unreleased
+
+### 新增
+
+- P1 全部 39 个方法：API 发现、应用管理、玩家、商店、评论、新闻、游戏服务器与排行榜；累计 12 个接口、57 个方法。
+- Service input_json、评论筛选及分页、排行榜原始字节、服务器 token 脱敏、按凭据和方法区分的重试策略。
+- SetAppBuildLive 的 HTTP 200/201 状态区分，以及仅对等待确认的 201 接受空响应；共享错误检测新增 EResult 校验。
+- 使用 Rust xtask 取代全部 Python 维护/发布脚本及 workflow 内嵌 Python，保留版本/标签/changelog/归档/registry 发布保护。
+- 发布包显式白名单，将仓库工具、工作流、集成测试、规划资料和参考 JSON 保留在 GitHub；校验归档及独立构建。
+
+### 验证边界
+
+- 新接口通过本地协议测试；未执行 Steam Publisher 管理写入，未获得实际凭据验证或生产负载证据。
+- 0.2.0 尚未发布；0.1.0 历史标签和已发布归档保持不变。
+
 ## [0.1.0] - 2026-10-21
 
 ### 新增

@@ -11,7 +11,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 核对日期：2026-10-21。范围覆盖[官方 Web API 索引](https://partner.steamgames.com/doc/webapi)的全部 **33 个接口**，包含 **157 个显式 HTTP 签名**，以及 Sandbox 从 ISteamMicroTxn 继承的 **10 个签名**。这是文档快照清单，不包含私有或未公开方法，也不是已实现覆盖率声明。
 
-共享机器清单：[api-inventory.json](api-inventory.json)。当前仅 P0 的 18 个方法已封装并通过本地契约测试，其中三个响应结构保持 opaque；Publisher 实测尚未完成。
+共享机器清单：[api-inventory.json](api-inventory.json)。0.2.0 开发版已封装 P0 的 18 个和 P1 的 39 个方法，共 12 个接口、57 个方法，并有本地契约测试。未公开响应结构保持 opaque，Publisher 实测尚未完成。
 
 ## 推进阶段
 
@@ -24,7 +24,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | P4 / 0.5 | 财务、站点许可、广播及覆盖收敛 | 数据访问权限、账期/时间范围、所有 33 个接口的覆盖报告 |
 | P5 / 单独提案 | 可选原生 SDK 互操作 companion crate | 生命周期/线程/回调契约；基础 HTTP crate 继续不依赖原生 SDK |
 
-版本是规划顺序，不是发布日期；目前不会为这些规划自动添加新 API 实现。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
+版本是规划顺序，不是发布日期；P0/P1 已有封装实现，P2–P5 仍处于规划阶段。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
 
 ## 全部 Web API 接口
 
@@ -33,15 +33,15 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | [ISteamUserAuth](https://partner.steamgames.com/doc/webapi/ISteamUserAuth) | 2 | P0 | 已封装；本地契约测试 |
 | [ISteamUserStats](https://partner.steamgames.com/doc/webapi/ISteamUserStats) | 7 | P0 | 已封装；本地契约测试 |
 | [ISteamUser](https://partner.steamgames.com/doc/webapi/ISteamUser) | 9 | P0 | 已封装；本地契约测试 |
-| [ISteamWebAPIUtil](https://partner.steamgames.com/doc/webapi/ISteamWebAPIUtil) | 2 | P1 | 规划中 |
-| [ISteamApps](https://partner.steamgames.com/doc/webapi/ISteamApps) | 10 | P1 | 规划中 |
-| [IPlayerService](https://partner.steamgames.com/doc/webapi/IPlayerService) | 6 | P1 | 规划中 |
-| [IStoreService](https://partner.steamgames.com/doc/webapi/IStoreService) | 1 | P1 | 规划中 |
-| [IUserReviewsService](https://partner.steamgames.com/doc/webapi/IUserReviewsService) | 1 | P1 | 规划中 |
-| [ISteamNews](https://partner.steamgames.com/doc/webapi/ISteamNews) | 2 | P1 | 规划中 |
-| [IGameServersService](https://partner.steamgames.com/doc/webapi/IGameServersService) | 9 | P1 | 规划中 |
-| [ISteamGameServerStats](https://partner.steamgames.com/doc/webapi/ISteamGameServerStats) | 1 | P1 | 规划中 |
-| [ISteamLeaderboards](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards) | 7 | P1 | 规划中 |
+| [ISteamWebAPIUtil](https://partner.steamgames.com/doc/webapi/ISteamWebAPIUtil) | 2 | P1 | 已封装；本地契约测试 |
+| [ISteamApps](https://partner.steamgames.com/doc/webapi/ISteamApps) | 10 | P1 | 已封装；本地契约测试 |
+| [IPlayerService](https://partner.steamgames.com/doc/webapi/IPlayerService) | 6 | P1 | 已封装；本地契约测试 |
+| [IStoreService](https://partner.steamgames.com/doc/webapi/IStoreService) | 1 | P1 | 已封装；本地契约测试 |
+| [IUserReviewsService](https://partner.steamgames.com/doc/webapi/IUserReviewsService) | 1 | P1 | 已封装；本地契约测试 |
+| [ISteamNews](https://partner.steamgames.com/doc/webapi/ISteamNews) | 2 | P1 | 已封装；本地契约测试 |
+| [IGameServersService](https://partner.steamgames.com/doc/webapi/IGameServersService) | 9 | P1 | 已封装；本地契约测试 |
+| [ISteamGameServerStats](https://partner.steamgames.com/doc/webapi/ISteamGameServerStats) | 1 | P1 | 已封装；本地契约测试 |
+| [ISteamLeaderboards](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards) | 7 | P1 | 已封装；本地契约测试 |
 | [ICloudService](https://partner.steamgames.com/doc/webapi/ICloudService) | 6 | P2 | 规划中 |
 | [IInventoryService](https://partner.steamgames.com/doc/webapi/IInventoryService) | 10 | P2 | 规划中 |
 | [IGameInventory](https://partner.steamgames.com/doc/webapi/IGameInventory) | 5 | P2 | 规划中 |

@@ -33,14 +33,16 @@ Rustls 的最高版本为 **0.24.0-dev.2**，但 reqwest 0.13.5 使用 Rustls 0.
 Cargo.lock 已在线 cargo update，传递依赖取当前约束及工具链允许的最新兼容版本。Cargo 不会自动越过类型不兼容的大版本，也不自动选择未显式要求的传递预发布包；强行替换所有传递依赖会破坏上游约束。最新 ICU 2.3 要求 Rust 1.88；本次验证使用 stable 1.99.1。
 
 ```sh
-python3 scripts/check_dependencies.py
+cargo xtask check-dependencies
 cargo update
-cargo tree --edges normal -i aws-lc-rs
+cargo tree --package steam-api-web --edges normal -i aws-lc-rs
 cargo fmt --all --check
-cargo clippy --all-targets --all-features --locked -- -D warnings
-cargo test --all-features --locked
+cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+cargo test --workspace --all-features --locked
 ```
 
-检查脚本只读，使用 Python 标准库和 cargo metadata，也检查新预发布；已记录的 Rustls 不兼容预览版单独标注。如果出现其他新版本或更高预览版会退出非零。脚本不自动修改 manifest、lockfile 或快照。生成新快照可使用 `python3 scripts/check_dependencies.py --json > docs/dependency-versions.json`，随后审阅差异并验证。
+检查脚本只读，使用 Rust xtask、cargo metadata、有限工作线程及显式 AWS-LC HTTP 客户端，也检查新预发布；已记录的 Rustls 不兼容预览版单独标注。如果出现其他新版本或更高预览版会退出非零。脚本不自动修改 manifest、lockfile 或快照。生成新快照可使用 `cargo xtask check-dependencies --json > docs/dependency-versions.json`，随后审阅差异并验证。
 
-JSON 清单作为共享的语言无关证据保留一份。cargo update 若重写 Cargo.lock，需要保留仓库版权/许可头。工作流采用已核对的 checkout v7、setup-python v7、upload-artifact v7、download-artifact v8 和 action-gh-release v3；CI 用最新 actionlint，本地验证为 1.7.12。这些构建工具不改变 crate 运行时依赖图。
+JSON 清单作为共享的语言无关证据保留一份。cargo update 若重写 Cargo.lock，需要保留仓库版权/许可头。工作流采用已核对的 checkout v7、upload-artifact v7、download-artifact v8 和 action-gh-release v3；CI 用最新 actionlint，本地验证为 1.7.12。这些构建工具不改变 crate 运行时依赖图。
+
+`xtask` 是 publish=false 的独立 workspace 成员，其 blocking HTTP 与审计依赖不进入公开 crate 的依赖图。项目源码和 workflow 不再依赖 Python。

@@ -69,9 +69,17 @@ Publisher 凭据默认选择 Partner。该域名的所有请求都要 Publisher 
 
 ## 验证层次
 
-- 本地协议测试：全部 18 个方法的路径/版本、GET/POST、header、envelope、indexed forms 及所有 256 种原始字节；整数精度、可选字段、错误处理、认证/写入不重放、重试预算、共享冷却、总/单次超时、取消、批处理、响应限额、重定向及 provider 隔离。
+- 原有 P0 协议测试：18 个方法的路径/版本、GET/POST、header、envelope、indexed forms 及所有 256 种原始字节；整数精度、可选字段、错误处理、认证/写入不重放、重试预算、共享冷却、总/单次超时、取消、批处理、响应限额、重定向及 provider 隔离。
 - 本地静态验证：stable 的 fmt、严格 Clippy、rustdoc 和示例编译。
 - 实际网络验证：2026-10-21 通过 current_players 示例读取 Public host 的 AppID 480，返回 23944。它只证明该时刻匿名 HTTPS/响应路径可用，不代表持续可用性或 Publisher 接口验证。
 - Publisher 实测需有权限的 key、AppID 和票据，继续验证 identity 不匹配/过期/封禁、AppID 授权、写入后读回、删除游标、v5 expiry 和实际配额。未搜寻本地凭据，未执行真实统计写入。
 
 已增加 Linux/macOS/Windows 测试 CI，保留已有审计和 SARIF 工作流；远端执行状态不能由本地验证替代。当前锁定 ICU 依赖声明最低 Rust 1.88，本次实际使用 stable 1.99.1，未安装或验证旧工具链。
+
+## 0.2 P1 扩展与仓库边界
+
+当前开发版新增九个 P1 接口、39 个方法：API 发现、应用、玩家、商店、评论、新闻、游戏服务器、服务器统计及排行榜。与 P0 合计 12 个接口、57 个方法。Service 方法使用 input_json；管理 POST 禁止自动重放；服务器登录 token 的输入和响应 Debug 脱敏；排行榜 details 保留原始字节且限制为 256 字节。
+
+SetAppBuildLive 通过保留 HTTP 状态区分请求接受与 201 等待手机确认，只有明确允许的 201 可以没有响应体；空 200 仍报 Decode。共享错误检查识别 result/eresult，并拒绝小数结果码。评论及 Partner 应用列表按官方公开字段建模，未公开响应保留 OpaqueResponse，不把缺失结构解释成空列表或成功。
+
+维护和发布保护迁移到独立、不可发布的 Rust xtask；工作流不再依赖 Python。Cargo include 白名单把仓库工具、集成测试和参考资料留在 GitHub，公开库不依赖 xtask。完整 workspace 测试与精简归档的独立构建分别验证，避免工具带来的 feature 合并掩盖公开库的依赖错误。P1 的本地测试不是实际 Steam Publisher 写入证据。

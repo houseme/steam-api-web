@@ -11,7 +11,7 @@ English | [简体中文](roadmap_ZH.md)
 
 Reviewed on 2026-10-21 against every interface in the [official Web API index](https://partner.steamgames.com/doc/webapi): **33 interfaces**, **157 explicit HTTP signatures**, and **10 Sandbox signatures inherited from ISteamMicroTxn**. This is a documentation snapshot, not an inventory of private methods or a claim that all bindings are implemented.
 
-The shared machine inventory is [api-inventory.json](api-inventory.json). Only the 18 P0 methods currently have bindings and local contract tests; three responses remain opaque, and Publisher validation is pending.
+The shared machine inventory is [api-inventory.json](api-inventory.json). The 0.2.0 development version binds all 18 P0 and 39 P1 methods (57 total across 12 interfaces), with local contract tests. Undocumented response contracts remain opaque, and Publisher validation is pending.
 
 ## Delivery phases
 
@@ -24,7 +24,7 @@ The shared machine inventory is [api-inventory.json](api-inventory.json). Only t
 | P4 / 0.5 | Finance, site licenses, broadcasts and coverage closure | Data access controls, reporting periods and coverage report for all 33 interfaces |
 | P5 / separate proposal | Optional native SDK interoperability companion crate | Lifecycle/thread/callback contracts; base HTTP crate stays SDK-independent |
 
-Versions describe sequencing, not release dates. This planning change does not implement the remaining APIs. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
+Versions describe sequencing, not release dates. P0/P1 bindings are implemented; P2–P5 remain planned. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
 
 ## Complete Web API interface matrix
 
@@ -33,15 +33,15 @@ Versions describe sequencing, not release dates. This planning change does not i
 | [ISteamUserAuth](https://partner.steamgames.com/doc/webapi/ISteamUserAuth) | 2 | P0 | Bound; local contract tests |
 | [ISteamUserStats](https://partner.steamgames.com/doc/webapi/ISteamUserStats) | 7 | P0 | Bound; local contract tests |
 | [ISteamUser](https://partner.steamgames.com/doc/webapi/ISteamUser) | 9 | P0 | Bound; local contract tests |
-| [ISteamWebAPIUtil](https://partner.steamgames.com/doc/webapi/ISteamWebAPIUtil) | 2 | P1 | Planned |
-| [ISteamApps](https://partner.steamgames.com/doc/webapi/ISteamApps) | 10 | P1 | Planned |
-| [IPlayerService](https://partner.steamgames.com/doc/webapi/IPlayerService) | 6 | P1 | Planned |
-| [IStoreService](https://partner.steamgames.com/doc/webapi/IStoreService) | 1 | P1 | Planned |
-| [IUserReviewsService](https://partner.steamgames.com/doc/webapi/IUserReviewsService) | 1 | P1 | Planned |
-| [ISteamNews](https://partner.steamgames.com/doc/webapi/ISteamNews) | 2 | P1 | Planned |
-| [IGameServersService](https://partner.steamgames.com/doc/webapi/IGameServersService) | 9 | P1 | Planned |
-| [ISteamGameServerStats](https://partner.steamgames.com/doc/webapi/ISteamGameServerStats) | 1 | P1 | Planned |
-| [ISteamLeaderboards](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards) | 7 | P1 | Planned |
+| [ISteamWebAPIUtil](https://partner.steamgames.com/doc/webapi/ISteamWebAPIUtil) | 2 | P1 | Bound; local contract tests |
+| [ISteamApps](https://partner.steamgames.com/doc/webapi/ISteamApps) | 10 | P1 | Bound; local contract tests |
+| [IPlayerService](https://partner.steamgames.com/doc/webapi/IPlayerService) | 6 | P1 | Bound; local contract tests |
+| [IStoreService](https://partner.steamgames.com/doc/webapi/IStoreService) | 1 | P1 | Bound; local contract tests |
+| [IUserReviewsService](https://partner.steamgames.com/doc/webapi/IUserReviewsService) | 1 | P1 | Bound; local contract tests |
+| [ISteamNews](https://partner.steamgames.com/doc/webapi/ISteamNews) | 2 | P1 | Bound; local contract tests |
+| [IGameServersService](https://partner.steamgames.com/doc/webapi/IGameServersService) | 9 | P1 | Bound; local contract tests |
+| [ISteamGameServerStats](https://partner.steamgames.com/doc/webapi/ISteamGameServerStats) | 1 | P1 | Bound; local contract tests |
+| [ISteamLeaderboards](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards) | 7 | P1 | Bound; local contract tests |
 | [ICloudService](https://partner.steamgames.com/doc/webapi/ICloudService) | 6 | P2 | Planned |
 | [IInventoryService](https://partner.steamgames.com/doc/webapi/IInventoryService) | 10 | P2 | Planned |
 | [IGameInventory](https://partner.steamgames.com/doc/webapi/IGameInventory) | 5 | P2 | Planned |

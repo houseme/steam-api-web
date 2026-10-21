@@ -1,10 +1,9 @@
 {
   "_metadata": {
+    "SPDX-License-Identifier": "Apache-2.0",
     "copyright": "Copyright 2026 steam-api-web contributors.",
     "license": "Apache-2.0",
-    "SPDX-License-Identifier": "Apache-2.0",
-    "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
-    "retrieved_on": "2026-10-21"
+    "license_url": "https://www.apache.org/licenses/LICENSE-2.0"
   },
   "aws-lc-rs": {
     "latest_including_prerelease": "1.18.2",
