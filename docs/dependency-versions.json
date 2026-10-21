@@ -47,6 +47,13 @@
     "source": "https://crates.io/api/v1/crates/rustls-platform-verifier",
     "status": "current"
   },
+  "scraper": {
+    "latest_including_prerelease": "0.29.0",
+    "latest_rust_version": null,
+    "manifest_minimum": "0.29.0",
+    "source": "https://crates.io/api/v1/crates/scraper",
+    "status": "current"
+  },
   "serde": {
     "latest_including_prerelease": "1.0.229",
     "latest_rust_version": "1.56",

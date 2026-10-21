@@ -308,6 +308,11 @@ impl BindingCoverage {
     }
 }
 
+pub(crate) fn validate_bindings(inventory: &Value) -> Result<()> {
+    binding_coverage(inventory)?;
+    check_sources(inventory)
+}
+
 pub(crate) fn coverage(args: &[String]) -> Result<()> {
     if !args.is_empty() && args != ["--json"] {
         return Err("coverage accepts only --json".into());
