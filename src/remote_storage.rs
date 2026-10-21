@@ -218,7 +218,7 @@ fn file_ids_params(count_name: &str, ids: &[u64]) -> Result<Params> {
         .map_err(|_| Error::InvalidParameter("publishedfileids count must fit uint32"))?;
     let mut params = Params::new().with(count_name, count);
     for (index, id) in ids.iter().enumerate() {
-        params.push(&format!("publishedfileids[{index}]"), id);
+        params.push_indexed("publishedfileids", index, id);
     }
     Ok(params)
 }

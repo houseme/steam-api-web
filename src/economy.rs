@@ -141,9 +141,9 @@ impl Economy<'_> {
         }
         for (index, class) in classes.iter().enumerate() {
             nonzero(class.classid, "classid must not be zero")?;
-            params.push(&format!("classid{index}"), class.classid);
+            params.push_suffixed("classid", index, class.classid);
             if let Some(instanceid) = class.instanceid {
-                params.push(&format!("instanceid{index}"), instanceid);
+                params.push_suffixed("instanceid", index, instanceid);
             }
         }
         self.0

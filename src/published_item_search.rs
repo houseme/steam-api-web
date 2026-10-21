@@ -139,7 +139,7 @@ fn filters(params: &mut Params, options: PublishedItemSearchOptions<'_>) -> Resu
     for (prefix, values) in [("tag", options.tags), ("usertag", options.user_tags)] {
         for (index, value) in values.iter().enumerate() {
             text(value, "tags must be nonempty and contain no NUL")?;
-            params.push(&format!("{prefix}[{index}]"), value);
+            params.push_indexed(prefix, index, value);
         }
     }
     if let Some(value) = options.hasappadminaccess {

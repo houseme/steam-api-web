@@ -91,6 +91,27 @@ impl Params {
         value.encode(&mut self.0);
     }
 
+    /// Append Valve's documented `name[index]` array key. Brackets travel
+    /// percent-encoded (`name%5B0%5D`), byte-for-byte like a preformatted key,
+    /// while the index is formatted on the stack without a temporary String.
+    pub fn push_indexed(&mut self, name: &str, index: usize, value: impl FormValue) {
+        self.prefixed_key(name, |key| {
+            key.push_str("%5B");
+            key.push_str(itoa::Buffer::new().format(index));
+            key.push_str("%5D");
+        });
+        value.encode(&mut self.0);
+    }
+
+    /// Append `name{index}=value`, the legacy flat indexed spelling such as
+    /// `classid0`, without allocating the key.
+    pub fn push_suffixed(&mut self, name: &str, index: usize, value: impl FormValue) {
+        self.prefixed_key(name, |key| {
+            key.push_str(itoa::Buffer::new().format(index));
+        });
+        value.encode(&mut self.0);
+    }
+
     pub fn push_bytes(&mut self, name: &str, value: &[u8]) {
         self.key(name);
         component(&mut self.0, value);
@@ -114,7 +135,20 @@ impl Params {
         if !self.0.is_empty() {
             self.0.push('&');
         }
-        component(&mut self.0, name.as_bytes());
+        // Names are ordinary text; borrow their unescaped ASCII prefix
+        // instead of visiting every byte through the escaping encoder.
+        FormValue::encode(name, &mut self.0);
+        self.0.push('=');
+    }
+
+    /// Write `&name` once, then let the caller append its index spelling
+    /// directly into the final form buffer.
+    fn prefixed_key(&mut self, name: &str, finish: impl FnOnce(&mut String)) {
+        if !self.0.is_empty() {
+            self.0.push('&');
+        }
+        FormValue::encode(name, &mut self.0);
+        finish(&mut self.0);
         self.0.push('=');
     }
 
@@ -245,6 +279,39 @@ mod tests {
             .append_pair("false", "false")
             .finish();
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn indexed_keys_match_formatted_spelling_without_temporary_strings() {
+        let mut indexed = Params::new().with("count", 2);
+        indexed.push_indexed("name", 0, "first +");
+        indexed.push_indexed("name", 1, u64::MAX);
+        let mut suffixed = Params::new().with("class_count", 2);
+        suffixed.push_suffixed("classid", 0, 1);
+        suffixed.push_suffixed("classid", 1, u64::MAX);
+        let expected = |pairs: &[(&str, String)]| {
+            let mut serializer = url::form_urlencoded::Serializer::new(String::new());
+            for (key, value) in pairs {
+                serializer.append_pair(key, value);
+            }
+            serializer.finish()
+        };
+        assert_eq!(
+            indexed.finish(),
+            expected(&[
+                ("count", "2".to_owned()),
+                ("name[0]", "first +".to_owned()),
+                ("name[1]", u64::MAX.to_string()),
+            ])
+        );
+        assert_eq!(
+            suffixed.finish(),
+            expected(&[
+                ("class_count", "2".to_owned()),
+                ("classid0", "1".to_owned()),
+                ("classid1", u64::MAX.to_string()),
+            ])
+        );
     }
 
     #[test]

@@ -226,7 +226,7 @@ impl UserStats<'_> {
         }
         let mut params = Params::new().with("appid", appid).with("count", count);
         for (index, name) in names.iter().enumerate() {
-            params.push(&format!("name[{index}]"), name);
+            params.push_indexed("name", index, name);
         }
         if let Some(start) = range.startdate {
             params.push("startdate", start);
@@ -329,8 +329,8 @@ impl UserStats<'_> {
             .with("appid", appid)
             .with("count", count);
         for (index, update) in updates.iter().enumerate() {
-            params.push(&format!("name[{index}]"), update.name);
-            params.push(&format!("value[{index}]"), update.value);
+            params.push_indexed("name", index, update.name);
+            params.push_indexed("value", index, update.value);
         }
         self.0
             .call_opaque(

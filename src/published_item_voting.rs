@@ -64,7 +64,7 @@ fn vote_params(steamid: SteamId, publishedfileids: &[u64]) -> Result<Params> {
     let mut params = Params::new().with("steamid", steamid).with("count", count);
     for (index, &publishedfileid) in publishedfileids.iter().enumerate() {
         nonzero(publishedfileid, "publishedfileids must not contain zero")?;
-        params.push(&format!("publishedfileid[{index}]"), publishedfileid);
+        params.push_indexed("publishedfileid", index, publishedfileid);
     }
     Ok(params)
 }

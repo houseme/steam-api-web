@@ -73,6 +73,18 @@ macro_rules! indexed_form {
         params.with("format", "json").finish()
     }};
 }
+macro_rules! cart_form {
+    ($params:path) => {{
+        let mut params = <$params>::new().with("appid", 480).with("itemcount", 100);
+        for index in 0..100 {
+            params.push(&format!("itemid[{index}]"), 1000 + index as u32);
+            params.push(&format!("qty[{index}]"), 1_i16);
+            params.push(&format!("amount[{index}]"), 499_i64);
+            params.push(&format!("description[{index}]"), "Item + & name");
+        }
+        params.with("format", "json").finish()
+    }};
+}
 macro_rules! definition_form {
     ($params:path, $definitions:expr) => {{
         let mut params = <$params>::new().with("appid", 480);
@@ -183,7 +195,32 @@ fn main() {
         "100 indexed IDs",
         500,
         || indexed_form!(baseline::Params),
-        || indexed_form!(request::Params),
+        || {
+            let mut params = request::Params::new()
+                .with("appid", 480)
+                .with("class_count", 100);
+            for index in 0..100 {
+                params.push_suffixed("classid", index, u64::MAX - index as u64);
+            }
+            params.with("format", "json").finish()
+        },
+    );
+    compare(
+        "100 cart lines",
+        500,
+        || cart_form!(baseline::Params),
+        || {
+            let mut params = request::Params::new()
+                .with("appid", 480)
+                .with("itemcount", 100);
+            for index in 0..100 {
+                params.push_indexed("itemid", index, 1000 + index as u32);
+                params.push_indexed("qty", index, 1_i16);
+                params.push_indexed("amount", index, 499_i64);
+                params.push_indexed("description", index, "Item + & name");
+            }
+            params.with("format", "json").finish()
+        },
     );
     compare(
         "100 JSON definitions",
