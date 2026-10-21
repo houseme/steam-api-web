@@ -15,7 +15,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](README.md) | 简体中文
 
-独立异步 Rust Steam Web API 客户端——无需 Steam 客户端与原生 SDK。版本 **0.4.0** 绑定 P0–P3 共 **30 个接口、161 条方法路径**，覆盖认证、统计、Cloud、库存、交易、Workshop、微交易与反作弊。
+独立异步 Rust Steam Web API 客户端——无需 Steam 客户端与原生 SDK。**0.5.0 开发版**绑定 P0–P4 共 **33 个接口、167 条方法路径**，覆盖认证、统计、Cloud、库存、交易、Workshop、微交易、反作弊、财务报表、站点许可与广播。
 
 **为什么选择这个 crate**
 
@@ -27,11 +27,11 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ## 快速开始
 
-以下配置面向 0.4.0。源码标签、crates.io 发布和 docs.rs 构建是独立步骤；该版本尚未在 registry 可用时，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。crates.io 和 docs.rs 徽章以实际发布版本为准。
+0.5.0 尚未发布；在版本进入 registry 之前，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。
 
 ```toml
 [dependencies]
-steam-api-web = "0.4.0"
+steam-api-web = "0.5.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -53,7 +53,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-复用或 clone `SteamClient`：所有 clone 共享连接池、并发限制、请求节奏、服务端冷却和指标。可运行示例：[当前玩家数](examples/current_players.rs)、[票据验证](examples/verify_ticket.rs)、[Cloud 文件](examples/cloud_files.rs)、[Sandbox 交易查询](examples/query_sandbox_transaction.rs)。
+复用或 clone `SteamClient`：所有 clone 共享连接池、并发限制、请求节奏、服务端冷却和指标。可运行示例：[当前玩家数](examples/current_players.rs)、[票据验证](examples/verify_ticket.rs)、[Cloud 文件](examples/cloud_files.rs)、[Sandbox 交易查询](examples/query_sandbox_transaction.rs)、[财务变更批次](examples/financial_changed_dates.rs)。
 
 ## 接口覆盖
 
@@ -63,8 +63,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 | P1 | 0.2 | 9 | 39 | 发现、应用、商店、评论、新闻、服务器、排行榜 |
 | P2 | 0.3 | 12 | 66 | Cloud、库存、经济、交易、Workshop |
 | P3 | 0.4 | 6 | 38 | 计费、反作弊、社区、通知、大厅 |
+| P4 | 0.5 | 3 | 6 | 财务报表、站点活动、广播 |
 
-总计包括 151 条显式文档路径和 10 条继承 Sandbox 路径。逐方法的路径、版本、凭据种类与重放规则见[使用指南](https://github.com/houseme/steam-api-web/blob/main/docs/usage_ZH.md)与完整[路线图清单](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap_ZH.md)。
+总计包括 157 条显式文档路径和 10 条继承 Sandbox 路径。财务接口要求独立的 `ApiKey::financial(...)` 客户端，`cargo xtask coverage --json` 输出源码映射及剩余路径报告。逐方法的路径、版本、凭据种类与重放规则见[使用指南](https://github.com/houseme/steam-api-web/blob/main/docs/usage_ZH.md)与完整[路线图清单](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap_ZH.md)。
 
 ## 文档
 
@@ -74,6 +75,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 | 设计分析与验证层次 | [设计分析](https://github.com/houseme/steam-api-web/blob/main/docs/design_ZH.md) |
 | Cloud、库存、经济与 Workshop 契约 | [P2 契约](https://github.com/houseme/steam-api-web/blob/main/docs/p2_ZH.md) |
 | 计费、反作弊与会话契约 | [P3 契约](https://github.com/houseme/steam-api-web/blob/main/docs/p3_ZH.md) |
+| 财务权限、站点报表、广播与覆盖 | [P4 契约](https://github.com/houseme/steam-api-web/blob/main/docs/p4_ZH.md) |
 | 路线图、方法清单与 steamworks-rs 模块映射 | [路线图](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap_ZH.md) |
 | 传输层 Review 与编解码测量 | [性能](https://github.com/houseme/steam-api-web/blob/main/docs/performance_ZH.md) |
 | 依赖审计 | [依赖记录](https://github.com/houseme/steam-api-web/blob/main/docs/dependencies_ZH.md) |

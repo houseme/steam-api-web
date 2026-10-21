@@ -11,7 +11,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 核对日期：2026-10-21。范围覆盖[官方 Web API 索引](https://partner.steamgames.com/doc/webapi)的全部 **33 个接口**，包含 **157 个显式 HTTP 签名**，以及 Sandbox 从 ISteamMicroTxn 继承的 **10 个签名**。这是文档快照清单，不包含私有或未公开方法，也不是已实现覆盖率声明。
 
-共享机器清单：[api-inventory.json](api-inventory.json)。0.4.0 版本已封装 P0–P3，共 30 个接口、161 条路径，包含 151 条显式文档路径及 10 条继承 Sandbox 路径，并有本地契约测试。未公开响应结构保持 opaque，Publisher 实测尚未完成。
+共享机器清单：[api-inventory.json](api-inventory.json)。0.5.0 开发版已封装此快照的 P0–P4 全部路径：33 个接口、167 条路径，包括 157 条显式签名及 10 条继承 Sandbox 路径，并有本地契约测试；未公开协议与真实权限仍分别验证。
 
 ## 推进阶段
 
@@ -24,9 +24,14 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | P4 / 0.5 | 财务、站点许可、广播及覆盖收敛 | 数据访问权限、账期/时间范围、所有 33 个接口的覆盖报告 |
 | P5 / 单独提案 | 可选原生 SDK 互操作 companion crate | 生命周期/线程/回调契约；基础 HTTP crate 继续不依赖原生 SDK |
 
-版本是规划顺序，不是发布日期；P0–P3 已有封装实现，P4–P5 仍处于规划阶段。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
+版本是规划顺序，不是发布日期；P0–P4 已有协议封装，P5 仍为单独的原生互操作提案。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
+
+## 可复现覆盖报告
+
+`cargo xtask coverage` 或 `cargo xtask coverage --json` 从机器清单推导数量，并逐项检查公开模块、Rust 方法及源码中的准确路径拼写。当前为 33/33 接口、167/167 路径（157 显式、10 继承），没有剩余文档路径。CI 将 JSON 保存为 `steam-api-web-coverage` artifact。该静态映射报告不证明真实凭据权限、wire 可用性或生产就绪；本地协议测试仍是独立检查。财务、站点和广播边界见 [P4 契约](p4_ZH.md)。
 
 ## 全部 Web API 接口
+
 
 | 接口 | 签名数 | 阶段 | 当前状态 |
 | --- | --- | --- | --- |
@@ -60,9 +65,9 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | [ISteamCommunity](https://partner.steamgames.com/doc/webapi/ISteamCommunity) | 1 | P3 | 已封装；本地契约测试 |
 | [IGameNotificationsService](https://partner.steamgames.com/doc/webapi/IGameNotificationsService) | 7 | P3 | 已封装；本地契约测试 |
 | [ILobbyMatchmakingService](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService) | 3 | P3 | 已封装；本地契约测试 |
-| [IPartnerFinancialsService](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService) | 3 | P4 | 规划中 |
-| [ISiteLicenseService](https://partner.steamgames.com/doc/webapi/ISiteLicenseService) | 2 | P4 | 规划中 |
-| [IBroadcastService](https://partner.steamgames.com/doc/webapi/IBroadcastService) | 1 | P4 | 规划中 |
+| [IPartnerFinancialsService](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService) | 3 | P4 | 已封装；本地契约测试 |
+| [ISiteLicenseService](https://partner.steamgames.com/doc/webapi/ISiteLicenseService) | 2 | P4 | 已封装；本地契约测试 |
+| [IBroadcastService](https://partner.steamgames.com/doc/webapi/IBroadcastService) | 1 | P4 | 已封装；本地契约测试 |
 
 Sandbox 页面仅说明与生产微交易相同的方法，本清单将继承关系显式记录；不是从该页面发现了独立 HTTP 签名。页面未公开的参数、响应或额外私有方法必须进一步核对，不能从计数推断。
 

@@ -11,7 +11,7 @@ English | [简体中文](roadmap_ZH.md)
 
 Reviewed on 2026-10-21 against every interface in the [official Web API index](https://partner.steamgames.com/doc/webapi): **33 interfaces**, **157 explicit HTTP signatures**, and **10 Sandbox signatures inherited from ISteamMicroTxn**. This is a documentation snapshot, not an inventory of private methods or a claim that all bindings are implemented.
 
-The shared machine inventory is [api-inventory.json](api-inventory.json). Version 0.4.0 binds P0–P3 (161 routes across 30 interfaces, comprising 151 explicit documented routes and ten inherited Sandbox routes), with local contract tests. Undocumented response contracts remain opaque, and Publisher validation is pending.
+The shared machine inventory is [api-inventory.json](api-inventory.json). The 0.5.0 development version binds all P0–P4 routes in this snapshot: 167 routes across 33 interfaces, comprising 157 explicit signatures and ten inherited Sandbox routes, with local contract tests. Missing or undocumented protocols and live permissions remain separate concerns.
 
 ## Delivery phases
 
@@ -24,9 +24,14 @@ The shared machine inventory is [api-inventory.json](api-inventory.json). Versio
 | P4 / 0.5 | Finance, site licenses, broadcasts and coverage closure | Data access controls, reporting periods and coverage report for all 33 interfaces |
 | P5 / separate proposal | Optional native SDK interoperability companion crate | Lifecycle/thread/callback contracts; base HTTP crate stays SDK-independent |
 
-Versions describe sequencing, not release dates. P0–P3 bindings are implemented; P4–P5 remain planned. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
+Versions describe sequencing, not release dates. P0–P4 protocol bindings are implemented; P5 remains a separate native interoperability proposal. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
+
+## Reproducible coverage report
+
+`cargo xtask coverage` or `cargo xtask coverage --json` derives totals from the inventory and verifies every public module, Rust method and verbatim path in source. It reports 33/33 interfaces and 167/167 routes (157 explicit, ten inherited), with no remaining documented routes. CI saves the JSON as the `steam-api-web-coverage` artifact. This static mapping report does not establish credentialed permissions, wire availability or production readiness; local protocol tests are a separate gate. Financial, Site and Broadcast boundaries are detailed in [P4 contracts](p4.md).
 
 ## Complete Web API interface matrix
+
 
 | Interface | Signatures | Phase | Current status |
 | --- | --- | --- | --- |
@@ -60,9 +65,9 @@ Versions describe sequencing, not release dates. P0–P3 bindings are implemente
 | [ISteamCommunity](https://partner.steamgames.com/doc/webapi/ISteamCommunity) | 1 | P3 | Bound; local contract tests |
 | [IGameNotificationsService](https://partner.steamgames.com/doc/webapi/IGameNotificationsService) | 7 | P3 | Bound; local contract tests |
 | [ILobbyMatchmakingService](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService) | 3 | P3 | Bound; local contract tests |
-| [IPartnerFinancialsService](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService) | 3 | P4 | Planned |
-| [ISiteLicenseService](https://partner.steamgames.com/doc/webapi/ISiteLicenseService) | 2 | P4 | Planned |
-| [IBroadcastService](https://partner.steamgames.com/doc/webapi/IBroadcastService) | 1 | P4 | Planned |
+| [IPartnerFinancialsService](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService) | 3 | P4 | Bound; local contract tests |
+| [ISiteLicenseService](https://partner.steamgames.com/doc/webapi/ISiteLicenseService) | 2 | P4 | Bound; local contract tests |
+| [IBroadcastService](https://partner.steamgames.com/doc/webapi/IBroadcastService) | 1 | P4 | Bound; local contract tests |
 
 The Sandbox page describes the production transaction interface with a dummy database. Its signatures are explicitly marked as inherited, not independently discovered on that page. Missing parameter/response contracts or additional private methods require further review; counts do not infer them.
 

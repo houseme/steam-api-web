@@ -101,3 +101,7 @@ Version 0.3.0 adds 66 methods in 12 interfaces, bringing coverage to 123 methods
 ## 0.4 P3 and business state
 
 Version 0.4.0 adds 38 routes, bringing coverage to 161 routes across 30 interfaces, including ten inherited Sandbox counterparts. Production and Sandbox are explicit and never automatically switch. Billing result=OK acknowledges the API request; transaction state remains in the response. ResponsePolicy scopes acknowledgement rules and VAC readiness exceptions to their endpoints before success metrics. Other false success markers still fail. See [P3 contracts](p3.md) for money, reconciliation, permissions, notification replacement and native SDK boundaries.
+
+## 0.5 P4 and coverage closure
+
+The 0.5 development version adds dedicated Financial API Group access without widening User/Publisher/anonymous permissions. It shares calendar/UTC validation while keeping financial PT/GMT dates and original timestamp strings distinct. P4 uses the existing transport and response policies, preserving exact money, explicit cursors and single-send broadcast writes. Coverage tooling now checks every documented module/method/path and inherited route; it reports binding evidence rather than live authorization. See [P4 contracts](p4.md).

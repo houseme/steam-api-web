@@ -30,7 +30,7 @@ Existing security audit and SARIF workflows remain separate. CI concurrency canc
 4. Run local checks and inspect the package contents. Before publishing, ensure CI passes for the exact revision.
 
 ```sh
-cargo xtask release check --version 0.4.0
+cargo xtask release check --version 0.5.0
 cargo xtask check-repository
 cargo test --package xtask --locked
 cargo fmt --all --check
@@ -52,8 +52,8 @@ Create a repository secret named CARGO_REGISTRY_TOKEN with permission to publish
 Publish by pushing an immutable v<VERSION> tag after reviewing the exact commit, or manually dispatch with dry_run disabled and an existing matching tag. Example commands, to be run only when publication is intended:
 
 ```sh
-git tag -s v0.4.0
-git push origin v0.4.0
+git tag -s v0.5.0
+git push origin v0.5.0
 ```
 
 Tag pushes resolve the version from the tag; manual publication checks out the existing requested tag. Preparation validates strict SemVer, Cargo package version/license/edition, both changelogs, and that HEAD is the exact tagged commit. Leading-zero versions and command-like inputs are rejected. rc/beta versions are supported and create prereleases.
@@ -73,9 +73,9 @@ All repository maintenance and release commands now use Rust `cargo xtask`, with
 ```sh
 cargo xtask release verify-package
 cargo package --package steam-api-web --allow-dirty --locked
-cargo xtask release verify-package --archive target/package/steam-api-web-0.4.0.crate
-cargo xtask release checksum --archive target/package/steam-api-web-0.4.0.crate --output target/package/SHA256SUMS
-cargo xtask release verify-archive --archive target/package/steam-api-web-0.4.0.crate --checksums target/package/SHA256SUMS
+cargo xtask release verify-package --archive target/package/steam-api-web-0.5.0.crate
+cargo xtask release checksum --archive target/package/steam-api-web-0.5.0.crate --output target/package/SHA256SUMS
+cargo xtask release verify-archive --archive target/package/steam-api-web-0.5.0.crate --checksums target/package/SHA256SUMS
 ```
 
 verify-package checks actual members and the normalized manifest, rejecting targets that point to excluded tests/tools. Cargo independently verifies that the archive builds. Warnings about ignored excluded integration tests are expected; complete workspace tests remain in source-checkout CI. README repository links use GitHub URLs, preventing missing local documentation links for crate consumers.
