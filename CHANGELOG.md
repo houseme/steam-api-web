@@ -33,6 +33,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Preserve explicit VAC API errors before requiring readiness fields, using one scoped error traversal.
 - Move single-send URL/body ownership and the final read-attempt URL into reqwest; centralize concurrency, pacing and metrics at the send boundary.
 - Indexed form keys write directly into the final buffer, and each client caches fixed endpoint URLs without retaining queries or credentials.
+- The README keeps a quick start, coverage summary and documentation index; detailed configuration, reliability, data handling and steamworks-rs interop notes moved to the bilingual usage guide in docs.
 - Maintenance remains Rust. Tests, benchmarks, tools, workflows, documents and reference JSON stay on GitHub outside the distributable crate.
 
 ### Validation boundaries

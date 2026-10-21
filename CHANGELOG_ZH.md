@@ -33,6 +33,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - 使用统一作用域错误遍历，在要求 VAC 就绪字段前保留明确 API 错误及错误码。
 - 单次发送直接移交 URL/请求体，最后一次读取尝试移交 URL；实际发送统一管理并发、节流及指标。
 - 索引表单键直接写入最终缓冲，每个客户端缓存固定端点 URL，不保留查询参数或凭据。
+- README 仅保留快速开始、覆盖摘要和文档索引；详细配置、可靠性、数据处理及 steamworks-rs 互操作说明移至 docs 下的双语使用指南。
 - 维护工具继续使用 Rust，发布包继续排除测试、基准、工具、工作流、文档及参考 JSON，均保留在 GitHub。
 
 ### 验证边界
