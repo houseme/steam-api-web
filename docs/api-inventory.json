@@ -41,10 +41,12 @@
       "commit_sha": "d8114185613be4dbfe4897c8484d0b2670fd3cd7",
       "tree_sha": "4c43e2a86462b070f9c92758123efac23efb6318"
     },
-    "binding_version": "0.3.0",
-    "bound_interfaces": 24,
-    "bound_methods": 123,
-    "binding_validation": "Local protocol contracts; live OAuth and Publisher operations remain unverified."
+    "binding_version": "0.4.0",
+    "bound_interfaces": 30,
+    "bound_methods": 161,
+    "binding_validation": "Local protocol contracts; live OAuth and Publisher operations remain unverified.",
+    "bound_explicit_methods": 151,
+    "bound_inherited_methods": 10
   },
   "interfaces": [
     {
@@ -68,42 +70,50 @@
         {
           "name": "ReportPlayerCheating",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "report_player_cheating"
         },
         {
           "name": "RequestPlayerGameBan",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "request_player_game_ban"
         },
         {
           "name": "RemovePlayerGameBan",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "remove_player_game_ban"
         },
         {
           "name": "GetCheatingReports",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_cheating_reports"
         },
         {
           "name": "RequestVacStatusForUser",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "request_vac_status_for_user"
         },
         {
           "name": "StartSecureMultiplayerSession",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "start_secure_multiplayer_session"
         },
         {
           "name": "EndSecureMultiplayerSession",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "end_secure_multiplayer_session"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "cheat_reporting"
     },
     {
       "interface": "ICloudService",
@@ -285,42 +295,50 @@
         {
           "name": "CreateSession",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "create_session"
         },
         {
           "name": "UpdateSession",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "update_session"
         },
         {
           "name": "EnumerateSessionsForApp",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "enumerate_sessions_for_app"
         },
         {
           "name": "GetSessionDetailsForApp",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_session_details_for_app"
         },
         {
           "name": "RequestNotifications",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "request_notifications"
         },
         {
           "name": "DeleteSession",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "delete_session"
         },
         {
           "name": "DeleteSessionBatch",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "delete_session_batch"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "game_notifications"
     },
     {
       "interface": "IGameServersService",
@@ -454,22 +472,26 @@
         {
           "name": "CreateLobby",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "create_lobby"
         },
         {
           "name": "RemoveUserFromLobby",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "remove_user_from_lobby"
         },
         {
           "name": "GetLobbyData",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_lobby_data"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "lobby_matchmaking"
     },
     {
       "interface": "IPartnerFinancialsService",
@@ -695,12 +717,14 @@
         {
           "name": "ReportAbuse",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "report_abuse"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "community"
     },
     {
       "interface": "ISteamEconomy",
@@ -827,57 +851,68 @@
         {
           "name": "AdjustAgreement",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "adjust_agreement"
         },
         {
           "name": "CancelAgreement",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "cancel_agreement"
         },
         {
           "name": "FinalizeTxn",
           "version": 2,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "finalize_txn"
         },
         {
           "name": "GetReport",
           "version": 5,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_report"
         },
         {
           "name": "GetUserAgreementInfo",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_user_agreement_info"
         },
         {
           "name": "GetUserInfo",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_user_info"
         },
         {
           "name": "InitTxn",
           "version": 3,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "init_txn"
         },
         {
           "name": "ProcessAgreement",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "process_agreement"
         },
         {
           "name": "QueryTxn",
           "version": 3,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "query_txn"
         },
         {
           "name": "RefundTxn",
           "version": 2,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "refund_txn"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "micro_txn"
     },
     {
       "interface": "ISteamMicroTxnSandbox",
@@ -887,66 +922,77 @@
           "name": "AdjustAgreement",
           "version": 1,
           "http_method": "POST",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "adjust_agreement"
         },
         {
           "name": "CancelAgreement",
           "version": 1,
           "http_method": "POST",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "cancel_agreement"
         },
         {
           "name": "FinalizeTxn",
           "version": 2,
           "http_method": "POST",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "finalize_txn"
         },
         {
           "name": "GetReport",
           "version": 5,
           "http_method": "GET",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "get_report"
         },
         {
           "name": "GetUserAgreementInfo",
           "version": 2,
           "http_method": "GET",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "get_user_agreement_info"
         },
         {
           "name": "GetUserInfo",
           "version": 2,
           "http_method": "GET",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "get_user_info"
         },
         {
           "name": "InitTxn",
           "version": 3,
           "http_method": "POST",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "init_txn"
         },
         {
           "name": "ProcessAgreement",
           "version": 1,
           "http_method": "POST",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "process_agreement"
         },
         {
           "name": "QueryTxn",
           "version": 3,
           "http_method": "GET",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "query_txn"
         },
         {
           "name": "RefundTxn",
           "version": 2,
           "http_method": "POST",
-          "inherited_from": "ISteamMicroTxn"
+          "inherited_from": "ISteamMicroTxn",
+          "rust_method": "refund_txn"
         }
       ],
       "discovery": "inherited_from_official_reference",
       "phase": "P3",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "micro_txn"
     },
     {
       "interface": "ISteamNews",

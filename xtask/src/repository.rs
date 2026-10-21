@@ -84,20 +84,32 @@ fn check_markdown(path: &Path, text: &str, errors: &mut Vec<String>) -> Result<(
 fn binding_coverage(inventory: &Value) -> Result<(u64, u64)> {
     let mut interface_count = 0;
     let mut method_count = 0;
+    let mut inherited_count = 0;
     for interface in inventory["interfaces"]
         .as_array()
         .ok_or("missing interfaces")?
     {
         if interface["binding_status"] == "bound_contract_tests_only" {
             interface_count += 1;
-            method_count += interface["methods"]
+            let methods = interface["methods"]
                 .as_array()
-                .ok_or("bound interface has no methods")?
-                .len() as u64;
+                .ok_or("bound interface has no methods")?;
+            method_count += methods.len() as u64;
+            inherited_count += methods
+                .iter()
+                .filter(|method| {
+                    method
+                        .get("inherited_from")
+                        .is_some_and(|value| !value.is_null())
+                })
+                .count() as u64;
         }
     }
     if inventory["_metadata"]["bound_interfaces"].as_u64() != Some(interface_count)
         || inventory["_metadata"]["bound_methods"].as_u64() != Some(method_count)
+        || inventory["_metadata"]["bound_explicit_methods"].as_u64()
+            != Some(method_count - inherited_count)
+        || inventory["_metadata"]["bound_inherited_methods"].as_u64() != Some(inherited_count)
     {
         return Err("bound interface/method totals disagree with the inventory".into());
     }
@@ -288,7 +300,7 @@ mod tests {
     #[test]
     fn binding_counts_cannot_inflate_planned_interfaces_or_missing_methods() -> Result<()> {
         let mut inventory = serde_json::json!({
-            "_metadata": {"bound_interfaces": 1, "bound_methods": 2},
+            "_metadata": {"bound_interfaces": 1, "bound_methods": 2, "bound_explicit_methods": 2, "bound_inherited_methods": 0},
             "interfaces": [
                 {"binding_status": "bound_contract_tests_only", "methods": [{}, {}]},
                 {"binding_status": "planned", "methods": [{}]}
@@ -298,6 +310,12 @@ mod tests {
         inventory["_metadata"]["bound_methods"] = serde_json::json!(3);
         assert!(binding_coverage(&inventory).is_err());
         inventory["_metadata"]["bound_methods"] = serde_json::json!(2);
+        inventory["interfaces"][0]["methods"][0]["inherited_from"] =
+            serde_json::json!("ISteamMicroTxn");
+        assert!(binding_coverage(&inventory).is_err());
+        inventory["_metadata"]["bound_explicit_methods"] = serde_json::json!(1);
+        inventory["_metadata"]["bound_inherited_methods"] = serde_json::json!(1);
+        assert_eq!(binding_coverage(&inventory)?, (1, 2));
         inventory["interfaces"][0]["methods"] = Value::Null;
         assert!(binding_coverage(&inventory).is_err());
         Ok(())
