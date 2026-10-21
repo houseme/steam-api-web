@@ -77,3 +77,44 @@ maintenance and documentation tests, the workspace runs 80 passing tests.
 Strict Clippy also compiles the benchmark. Package verification checks that the
 benchmark, reference algorithm and this document stay in the repository; only
 the new production modules join the published crate.
+
+## 0.4 follow-up: indexed keys and endpoint URLs
+
+Reviewed on 2026-10-21 during 0.4 development. Two residual per-call CPU costs
+remained after the rounds above. Public signatures and wire encodings remain
+unchanged.
+
+**Indexed form keys.** Every indexed or array parameter formatted a temporary
+key `String` per field (`format!("classid{index}")` and `name%5B0%5D` spellings)
+across economy class/asset loops, remote-storage and voting ID batches,
+user-stats name/value batches, published-item search tags, and the new
+microtransaction cart encoding. `Params::push_indexed` and
+`Params::push_suffixed` now write the key directly into the final form using an
+itoa stack buffer. Brackets still travel percent-encoded (`name%5B0%5D`),
+byte-for-byte like a preformatted key, which a new unit test pins against
+`url::form_urlencoded`. Plain key names also borrow their unescaped ASCII
+prefix instead of visiting every byte through the escaping encoder.
+
+**Endpoint URLs.** Each call re-parsed its endpoint URL
+(`Url::join` + `set_query`). Clients now parse each fixed endpoint path once
+into a per-client cache guarded by a synchronous mutex; every call clones and
+appends its query. The guard is never held across an await, and the cache is
+bounded by the fixed internal endpoint set. Query parameters and credentials are
+never stored in this cache. The encoder benchmark below does not measure this
+cache or concurrent transport throughput.
+
+Measured with `cargo bench --bench request --locked --offline`
+(stable 1.99.1, optimized profile, A/B/B/A medians, wire equivalence asserted
+before timing). The reference is commit 2077350, before the 0.3 transport review;
+these figures include subsequent 0.3 and 0.4 encoder improvements:
+
+| Case | Reference ns/op | Current ns/op | Time reduction | Baseline drift |
+| --- | ---: | ---: | ---: | ---: |
+| 100 indexed IDs | 5,329 | 1,619 | 69.6% | -0.3% |
+| 100 microtransaction cart lines | 17,552 | 5,640 | 67.9% | -4.6% |
+
+These are local encoder CPU measurements, not end-to-end latency claims; input
+data construction is outside the timed region, and the final form buffer
+allocation remains by design. The full
+workspace (168 tests including the new wire-spelling test), strict Clippy with
+`-D warnings`, rustdoc and formatting checks pass after the change.
