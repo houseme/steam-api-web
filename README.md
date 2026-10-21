@@ -15,13 +15,13 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 English | [简体中文](README_ZH.md)
 
-An independent asynchronous Rust client. The **0.3.0 development version** covers **123 methods across 24 P0 +
+An independent asynchronous Rust client. Version **0.3.0** covers **123 methods across 24 P0 +
 P1 + P2 interfaces**: users, stats, apps, Cloud, inventory, economy, trades, Workshop and more.
 Built with Tokio, reqwest, Rustls, and **aws-lc-rs**, without the Steam client or native SDK.
 
 ## Usage
 
-Version 0.3.0 is unreleased; the manifest below targets this development version. Source tags, crates.io publication and docs.rs builds are separate steps.
+The manifest below targets 0.3.0. Source tags, crates.io publication and docs.rs builds are separate steps.
 If this version is not yet available in the registry, use `{ path = "../steam-api-web" }` from a GitHub
 checkout. Registry and documentation badges reflect published versions.
 

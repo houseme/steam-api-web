@@ -18,7 +18,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - 按完整 Web API 与原生 SDK 互操作路线图扩展覆盖范围。
 - 使用有权限的凭据验证 Publisher 接口、删除游标、写入结果和所有权 v5。
 
-## [0.3.0] - Unreleased
+## [0.3.0] - 2026-10-21
 
 ### 新增
 
@@ -36,7 +36,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 ### 验证边界
 
 - 未使用真实 OAuth/Publisher 凭据，也没有写入 Cloud 文件、库存、交易、挂牌或 Workshop；实际权限、去重和持久化结果仍需验证。
-- 0.3.0 尚未发布；已有 0.1.0、0.2.0 标签不变。
+- 创建标签和 registry 发布是独立步骤，实际发布状态以 registry 及发布工作流为准；已有 0.1.0、0.2.0 标签不变。
 
 ## [0.2.0] - 2026-10-21
 

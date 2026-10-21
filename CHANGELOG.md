@@ -18,7 +18,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
-## [0.3.0] - Unreleased
+## [0.3.0] - 2026-10-21
 
 ### Added
 
@@ -36,7 +36,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 ### Validation boundaries
 
 - No live OAuth/Publisher credentials or Cloud, inventory, trade, listing or Workshop writes were used. Actual authorization, deduplication and persistence outcomes remain unverified.
-- Version 0.3.0 is unreleased; existing 0.1.0 and 0.2.0 tags are unchanged.
+- Tag creation and registry publication are separate steps; publication status is determined by the registry and release workflow. Existing 0.1.0 and 0.2.0 tags are unchanged.
 
 ## [0.2.0] - 2026-10-21
 

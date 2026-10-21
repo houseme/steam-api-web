@@ -15,11 +15,11 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](README.md) | 简体中文
 
-独立异步 Rust Steam Web API crate。**0.3.0 开发版**覆盖 P0 + P1 + P2 共 **24 个接口、123 个方法**，包括用户、统计、应用、Cloud、库存、经济、交易、Workshop 等能力。使用 Tokio、reqwest、Rustls 和 **aws-lc-rs**，无需 Steam 客户端或原生 SDK。
+独立异步 Rust Steam Web API crate。**0.3.0** 覆盖 P0 + P1 + P2 共 **24 个接口、123 个方法**，包括用户、统计、应用、Cloud、库存、经济、交易、Workshop 等能力。使用 Tokio、reqwest、Rustls 和 **aws-lc-rs**，无需 Steam 客户端或原生 SDK。
 
 ## 使用
 
-0.3.0 尚未发布，下面的配置面向该开发版本。源码标签、crates.io 发布和 docs.rs 构建是独立步骤；该版本尚未在 registry 可用时，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。crates.io 和 docs.rs 徽章以实际发布版本为准。
+下面的配置使用 0.3.0。源码标签、crates.io 发布和 docs.rs 构建是独立步骤；该版本尚未在 registry 可用时，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。crates.io 和 docs.rs 徽章以实际发布版本为准。
 
 ```toml
 [dependencies]

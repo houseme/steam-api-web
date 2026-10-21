@@ -9,7 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](p2.md) | 简体中文
 
-0.3.0 处于开发阶段，新增 P2 的全部 12 个接口、66 个文档方法，累计 24 个接口、123 个方法。[机器清单](api-inventory.json)记录 P2 对应的 Rust 方法及物品定义接口原样保留的 `v0001` 路径。当前交付是有本地测试的协议封装，真实 Steam 凭据验证和生产运行仍需独立完成。
+0.3.0 新增 P2 的全部 12 个接口、66 个文档方法，累计 24 个接口、123 个方法。[机器清单](api-inventory.json)记录 P2 对应的 Rust 方法及物品定义接口原样保留的 `v0001` 路径。当前交付是有本地测试的协议封装，真实 Steam 凭据验证和生产运行仍需独立完成。
 
 ## Cloud 与远程存储
 
