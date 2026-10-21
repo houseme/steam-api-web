@@ -16,9 +16,10 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 English | [简体中文](README_ZH.md)
 
 An independent asynchronous Rust client for Steam's Web API — no Steam client,
-no native SDK. Version **0.4.0** binds **161 method routes
-across 30 interfaces** (P0–P3), from authentication and stats to Cloud,
-inventory, trading, Workshop, microtransactions and anti-cheat.
+no native SDK. The **0.5.0 development version** binds **167 method routes
+across 33 interfaces** (P0–P4), from authentication and stats to Cloud,
+inventory, trading, Workshop, microtransactions, anti-cheat, financial reports,
+site licensing and broadcasts.
 
 **Why this crate**
 
@@ -35,14 +36,12 @@ inventory, trading, Workshop, microtransactions and anti-cheat.
 
 ## Quick start
 
-The manifest below targets 0.4.0. Source tags, crates.io publication and
-docs.rs builds are separate steps. If this version is not yet available in the
-registry, use `{ path = "../steam-api-web" }` from a GitHub checkout. Registry
-and documentation badges reflect published versions.
+Version 0.5.0 is unreleased; until it reaches the registry, use a
+`{ path = "../steam-api-web" }` dependency from a GitHub checkout.
 
 ```toml
 [dependencies]
-steam-api-web = "0.4.0"
+steam-api-web = "0.5.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -67,7 +66,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 Reuse or clone `SteamClient`: all clones share the connection pool, concurrency
 limit, request pacing, server cooldown and metrics. Runnable examples:
 [current players](examples/current_players.rs), [ticket verification](examples/verify_ticket.rs),
-[Cloud files](examples/cloud_files.rs), [Sandbox transaction query](examples/query_sandbox_transaction.rs).
+[Cloud files](examples/cloud_files.rs), [Sandbox transaction query](examples/query_sandbox_transaction.rs),
+[financial change batch](examples/financial_changed_dates.rs).
 
 ## API coverage
 
@@ -77,8 +77,11 @@ limit, request pacing, server cooldown and metrics. Runnable examples:
 | P1 | 0.2 | 9 | 39 | Discovery, apps, store, reviews, news, servers, leaderboards |
 | P2 | 0.3 | 12 | 66 | Cloud, inventory, economy, trading, Workshop |
 | P3 | 0.4 | 6 | 38 | Billing, anti-cheat, community, notifications, lobbies |
+| P4 | 0.5 | 3 | 6 | Financial reports, site activity, broadcasts |
 
-Totals include 151 explicit documented routes and ten inherited Sandbox routes.
+Totals include 157 explicit documented routes and ten inherited Sandbox routes.
+Financial endpoints require a separate `ApiKey::financial(...)` client.
+`cargo xtask coverage --json` reports source-checked mappings and remaining routes.
 Per-method paths, versions, credential kinds and replay rules live in the
 [usage guide](https://github.com/houseme/steam-api-web/blob/main/docs/usage.md)
 and the complete [roadmap inventory](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap.md).
@@ -91,6 +94,7 @@ and the complete [roadmap inventory](https://github.com/houseme/steam-api-web/bl
 | Design analysis and verification layers | [Design](https://github.com/houseme/steam-api-web/blob/main/docs/design.md) |
 | Cloud, inventory, economy and Workshop contracts | [P2 contracts](https://github.com/houseme/steam-api-web/blob/main/docs/p2.md) |
 | Billing, anti-cheat and session contracts | [P3 contracts](https://github.com/houseme/steam-api-web/blob/main/docs/p3.md) |
+| Financial authority, site reports, broadcasts and coverage | [P4 contracts](https://github.com/houseme/steam-api-web/blob/main/docs/p4.md) |
 | Roadmap, inventory and steamworks-rs module map | [Roadmap](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap.md) |
 | Transport reviews and codec measurements | [Performance](https://github.com/houseme/steam-api-web/blob/main/docs/performance.md) |
 | Dependency audit | [Dependencies](https://github.com/houseme/steam-api-web/blob/main/docs/dependencies.md) |

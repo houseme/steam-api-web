@@ -13,9 +13,18 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ## 凭据与域名
 
-API key 使用 Valve 的 sensitive `x-webapi-key` header，重定向已关闭。Publisher key 默认选择官方推荐的 `partner.steam-api.com`，该域名的**每个请求**都需要 Publisher key，包括通常可匿名的方法。无 key / User key 默认使用 `api.steampowered.com`。`host(Host::Public/Partner)` 可显式选择；不会自动跨域切换。AppID 所属、key 权限及 IP 白名单仍由 Steam 校验。
+API key 通过敏感 `x-webapi-key` header 传递，重定向已关闭。Publisher 和 Financial API
+Group 客户端默认选择推荐的 Partner，匿名与 User key 客户端默认使用 Public；可通过
+`host(Host::Public/Partner)` 显式选择，配置后主机固定，不自动切换。真实组权限、
+AppID 所属及 IP 白名单仍由 Steam 校验。
 
-每个方法的最低凭据（无 / User / Publisher）属于其文档化契约，发送前本地校验。方法使用 snake_case；`cargo doc --no-deps --open` 可查看完整 API。
+每个方法的最低凭据（无 / User / Publisher / Financial）在发送前本地检查。财务方法
+要求独立 `ApiKey::financial(...)` 客户端，专属组 key 拥有伙伴账户范围财报可见性，
+在这里不能满足其他凭据类别。声明 key 种类不等于已获远端授权；财务默认使用 Partner。
+Site 方法页展示 Public，可由 Publisher 客户端显式选择；概览仍推荐可信后端使用 Partner。
+
+方法使用 snake_case，`cargo doc --no-deps --open` 可查看完整 API。[P4 契约](p4_ZH.md)
+说明精确金额、独立游标、PT/GMT 日期、Site wire 假设及广播单次发送。
 
 ## API 全貌
 
@@ -51,6 +60,9 @@ API key 使用 Valve 的 sensitive `x-webapi-key` header，重定向已关闭。
 | ISteamCommunity | `community()` | 1 |
 | ISteamMicroTxn | `micro_txn_production()` | 10 |
 | ISteamMicroTxnSandbox | `micro_txn_sandbox()` | 10（继承） |
+| IPartnerFinancialsService | `partner_financials()` | 3 |
+| ISiteLicenseService | `site_license()` | 2 |
+| IBroadcastService | `broadcast()` | 1 |
 
 逐方法清单——路径、版本、HTTP 动词、凭据种类与重放分类——见[完整路线图](roadmap_ZH.md)与机器可读的 [api-inventory.json](api-inventory.json)。
 
@@ -160,3 +172,7 @@ cargo run --example current_players -- 480
 | 传输层 Review 与编解码测量 | [performance_ZH.md](performance_ZH.md)、[review-0.3_ZH.md](review-0.3_ZH.md) |
 | 依赖审计 | [dependencies_ZH.md](dependencies_ZH.md) |
 | 发布流程 | [releases_ZH.md](releases_ZH.md) |
+
+## 封装覆盖报告
+
+`cargo xtask coverage --json` 将 33 接口、167 路径快照与公开模块、Rust 方法及准确路径字面量逐项核对，区分 157 条显式签名和 10 条 Sandbox 继承路径。CI 将静态报告保留为 `steam-api-web-coverage`，它与协议 fixture、真实权限及生产验证分别处理。覆盖数据和本指南仅留在 GitHub，不进入 crate 白名单。

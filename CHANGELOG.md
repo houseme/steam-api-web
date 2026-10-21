@@ -18,6 +18,25 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
+## [0.5.0] - Unreleased
+
+### Added
+
+- All six P4 methods for financial reports, PC Cafe site activity/playtime and broadcast frames; the documented snapshot now binds all 33 interfaces and 167 routes (157 explicit, ten inherited Sandbox routes).
+- A dedicated Financial API Group key kind and isolated access policy, lossless report money/cursors, conditional sales/wishlist models and a read-only change-batch example.
+- Site models with private-field Debug redaction, response-local game IDs, future license types and exact UTC interval comparison; explicit single-send broadcast frames.
+- Rust coverage reports with complete module/method/path mappings and inherited-signature checks, saved as a separate GitHub CI artifact.
+
+### Changed
+
+- Share Gregorian/UTC validation across MicroTxn, financial dates and site reporting, retaining original date spelling and arbitrary fractional precision.
+- Keep repository maintenance in Rust and preserve the package allowlist; tests, benchmarks, tooling, workflows, coverage data and prose docs remain on GitHub.
+
+### Validation boundaries
+
+- No financial account data, Site credentials or live broadcast operations were used. Financial permissions, Site response wrapping/array omission and production availability still require credentialed integration.
+- Version 0.5.0 is unreleased. Existing tags and registry versions remain separate from this development work.
+
 ## [0.4.0] - 2026-10-22
 
 ### Added

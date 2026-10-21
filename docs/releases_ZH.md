@@ -30,7 +30,7 @@ CI 支持 main push、PR、手动执行和可复用 workflow 调用。发布流�
 4. 运行本地检查并查看包内容，真正发布前确认固定 revision 的 CI 已通过。
 
 ```sh
-cargo xtask release check --version 0.4.0
+cargo xtask release check --version 0.5.0
 cargo xtask check-repository
 cargo test --package xtask --locked
 cargo fmt --all --check
@@ -52,8 +52,8 @@ cargo package --package steam-api-web --locked
 审阅固定提交后推送不可变 v<VERSION> 标签，或手动关闭 dry_run 并指定已存在的匹配标签。以下命令只应在确实决定发布时执行：
 
 ```sh
-git tag -s v0.4.0
-git push origin v0.4.0
+git tag -s v0.5.0
+git push origin v0.5.0
 ```
 
 标签 push 从标签解析版本；手动真正发布则检出已存在的目标标签。准备阶段校验严格 SemVer、Cargo 包版本/许可/edition、双语 changelog 和 HEAD 与标签提交完全一致，拒绝前导零及命令式输入。支持 rc/beta，并标记为 prerelease。
@@ -73,9 +73,9 @@ Rust、TOML、YAML、Markdown、ignore/lock 文件及 LICENSE 均包含英文版
 ```sh
 cargo xtask release verify-package
 cargo package --package steam-api-web --allow-dirty --locked
-cargo xtask release verify-package --archive target/package/steam-api-web-0.4.0.crate
-cargo xtask release checksum --archive target/package/steam-api-web-0.4.0.crate --output target/package/SHA256SUMS
-cargo xtask release verify-archive --archive target/package/steam-api-web-0.4.0.crate --checksums target/package/SHA256SUMS
+cargo xtask release verify-package --archive target/package/steam-api-web-0.5.0.crate
+cargo xtask release checksum --archive target/package/steam-api-web-0.5.0.crate --output target/package/SHA256SUMS
+cargo xtask release verify-archive --archive target/package/steam-api-web-0.5.0.crate --checksums target/package/SHA256SUMS
 ```
 
 `verify-package` 检查实际文件清单和规范化 manifest，不允许残留指向未打包测试/工具的 target；Cargo 自身验证归档可独立构建。Cargo 提示忽略未打包集成测试属于预期，完整测试仍在 GitHub checkout 的 workspace CI 中运行。README 的仓库文档链接使用 GitHub URL，避免下载 crate 后出现缺失的本地文档链接。

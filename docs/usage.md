@@ -15,17 +15,23 @@ data handling, native SDK interoperability, toolchain and packaging notes.
 
 ## Credentials and hosts
 
-API keys travel in Valve's sensitive `x-webapi-key` header; redirects are
-disabled. Publisher keys default to Valve's recommended `partner.steam-api.com`
-host, where **every request** requires a Publisher key, including otherwise
-anonymous methods. Anonymous clients and User keys default to
-`api.steampowered.com`. Select a host explicitly with `host(Host::Public/Partner)`;
-automatic cross-host failover is disabled. Steam still checks actual key
-permissions, AppID ownership and IP allow lists.
+API keys travel in Valve's sensitive `x-webapi-key` header; redirects are disabled.
+Publisher and Financial API Group clients default to the recommended Partner host.
+Anonymous clients and User keys default to Public; select `host(Host::Public/Partner)`
+explicitly when needed. The configured host is fixed, without automatic failover.
+Steam checks actual group permissions, AppID ownership and IP allowlists.
 
-Each method's minimum credential (none, User or Publisher) is part of its
-documented contract and is checked locally before sending. Rust methods use
-snake_case; run `cargo doc --no-deps --open` for the complete API.
+Each method's minimum credential (none, User, Publisher or Financial) is checked
+locally before sending. Financial endpoints require `ApiKey::financial(...)` in
+a separate client; their dedicated group key has partner-wide report visibility
+and cannot satisfy other endpoint kinds here. A declared key kind is not proof
+of remote authorization. Financial clients default to `partner.steam-api.com`.
+Site method pages show Public, which Publisher clients can select explicitly;
+the overview still recommends Partner for trusted Publisher backends.
+
+Rust methods use snake_case; run `cargo doc --no-deps --open` for the complete API.
+See [P4 contracts](p4.md) for exact report money, independent cursors, PT/GMT dates,
+Site wire assumptions and single-send broadcast frames.
 
 ## API surface
 
@@ -61,6 +67,9 @@ snake_case; run `cargo doc --no-deps --open` for the complete API.
 | ISteamCommunity | `community()` | 1 |
 | ISteamMicroTxn | `micro_txn_production()` | 10 |
 | ISteamMicroTxnSandbox | `micro_txn_sandbox()` | 10 inherited |
+| IPartnerFinancialsService | `partner_financials()` | 3 |
+| ISiteLicenseService | `site_license()` | 2 |
+| IBroadcastService | `broadcast()` | 1 |
 
 The per-method inventory — paths, versions, HTTP verbs, credential kinds and
 replay classification — lives in the [roadmap](roadmap.md) and the
@@ -247,3 +256,7 @@ authentication, writes or production concurrency.
 | Transport reviews and codec measurements | [performance.md](performance.md), [review-0.3.md](review-0.3.md) |
 | Dependency audit | [dependencies.md](dependencies.md) |
 | Release process | [releases.md](releases.md) |
+
+## Binding coverage report
+
+`cargo xtask coverage --json` checks the complete 33-interface, 167-route snapshot against public modules, Rust methods and exact path literals. It distinguishes 157 explicit signatures from ten inherited Sandbox routes. CI retains this static report as `steam-api-web-coverage`; it remains separate from protocol fixtures, live permissions and production validation. Coverage data and this guide stay on GitHub outside the crate allowlist.
