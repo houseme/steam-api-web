@@ -23,7 +23,7 @@
 use crate::{
     Error, Result, SteamClient, SteamId,
     request::{Access, Endpoint, Params},
-    types::{nonzero, text},
+    types::{nonzero, text, valid_calendar_date, valid_utc_time},
     user_auth::OpaqueResponse,
 };
 use std::net::Ipv4Addr;
@@ -699,57 +699,5 @@ fn valid_date(value: &str) -> bool {
             .iter()
             .fold(0u32, |n, byte| n * 10 + u32::from(byte - b'0'))
     };
-    let year = number(0, 4);
-    let month = number(4, 6);
-    let day = number(6, 8);
-    let leap = year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400));
-    let days = match month {
-        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-        4 | 6 | 9 | 11 => 30,
-        2 if leap => 29,
-        2 => 28,
-        _ => return false,
-    };
-    year != 0 && (1..=days).contains(&day)
-}
-fn valid_utc_time(value: &str) -> bool {
-    let Some(value) = value
-        .strip_suffix('Z')
-        .or_else(|| value.strip_suffix('z'))
-        .or_else(|| value.strip_suffix("+00:00"))
-    else {
-        return false;
-    };
-    let bytes = value.as_bytes();
-    if bytes.len() < 19
-        || bytes[4] != b'-'
-        || bytes[7] != b'-'
-        || !matches!(bytes[10], b'T' | b't')
-        || bytes[13] != b':'
-        || bytes[16] != b':'
-    {
-        return false;
-    }
-    if bytes[..19]
-        .iter()
-        .enumerate()
-        .any(|(index, byte)| ![4, 7, 10, 13, 16].contains(&index) && !byte.is_ascii_digit())
-    {
-        return false;
-    }
-    let date = [
-        bytes[0], bytes[1], bytes[2], bytes[3], bytes[5], bytes[6], bytes[8], bytes[9],
-    ];
-    let Ok(date) = std::str::from_utf8(&date) else {
-        return false;
-    };
-    if !valid_date(date) {
-        return false;
-    }
-    let number = |start: usize| (bytes[start] - b'0') * 10 + bytes[start + 1] - b'0';
-    if number(11) > 23 || number(14) > 59 || number(17) > 60 {
-        return false;
-    }
-    bytes.len() == 19
-        || (bytes[19] == b'.' && bytes.len() > 20 && bytes[20..].iter().all(u8::is_ascii_digit))
+    valid_calendar_date(number(0, 4), number(4, 6), number(6, 8))
 }

@@ -6,6 +6,7 @@
 use crate::{
     Error, Result,
     apps::Apps,
+    broadcast::BroadcastService,
     cheat_reporting::CheatReportingService,
     cloud::Cloud,
     community::Community,
@@ -21,6 +22,7 @@ use crate::{
     lobby_matchmaking::LobbyMatchmakingService,
     micro_txn::MicroTxn,
     news::News,
+    partner_financials::PartnerFinancialsService,
     player::PlayerService,
     published_file::PublishedFileService,
     published_file_moderation::PublishedFileModerationService,
@@ -30,6 +32,7 @@ use crate::{
     request::{Access, Endpoint, Operation, Params},
     response::Response,
     reviews::UserReviewsService,
+    site_license::SiteLicenseService,
     store::StoreService,
     user::User,
     user_auth::{OpaqueResponse, UserAuth},
@@ -62,7 +65,7 @@ use zeroize::Zeroizing;
 pub enum Host {
     /// Public host; also permits anonymous public methods.
     Public,
-    /// Higher availability server host; every request requires a publisher key.
+    /// Higher availability server host; requires a publisher or financial group key.
     Partner,
 }
 impl Host {
@@ -78,10 +81,11 @@ impl Host {
 enum KeyKind {
     User,
     Publisher,
+    Financial,
 }
 
 /// A validated API key. Debug output is redacted; owned text is zeroized on drop.
-/// Publisher keys belong only on trusted servers.
+/// Publisher and financial keys belong only on trusted servers.
 #[derive(Clone)]
 pub struct ApiKey {
     kind: KeyKind,
@@ -103,6 +107,12 @@ impl ApiKey {
     /// Create a publisher key, which also authorizes user-key methods.
     pub fn publisher(value: impl Into<String>) -> Result<Self> {
         Self::new(KeyKind::Publisher, value.into())
+    }
+    /// Create a dedicated Financial API Group key. This key can read all financial
+    /// data for its partner account and only authorizes financial endpoints here.
+    /// Declaring the kind does not establish remote account permissions.
+    pub fn financial(value: impl Into<String>) -> Result<Self> {
+        Self::new(KeyKind::Financial, value.into())
     }
     fn new(kind: KeyKind, value: String) -> Result<Self> {
         let secret = Zeroizing::new(value);
@@ -174,7 +184,7 @@ impl Default for ClientBuilder {
     }
 }
 impl ClientBuilder {
-    /// Configure a key. Publisher credentials select Partner unless overridden.
+    /// Configure a key. Publisher and financial credentials select Partner unless overridden.
     pub fn api_key(mut self, key: ApiKey) -> Self {
         self.key = Some(key);
         self
@@ -257,13 +267,14 @@ impl ClientBuilder {
             ));
         }
         let kind = self.key.as_ref().map(|k| k.kind);
-        let host = self.host.unwrap_or(if kind == Some(KeyKind::Publisher) {
+        let server_key = matches!(kind, Some(KeyKind::Publisher | KeyKind::Financial));
+        let host = self.host.unwrap_or(if server_key {
             Host::Partner
         } else {
             Host::Public
         });
-        if host == Host::Partner && kind != Some(KeyKind::Publisher) {
-            return Err(Error::MissingApiKey("publisher"));
+        if host == Host::Partner && !server_key {
+            return Err(Error::MissingApiKey("publisher or financial"));
         }
         let mut base_url = Url::parse(self.base_url.as_deref().unwrap_or(host.url()))
             .map_err(|_| Error::Configuration("invalid base URL"))?;
@@ -289,9 +300,8 @@ impl ClientBuilder {
             base_url.set_path(&format!("{}/", base_url.path()));
         }
         // An explicit public-host override must not smuggle a user key to Partner.
-        if base_url.host_str() == Some("partner.steam-api.com") && kind != Some(KeyKind::Publisher)
-        {
-            return Err(Error::MissingApiKey("publisher"));
+        if base_url.host_str() == Some("partner.steam-api.com") && !server_key {
+            return Err(Error::MissingApiKey("publisher or financial"));
         }
         let mut headers = HeaderMap::new();
         if let Some(key) = &self.key {
@@ -522,6 +532,18 @@ impl SteamClient {
     pub fn lobby_matchmaking(&self) -> LobbyMatchmakingService<'_> {
         LobbyMatchmakingService(self)
     }
+    /// Partner-wide financial reports requiring a dedicated Financial API Group key.
+    pub fn partner_financials(&self) -> PartnerFinancialsService<'_> {
+        PartnerFinancialsService(self)
+    }
+    /// PC Cafe site activity and playtime reports with publisher credentials.
+    pub fn site_license(&self) -> SiteLicenseService<'_> {
+        SiteLicenseService(self)
+    }
+    /// Explicit publisher game-data frames for an existing broadcast.
+    pub fn broadcast(&self) -> BroadcastService<'_> {
+        BroadcastService(self)
+    }
     /// Inspect counters without logging sensitive requests or responses.
     pub fn metrics(&self) -> ClientMetrics {
         let m = &self.inner.metrics;
@@ -569,10 +591,15 @@ impl SteamClient {
         decode: impl FnOnce(Response) -> Result<T>,
     ) -> Result<T> {
         match (endpoint.access, self.inner.kind) {
-            (Access::Publisher, Some(KeyKind::Publisher))
-            | (Access::Anonymous, _)
-            | (Access::User, Some(_)) => (),
+            (Access::Financial, Some(KeyKind::Financial))
+            | (Access::Publisher, Some(KeyKind::Publisher))
+            | (Access::Anonymous, None | Some(KeyKind::User | KeyKind::Publisher))
+            | (Access::User, Some(KeyKind::User | KeyKind::Publisher)) => (),
+            (Access::Financial, _) => return Err(Error::MissingApiKey("financial")),
             (Access::Publisher, _) => return Err(Error::MissingApiKey("publisher")),
+            (Access::Anonymous, _) => {
+                return Err(Error::MissingApiKey("anonymous, user or publisher"));
+            }
             _ => return Err(Error::MissingApiKey("user or publisher")),
         }
         params.push("format", "json");
@@ -805,6 +832,53 @@ mod tests {
             assert!(request.body().is_none());
         }
         assert_eq!(client.endpoint_url(&read).unwrap().query(), None);
+    }
+
+    #[tokio::test]
+    async fn financial_group_keys_are_redacted_partner_scoped_and_access_isolated() {
+        assert!(ApiKey::financial("").is_err());
+        assert!(ApiKey::financial("\nprivate-financial-key").is_err());
+        let key = ApiKey::financial("private-financial-key").unwrap();
+        assert!(!format!("{key:?}").contains("private-financial-key"));
+        let financial = SteamClient::builder().api_key(key.clone()).build().unwrap();
+        assert_eq!(
+            financial.inner.base_url.host_str(),
+            Some("partner.steam-api.com")
+        );
+        let financial = SteamClient::builder()
+            .api_key(key)
+            .base_url("http://localhost/")
+            .build()
+            .unwrap();
+        for access in [Access::Anonymous, Access::User, Access::Publisher] {
+            let result = financial
+                .call_opaque(
+                    Endpoint::get("test/NotFinancial/v1/", access),
+                    Params::new(),
+                )
+                .await;
+            assert!(matches!(result, Err(Error::MissingApiKey(_))));
+        }
+        assert_eq!(financial.metrics(), ClientMetrics::default());
+        for key in [
+            None,
+            Some(ApiKey::user("user").unwrap()),
+            Some(ApiKey::publisher("publisher").unwrap()),
+        ] {
+            let mut builder = SteamClient::builder().base_url("http://localhost/");
+            if let Some(key) = key {
+                builder = builder.api_key(key);
+            }
+            let client = builder.build().unwrap();
+            let result = client
+                .call_opaque(
+                    Endpoint::get("test/Financial/v001/", Access::Financial),
+                    Params::new(),
+                )
+                .await;
+            assert!(matches!(result, Err(Error::MissingApiKey("financial"))));
+            assert_eq!(client.metrics(), ClientMetrics::default());
+        }
     }
 
     #[test]
