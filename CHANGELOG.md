@@ -18,6 +18,26 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
+## [0.4.0] - Unreleased
+
+### Added
+
+- All 38 P3 routes: ten production billing and ten inherited Sandbox routes, eight anti-cheat/community methods and ten notification/lobby methods; 161 routes across 30 interfaces in total.
+- Explicit billing environments, exact integer amounts/IDs, recurring agreements and reconciliation cursors. Sandbox failures never fall back to production, and every mutation remains single-send.
+- Explicit result=OK billing acknowledgements and endpoint-scoped VAC readiness responses that preserve pending/unverified states without hiding errors.
+- Notification sessions, explicit ban/report/lobby operations, a read-only Sandbox query example, local protocol tests and bilingual P3 contract documentation.
+
+### Changed
+
+- Coverage guards distinguish explicit signatures from inherited Sandbox counterparts.
+- Indexed form keys write directly into the final buffer, and each client caches fixed endpoint URLs without retaining queries or credentials.
+- Maintenance remains Rust. Tests, benchmarks, tools, workflows, documents and reference JSON stay on GitHub outside the distributable crate.
+
+### Validation boundaries
+
+- No live billing/anti-cheat authorization or real payments, refunds, bans, reports, notifications or lobby writes were used. Permissions, callbacks and persistence require independent validation.
+- Version 0.4.0 is unreleased; existing version tags are unchanged.
+
 ## [0.3.0] - 2026-10-21
 
 ### Added

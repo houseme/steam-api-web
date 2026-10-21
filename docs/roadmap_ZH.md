@@ -11,7 +11,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 核对日期：2026-10-21。范围覆盖[官方 Web API 索引](https://partner.steamgames.com/doc/webapi)的全部 **33 个接口**，包含 **157 个显式 HTTP 签名**，以及 Sandbox 从 ISteamMicroTxn 继承的 **10 个签名**。这是文档快照清单，不包含私有或未公开方法，也不是已实现覆盖率声明。
 
-共享机器清单：[api-inventory.json](api-inventory.json)。0.3.0 已封装 P0 的 18 个、P1 的 39 个及 P2 的 66 个方法，共 24 个接口、123 个方法，并有本地契约测试。未公开响应结构保持 opaque，Publisher 实测尚未完成。
+共享机器清单：[api-inventory.json](api-inventory.json)。0.4.0 开发版已封装 P0–P3，共 30 个接口、161 条路径，包含 151 条显式文档路径及 10 条继承 Sandbox 路径，并有本地契约测试。未公开响应结构保持 opaque，Publisher 实测尚未完成。
 
 ## 推进阶段
 
@@ -24,7 +24,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | P4 / 0.5 | 财务、站点许可、广播及覆盖收敛 | 数据访问权限、账期/时间范围、所有 33 个接口的覆盖报告 |
 | P5 / 单独提案 | 可选原生 SDK 互操作 companion crate | 生命周期/线程/回调契约；基础 HTTP crate 继续不依赖原生 SDK |
 
-版本是规划顺序，不是发布日期；P0/P1/P2 已有封装实现，P3–P5 仍处于规划阶段。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
+版本是规划顺序，不是发布日期；P0–P3 已有封装实现，P4–P5 仍处于规划阶段。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
 
 ## 全部 Web API 接口
 
@@ -54,12 +54,12 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | [ISteamRemoteStorage](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage) | 7 | P2 | 已封装；本地契约测试 |
 | [IPublishedFileModerationService](https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService) | 2 | P2 | 已封装；本地契约测试 |
 | [IWorkshopService](https://partner.steamgames.com/doc/webapi/IWorkshopService) | 4 | P2 | 已封装；本地契约测试 |
-| [ISteamMicroTxnSandbox](https://partner.steamgames.com/doc/webapi/ISteamMicroTxnSandbox) | 10（继承） | P3 | 规划中 |
-| [ISteamMicroTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn) | 10 | P3 | 规划中 |
-| [ICheatReportingService](https://partner.steamgames.com/doc/webapi/ICheatReportingService) | 7 | P3 | 规划中 |
-| [ISteamCommunity](https://partner.steamgames.com/doc/webapi/ISteamCommunity) | 1 | P3 | 规划中 |
-| [IGameNotificationsService](https://partner.steamgames.com/doc/webapi/IGameNotificationsService) | 7 | P3 | 规划中 |
-| [ILobbyMatchmakingService](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService) | 3 | P3 | 规划中 |
+| [ISteamMicroTxnSandbox](https://partner.steamgames.com/doc/webapi/ISteamMicroTxnSandbox) | 10（继承） | P3 | 已封装；本地契约测试 |
+| [ISteamMicroTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn) | 10 | P3 | 已封装；本地契约测试 |
+| [ICheatReportingService](https://partner.steamgames.com/doc/webapi/ICheatReportingService) | 7 | P3 | 已封装；本地契约测试 |
+| [ISteamCommunity](https://partner.steamgames.com/doc/webapi/ISteamCommunity) | 1 | P3 | 已封装；本地契约测试 |
+| [IGameNotificationsService](https://partner.steamgames.com/doc/webapi/IGameNotificationsService) | 7 | P3 | 已封装；本地契约测试 |
+| [ILobbyMatchmakingService](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService) | 3 | P3 | 已封装；本地契约测试 |
 | [IPartnerFinancialsService](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService) | 3 | P4 | 规划中 |
 | [ISiteLicenseService](https://partner.steamgames.com/doc/webapi/ISiteLicenseService) | 2 | P4 | 规划中 |
 | [IBroadcastService](https://partner.steamgames.com/doc/webapi/IBroadcastService) | 1 | P4 | 规划中 |

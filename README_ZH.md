@@ -15,15 +15,15 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](README.md) | 简体中文
 
-独立异步 Rust Steam Web API crate。**0.3.0** 覆盖 P0 + P1 + P2 共 **24 个接口、123 个方法**，包括用户、统计、应用、Cloud、库存、经济、交易、Workshop 等能力。使用 Tokio、reqwest、Rustls 和 **aws-lc-rs**，无需 Steam 客户端或原生 SDK。
+独立异步 Rust Steam Web API crate。**0.4.0 开发版**覆盖 P0–P3 共 **30 个接口、161 条方法路径**，包括用户、Cloud、库存、经济、Workshop、微交易、反作弊及游戏服务。使用 Tokio、reqwest、Rustls 和 **aws-lc-rs**，无需 Steam 客户端或原生 SDK。
 
 ## 使用
 
-下面的配置使用 0.3.0。源码标签、crates.io 发布和 docs.rs 构建是独立步骤；该版本尚未在 registry 可用时，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。crates.io 和 docs.rs 徽章以实际发布版本为准。
+0.4.0 尚未发布，下面的配置面向该开发版本。源码标签、crates.io 发布和 docs.rs 构建是独立步骤；该版本尚未在 registry 可用时，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。crates.io 和 docs.rs 徽章以实际发布版本为准。
 
 ```toml
 [dependencies]
-steam-api-web = "0.3.0"
+steam-api-web = "0.4.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -136,6 +136,19 @@ Service 接口使用 `input_json`；读取与管理写入分开控制凭据和�
 | `IWorkshopService` / `workshop` | 4 |
 
 Cloud 通过用户 OAuth 授权，严格检查 `x-eresult`；上传分阶段返回元数据，文件传输及批次收尾由调用方管理。库存 requestid、修改时间戳、交易 cursor 和 Workshop 修订号原样保留。包括 GET StartTrade、GET Delete 在内的写操作不自动重放。[P2 契约与边界](https://github.com/houseme/steam-api-web/blob/main/docs/p2_ZH.md)说明全部接口的编码、权限和结果检查。
+
+### P3：新增 38 条路径
+
+| 接口 / 模块 | 路径数 |
+| --- | ---: |
+| `ICheatReportingService` / `cheat_reporting` | 7 |
+| `IGameNotificationsService` / `game_notifications` | 7 |
+| `ILobbyMatchmakingService` / `lobby_matchmaking` | 3 |
+| `ISteamCommunity` / `community` | 1 |
+| `ISteamMicroTxn` / `micro_txn` | 10 |
+| `ISteamMicroTxnSandbox` / `micro_txn` | 10（继承） |
+
+总计包括 151 条显式文档路径和 10 条继承 Sandbox 路径。微交易显式选择 `client.micro_txn_sandbox()` 或 `client.micro_txn_production()`，两种环境共享实现且不自动切换；写入不重放，支付确认与实际结算分开处理。VAC 未就绪状态不等于已验证；报告、封禁、通知及大厅操作均由调用方显式发起。[P3 契约与边界](https://github.com/houseme/steam-api-web/blob/main/docs/p3_ZH.md)说明权限、恢复及未公开协议。
 
 Publisher key 默认选择官方推荐的 `partner.steam-api.com`，该域名的 **每个请求**都需要 Publisher key，包括通常可以匿名的方法。无
 key / User key 默认使用 `api.steampowered.com`。`host(Host::Public/Partner)` 可显式选择；Publisher 专用方法应使用
@@ -261,7 +274,7 @@ key，需要允许监听本地端口。离线测试通过不代表 Publisher 认
 
 [0.3 传输层 Review](https://github.com/houseme/steam-api-web/blob/main/docs/review-0.3_ZH.md)记录响应策略集中处理和请求编码实测改进。
 
-0.3.0 已实现 P2 的 66 个方法及本地契约测试；公开 schema 有对应类型，未公开响应显式保留原始 JSON。凭据环境和生产验证仍需单独完成。
+0.4.0 已实现 P3 的 38 条路径，其中 10 条为 Sandbox 镜像；公开 schema 有对应类型，未公开响应显式保留原始 JSON。凭据环境和生产验证仍需单独完成。
 
 [完整路线图](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap_ZH.md)列出全部 **33 个文档 Web API 接口**、已公开方法签名和 steamworks-rs
 源码模块。以下版本仅为推进顺序，不代表发布日期或功能已完成。

@@ -97,3 +97,7 @@ the client handles bounded transport. Scalar form fields borrow text and format
 integers on the stack. See the [0.3 review](review-0.3.md) for measured tradeoffs.
 
 Version 0.3.0 adds 66 methods in 12 interfaces, bringing coverage to 123 methods in 24 interfaces. Cloud OAuth, x-eresult and empty HTTP 200 acknowledgements have an explicit response policy. Object-valued inventory result envelopes receive recursive checks. GET StartTrade and GET Delete are single-send operations; every POST remains non-replayed. See [P2 contracts](p2.md) for batch cleanup, deduplication, concurrency timestamps, cursors, revisions and unspecified schemas. Maintenance and distribution retain Rust xtask and the package allowlist.
+
+## 0.4 P3 and business state
+
+The 0.4 development version adds 38 routes, bringing coverage to 161 routes across 30 interfaces, including ten inherited Sandbox counterparts. Production and Sandbox are explicit and never automatically switch. Billing result=OK acknowledges the API request; transaction state remains in the response. ResponsePolicy scopes acknowledgement rules and VAC readiness exceptions to their endpoints before success metrics. Other false success markers still fail. See [P3 contracts](p3.md) for money, reconciliation, permissions, notification replacement and native SDK boundaries.

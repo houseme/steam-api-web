@@ -91,3 +91,7 @@ SetAppBuildLive 通过保留 HTTP 状态区分请求接受与 201 等待手机�
 ResponsePolicy 负责 result header、空响应及 JSON 根结构，客户端负责有限传输。表单标量借用文本、在栈缓冲区格式化整数，实测取舍见 [0.3 Review](review-0.3_ZH.md)。
 
 0.3.0 新增 12 个接口、66 个方法，累计 24 个接口、123 个方法。Cloud 的 OAuth、x-eresult 与空 HTTP 200 具有独立响应策略；库存定义对象型 result 也会递归校验。GET StartTrade 和 GET Delete 明确为单次发送，所有 POST 保持不重放。详见 [P2 契约](p2_ZH.md)，包括批次清理、去重、并发时间戳、cursor、修订号及未公开 schema 的边界。维护与分发继续使用现有 Rust xtask 和发布包白名单。
+
+## 0.4 P3 与业务状态
+
+0.4 开发版新增 38 条路径，累计 30 个接口、161 条路径，其中 10 条为 Sandbox 继承镜像。生产与 Sandbox 显式选择且不自动切换；微交易 result=OK 是 API 确认，实际交易状态保留在响应中。ResponsePolicy 将确认规则和 VAC 未就绪例外限定到对应接口，在成功计数前校验；其他 success=false 仍失败。详见 [P3 契约](p3_ZH.md)中的金额、对账、权限、通知替换和原生 SDK 边界。

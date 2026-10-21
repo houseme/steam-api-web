@@ -15,19 +15,20 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 English | [简体中文](README_ZH.md)
 
-An independent asynchronous Rust client. Version **0.3.0** covers **123 methods across 24 P0 +
-P1 + P2 interfaces**: users, stats, apps, Cloud, inventory, economy, trades, Workshop and more.
+An independent asynchronous Rust client. The **0.4.0 development version** covers
+**161 method routes across 30 interfaces** in P0–P3: users, Cloud, inventory,
+Workshop, billing, anti-cheat and game services.
 Built with Tokio, reqwest, Rustls, and **aws-lc-rs**, without the Steam client or native SDK.
 
 ## Usage
 
-The manifest below targets 0.3.0. Source tags, crates.io publication and docs.rs builds are separate steps.
+Version 0.4.0 is unreleased; the manifest below targets this development version. Source tags, crates.io publication and docs.rs builds are separate steps.
 If this version is not yet available in the registry, use `{ path = "../steam-api-web" }` from a GitHub
 checkout. Registry and documentation badges reflect published versions.
 
 ```toml
 [dependencies]
-steam-api-web = "0.3.0"
+steam-api-web = "0.4.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -141,6 +142,19 @@ Service interfaces use `input_json`; reads and administrative writes retain sepa
 | `IWorkshopService` / `workshop` | 4 |
 
 Cloud uses user OAuth and strict `x-eresult` checks. Upload stages return metadata; callers manage file transfer and batch completion. Inventory request IDs, concurrency timestamps, trade cursors and Workshop revisions remain explicit. Mutations never replay, including GET StartTrade and GET Delete. See [P2 contracts and boundaries](https://github.com/houseme/steam-api-web/blob/main/docs/p2.md) for encoding, permissions and outcome checks.
+
+### P3: 38 additional routes
+
+| Interface / module | Routes |
+| --- | ---: |
+| `ICheatReportingService` / `cheat_reporting` | 7 |
+| `IGameNotificationsService` / `game_notifications` | 7 |
+| `ILobbyMatchmakingService` / `lobby_matchmaking` | 3 |
+| `ISteamCommunity` / `community` | 1 |
+| `ISteamMicroTxn` / `micro_txn` | 10 |
+| `ISteamMicroTxnSandbox` / `micro_txn` | 10 inherited |
+
+Totals include 151 explicit documented routes and ten inherited Sandbox routes. Billing explicitly selects `client.micro_txn_sandbox()` or `client.micro_txn_production()`; implementations are shared and never automatically switch environments. Mutations never replay, and acknowledgement remains distinct from settlement. VAC readiness is separate from verification. Reports, bans, notifications and lobby actions are explicit caller operations. See [P3 contracts and boundaries](https://github.com/houseme/steam-api-web/blob/main/docs/p3.md) for permissions, recovery and undocumented shapes.
 
 Publisher keys default to Valve's recommended `partner.steam-api.com` host, which requires a Publisher key for **every
 request**, including otherwise anonymous methods. Anonymous clients and User keys default to `api.steampowered.com`.
@@ -289,7 +303,7 @@ record the 0.2 refactor and its reproducible offline benchmarks.
 The [0.3 transport review](https://github.com/houseme/steam-api-web/blob/main/docs/review-0.3.md)
 records response-policy consolidation and measured request-encoding improvements.
 
-Version 0.3.0 implements all 66 P2 request bindings and local contract tests. Published response schemas have types; undocumented results explicitly retain raw JSON. Credentialed integration and production validation remain separate.
+Version 0.4.0 implements all 38 P3 routes, including ten inherited Sandbox counterparts. Published response schemas have types; undocumented results explicitly retain raw JSON. Credentialed integration and production validation remain separate.
 
 The [complete roadmap](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap.md) inventories all **33 documented Web API interfaces**, their documented method
 signatures, and the `steamworks-rs` source modules. Planned versions are sequencing proposals, not release dates or

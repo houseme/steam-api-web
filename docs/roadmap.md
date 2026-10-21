@@ -11,7 +11,7 @@ English | [简体中文](roadmap_ZH.md)
 
 Reviewed on 2026-10-21 against every interface in the [official Web API index](https://partner.steamgames.com/doc/webapi): **33 interfaces**, **157 explicit HTTP signatures**, and **10 Sandbox signatures inherited from ISteamMicroTxn**. This is a documentation snapshot, not an inventory of private methods or a claim that all bindings are implemented.
 
-The shared machine inventory is [api-inventory.json](api-inventory.json). Version 0.3.0 binds all 18 P0, 39 P1 and 66 P2 methods (123 total across 24 interfaces), with local contract tests. Undocumented response contracts remain opaque, and Publisher validation is pending.
+The shared machine inventory is [api-inventory.json](api-inventory.json). The 0.4.0 development version binds P0–P3 (161 routes across 30 interfaces, comprising 151 explicit documented routes and ten inherited Sandbox routes), with local contract tests. Undocumented response contracts remain opaque, and Publisher validation is pending.
 
 ## Delivery phases
 
@@ -24,7 +24,7 @@ The shared machine inventory is [api-inventory.json](api-inventory.json). Versio
 | P4 / 0.5 | Finance, site licenses, broadcasts and coverage closure | Data access controls, reporting periods and coverage report for all 33 interfaces |
 | P5 / separate proposal | Optional native SDK interoperability companion crate | Lifecycle/thread/callback contracts; base HTTP crate stays SDK-independent |
 
-Versions describe sequencing, not release dates. P0/P1/P2 bindings are implemented; P3–P5 remain planned. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
+Versions describe sequencing, not release dates. P0–P3 bindings are implemented; P4–P5 remain planned. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
 
 ## Complete Web API interface matrix
 
@@ -54,12 +54,12 @@ Versions describe sequencing, not release dates. P0/P1/P2 bindings are implement
 | [ISteamRemoteStorage](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage) | 7 | P2 | Bound; local contract tests |
 | [IPublishedFileModerationService](https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService) | 2 | P2 | Bound; local contract tests |
 | [IWorkshopService](https://partner.steamgames.com/doc/webapi/IWorkshopService) | 4 | P2 | Bound; local contract tests |
-| [ISteamMicroTxnSandbox](https://partner.steamgames.com/doc/webapi/ISteamMicroTxnSandbox) | 10 inherited | P3 | Planned |
-| [ISteamMicroTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn) | 10 | P3 | Planned |
-| [ICheatReportingService](https://partner.steamgames.com/doc/webapi/ICheatReportingService) | 7 | P3 | Planned |
-| [ISteamCommunity](https://partner.steamgames.com/doc/webapi/ISteamCommunity) | 1 | P3 | Planned |
-| [IGameNotificationsService](https://partner.steamgames.com/doc/webapi/IGameNotificationsService) | 7 | P3 | Planned |
-| [ILobbyMatchmakingService](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService) | 3 | P3 | Planned |
+| [ISteamMicroTxnSandbox](https://partner.steamgames.com/doc/webapi/ISteamMicroTxnSandbox) | 10 inherited | P3 | Bound; local contract tests |
+| [ISteamMicroTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn) | 10 | P3 | Bound; local contract tests |
+| [ICheatReportingService](https://partner.steamgames.com/doc/webapi/ICheatReportingService) | 7 | P3 | Bound; local contract tests |
+| [ISteamCommunity](https://partner.steamgames.com/doc/webapi/ISteamCommunity) | 1 | P3 | Bound; local contract tests |
+| [IGameNotificationsService](https://partner.steamgames.com/doc/webapi/IGameNotificationsService) | 7 | P3 | Bound; local contract tests |
+| [ILobbyMatchmakingService](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService) | 3 | P3 | Bound; local contract tests |
 | [IPartnerFinancialsService](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService) | 3 | P4 | Planned |
 | [ISiteLicenseService](https://partner.steamgames.com/doc/webapi/ISiteLicenseService) | 2 | P4 | Planned |
 | [IBroadcastService](https://partner.steamgames.com/doc/webapi/IBroadcastService) | 1 | P4 | Planned |
