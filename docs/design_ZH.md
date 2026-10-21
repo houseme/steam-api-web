@@ -85,3 +85,7 @@ Publisher 凭据默认选择 Partner。该域名的所有请求都要 Publisher 
 SetAppBuildLive 通过保留 HTTP 状态区分请求接受与 201 等待手机确认，只有明确允许的 201 可以没有响应体；空 200 仍报 Decode。共享错误检查识别 result/eresult，并拒绝小数结果码。评论及 Partner 应用列表按官方公开字段建模，未公开响应保留 OpaqueResponse，不把缺失结构解释成空列表或成功。
 
 维护和发布保护迁移到独立、不可发布的 Rust xtask；工作流不再依赖 Python。Cargo include 白名单把仓库工具、集成测试和参考资料留在 GitHub，公开库不依赖 xtask。完整 workspace 测试与精简归档的独立构建分别验证，避免工具带来的 feature 合并掩盖公开库的依赖错误。P1 的本地测试不是实际 Steam Publisher 写入证据。
+
+## 0.3 P2 与结果策略
+
+0.3 开发版新增 12 个接口、66 个方法，累计 24 个接口、123 个方法。Cloud 的 OAuth、x-eresult 与空 HTTP 200 具有独立响应策略；库存定义对象型 result 也会递归校验。GET StartTrade 和 GET Delete 明确为单次发送，所有 POST 保持不重放。详见 [P2 契约](p2_ZH.md)，包括批次清理、去重、并发时间戳、cursor、修订号及未公开 schema 的边界。维护与分发继续使用现有 Rust xtask 和发布包白名单。

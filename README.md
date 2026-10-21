@@ -15,19 +15,19 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 English | [简体中文](README_ZH.md)
 
-An independent asynchronous Rust client. Version **0.2.0** covers **57 methods across 12 P0 +
-P1 interfaces**: authentication, users, stats, apps, players, store, reviews, news, servers, and leaderboards.
+An independent asynchronous Rust client. The **0.3.0 development version** covers **123 methods across 24 P0 +
+P1 + P2 interfaces**: users, stats, apps, Cloud, inventory, economy, trades, Workshop and more.
 Built with Tokio, reqwest, Rustls, and **aws-lc-rs**, without the Steam client or native SDK.
 
 ## Usage
 
-The manifest below targets 0.2.0. Source tags, crates.io publication and docs.rs builds are separate steps.
+Version 0.3.0 is unreleased; the manifest below targets this development version. Source tags, crates.io publication and docs.rs builds are separate steps.
 If this version is not yet available in the registry, use `{ path = "../steam-api-web" }` from a GitHub
 checkout. Registry and documentation badges reflect published versions.
 
 ```toml
 [dependencies]
-steam-api-web = "0.2.0"
+steam-api-web = "0.3.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -122,6 +122,25 @@ and metrics.
 | `IUserReviewsService` / `reviews` | `GetAppReviews` | GET / v1 |
 
 Service interfaces use `input_json`; reads and administrative writes retain separate credential/replay policies. Legacy `ISteamApps/GetAppList/v2` is deprecated; new integrations should use the paginated `IStoreService/GetAppList`. `SetAppBuildLive` preserves HTTP 201 mobile-confirmation state rather than equating acceptance with deployment.
+
+### P2: 66 additional methods
+
+| Interface / module | Methods |
+| --- | ---: |
+| `ICloudService` / `cloud` | 6 |
+| `IEconMarketService` / `econ_market` | 4 |
+| `IEconService` / `econ` | 7 |
+| `IGameInventory` / `game_inventory` | 5 |
+| `IInventoryService` / `inventory` | 10 |
+| `IPublishedFileModerationService` / `published_file_moderation` | 2 |
+| `IPublishedFileService` / `published_file` | 7 |
+| `ISteamEconomy` / `economy` | 8 |
+| `ISteamPublishedItemSearch` / `published_item_search` | 4 |
+| `ISteamPublishedItemVoting` / `published_item_voting` | 2 |
+| `ISteamRemoteStorage` / `remote_storage` | 7 |
+| `IWorkshopService` / `workshop` | 4 |
+
+Cloud uses user OAuth and strict `x-eresult` checks. Upload stages return metadata; callers manage file transfer and batch completion. Inventory request IDs, concurrency timestamps, trade cursors and Workshop revisions remain explicit. Mutations never replay, including GET StartTrade and GET Delete. See [P2 contracts and boundaries](https://github.com/houseme/steam-api-web/blob/main/docs/p2.md) for encoding, permissions and outcome checks.
 
 Publisher keys default to Valve's recommended `partner.steam-api.com` host, which requires a Publisher key for **every
 request**, including otherwise anonymous methods. Anonymous clients and User keys default to `api.steampowered.com`.
@@ -266,7 +285,7 @@ checks cover bilingual links, licensing, reference inventory, and the AWS-LC dep
 The [transport review and codec measurements](https://github.com/houseme/steam-api-web/blob/main/docs/performance.md)
 record the 0.2 refactor and its reproducible offline benchmarks.
 
-Version 0.2.0 implements the 39 P1 request bindings and local contract tests. Published response schemas have types; undocumented results explicitly retain raw JSON. Credentialed integration and production validation remain separate.
+Version 0.3.0 implements all 66 P2 request bindings and local contract tests. Published response schemas have types; undocumented results explicitly retain raw JSON. Credentialed integration and production validation remain separate.
 
 The [complete roadmap](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap.md) inventories all **33 documented Web API interfaces**, their documented method
 signatures, and the `steamworks-rs` source modules. Planned versions are sequencing proposals, not release dates or
