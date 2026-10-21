@@ -300,7 +300,7 @@ impl Cloud<'_> {
         self.0
             .call(
                 Endpoint::get("ICloudService/EnumerateUserFiles/v1/", Access::Anonymous)
-                    .steam_result(),
+                    .cloud_json(),
                 oauth_params(token, request)?,
                 &["response"],
             )
@@ -333,7 +333,7 @@ impl Cloud<'_> {
         self.0
             .call(
                 Endpoint::post("ICloudService/BeginAppUploadBatch/v1/", Access::Anonymous)
-                    .steam_result(),
+                    .cloud_json(),
                 oauth_params(token, request)?,
                 &["response"],
             )
@@ -364,8 +364,7 @@ impl Cloud<'_> {
         }
         self.0
             .call(
-                Endpoint::post("ICloudService/BeginHTTPUpload/v1/", Access::Anonymous)
-                    .steam_result(),
+                Endpoint::post("ICloudService/BeginHTTPUpload/v1/", Access::Anonymous).cloud_json(),
                 oauth_params(token, request)?,
                 &["response"],
             )
@@ -384,7 +383,7 @@ impl Cloud<'_> {
         self.0
             .call(
                 Endpoint::post("ICloudService/CommitHTTPUpload/v1/", Access::Anonymous)
-                    .steam_result(),
+                    .cloud_json(),
                 oauth_params(token, request)?,
                 &["response"],
             )
@@ -407,7 +406,7 @@ impl Cloud<'_> {
                     "ICloudService/CompleteAppUploadBatch/v1/",
                     Access::Anonymous,
                 )
-                .empty_steam_result(),
+                .cloud_acknowledgement(),
                 oauth_params(token, request)?,
                 &[],
             )
@@ -424,7 +423,8 @@ impl Cloud<'_> {
         validate_file(request.appid, request.filename)?;
         self.0
             .call(
-                Endpoint::post("ICloudService/Delete/v1/", Access::Anonymous).empty_steam_result(),
+                Endpoint::post("ICloudService/Delete/v1/", Access::Anonymous)
+                    .cloud_acknowledgement(),
                 oauth_params(token, request)?,
                 &[],
             )

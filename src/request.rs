@@ -3,7 +3,7 @@
 // Licensed under the Apache License, Version 2.0.
 // See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
-use crate::{Error, Result};
+use crate::{Error, Result, SteamId, response::ResponsePolicy};
 use serde::Serialize;
 use std::io;
 
@@ -22,34 +22,13 @@ pub(crate) enum Operation {
     Post,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub(crate) enum BodyPolicy {
-    Json,
-    EmptyCreated,
-    SteamResultJson,
-    SteamResultEmpty,
-}
-
-impl BodyPolicy {
-    pub const fn requires_steam_result(self) -> bool {
-        matches!(self, Self::SteamResultJson | Self::SteamResultEmpty)
-    }
-
-    pub const fn allows_empty(self, status: u16) -> bool {
-        matches!(
-            (self, status),
-            (Self::EmptyCreated, 201) | (Self::SteamResultEmpty, 200)
-        )
-    }
-}
-
 /// Only fixed internal paths may reach the transport.
 #[derive(Clone, Copy)]
 pub(crate) struct Endpoint {
     pub path: &'static str,
     pub access: Access,
     pub operation: Operation,
-    pub body: BodyPolicy,
+    pub response: ResponsePolicy,
 }
 
 impl Endpoint {
@@ -70,26 +49,26 @@ impl Endpoint {
             path,
             access,
             operation,
-            body: BodyPolicy::Json,
+            response: ResponsePolicy::Json,
         }
     }
 
     /// Only HTTP 201 may omit JSON when mobile confirmation is pending.
     pub const fn allow_empty_created(mut self) -> Self {
-        self.body = BodyPolicy::EmptyCreated;
+        self.response = ResponsePolicy::BuildConfirmation;
         self
     }
 
     /// Cloud calls require an explicit successful Steam result header and JSON.
-    pub const fn steam_result(mut self) -> Self {
-        self.body = BodyPolicy::SteamResultJson;
+    pub const fn cloud_json(mut self) -> Self {
+        self.response = ResponsePolicy::CloudJson;
         self
     }
 
     /// Bodyless Cloud methods require a successful result header before HTTP 200
     /// can represent success without JSON.
-    pub const fn empty_steam_result(mut self) -> Self {
-        self.body = BodyPolicy::SteamResultEmpty;
+    pub const fn cloud_acknowledgement(mut self) -> Self {
+        self.response = ResponsePolicy::CloudAcknowledgement;
         self
     }
 }
@@ -102,13 +81,14 @@ impl Params {
         Self(String::with_capacity(128))
     }
 
-    pub fn with(mut self, name: &str, value: impl ToString) -> Self {
+    pub fn with(mut self, name: &str, value: impl FormValue) -> Self {
         self.push(name, value);
         self
     }
 
-    pub fn push(&mut self, name: &str, value: impl ToString) {
-        self.push_bytes(name, value.to_string().as_bytes());
+    pub fn push(&mut self, name: &str, value: impl FormValue) {
+        self.key(name);
+        value.encode(&mut self.0);
     }
 
     pub fn push_bytes(&mut self, name: &str, value: &[u8]) {
@@ -160,9 +140,7 @@ fn component(output: &mut String, bytes: &[u8]) {
     const HEX: &[u8; 16] = b"0123456789ABCDEF";
     for &byte in bytes {
         match byte {
-            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'*' => {
-                output.push(char::from(byte))
-            }
+            byte if unescaped(byte) => output.push(char::from(byte)),
             b' ' => output.push('+'),
             _ => {
                 output.push('%');
@@ -173,10 +151,101 @@ fn component(output: &mut String, bytes: &[u8]) {
     }
 }
 
+fn unescaped(byte: u8) -> bool {
+    matches!(byte, b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'*')
+}
+
+/// Only internal wire scalars implement this trait. Text is borrowed and integer
+/// formatting uses a stack buffer, so values need no temporary String.
+pub(crate) trait FormValue {
+    fn encode(&self, output: &mut String);
+}
+
+impl FormValue for str {
+    fn encode(&self, output: &mut String) {
+        if let Some(index) = self.bytes().position(|byte| !unescaped(byte)) {
+            // This prefix contains only ASCII, so index is a UTF-8 boundary.
+            output.push_str(&self[..index]);
+            component(output, &self.as_bytes()[index..]);
+        } else {
+            output.push_str(self);
+        }
+    }
+}
+
+impl FormValue for String {
+    fn encode(&self, output: &mut String) {
+        self.as_str().encode(output);
+    }
+}
+
+impl<T: FormValue + ?Sized> FormValue for &T {
+    fn encode(&self, output: &mut String) {
+        T::encode(self, output);
+    }
+}
+
+impl FormValue for bool {
+    fn encode(&self, output: &mut String) {
+        output.push_str(if *self { "true" } else { "false" });
+    }
+}
+
+impl FormValue for SteamId {
+    fn encode(&self, output: &mut String) {
+        self.raw().encode(output);
+    }
+}
+
+macro_rules! integer_values {
+    ($($integer:ty),+ $(,)?) => {$(
+        impl FormValue for $integer {
+            fn encode(&self, output: &mut String) {
+                output.push_str(itoa::Buffer::new().format(*self));
+            }
+        }
+    )+};
+}
+
+integer_values!(
+    u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize
+);
+
 #[cfg(test)]
 mod tests {
     #![allow(clippy::unwrap_used)]
     use super::*;
+
+    #[test]
+    fn scalar_wire_values_match_the_standard_encoder_at_integer_extremes() {
+        let owned = "owned +&=%/中文\0".to_owned();
+        let id = SteamId(u64::MAX);
+        let actual = Params::new()
+            .with("text", "borrowed +&=%/中文\0")
+            .with("owned", &owned)
+            .with("id", id)
+            .with("zero", 0u8)
+            .with("unsigned", u128::MAX)
+            .with("signed", i128::MIN)
+            .with("isize", isize::MIN)
+            .with("usize", usize::MAX)
+            .with("true", true)
+            .with("false", false)
+            .finish();
+        let expected = url::form_urlencoded::Serializer::new(String::new())
+            .append_pair("text", "borrowed +&=%/中文\0")
+            .append_pair("owned", &owned)
+            .append_pair("id", &id.to_string())
+            .append_pair("zero", "0")
+            .append_pair("unsigned", &u128::MAX.to_string())
+            .append_pair("signed", &i128::MIN.to_string())
+            .append_pair("isize", &isize::MIN.to_string())
+            .append_pair("usize", &usize::MAX.to_string())
+            .append_pair("true", "true")
+            .append_pair("false", "false")
+            .finish();
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn service_json_preserves_escaping_unsigned_ids_and_field_types() {

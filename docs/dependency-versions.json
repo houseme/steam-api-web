@@ -19,6 +19,13 @@
     "source": "https://crates.io/api/v1/crates/httpdate",
     "status": "current"
   },
+  "itoa": {
+    "latest_including_prerelease": "1.0.18",
+    "latest_rust_version": "1.68",
+    "manifest_minimum": "1.0.18",
+    "source": "https://crates.io/api/v1/crates/itoa",
+    "status": "current"
+  },
   "reqwest": {
     "latest_including_prerelease": "0.13.5",
     "latest_rust_version": "1.85.0",

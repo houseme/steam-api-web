@@ -4,8 +4,84 @@
 // See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 use crate::{Error, Result, user_auth::OpaqueResponse};
+use reqwest::header::HeaderMap;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
+
+/// Complete endpoint response contracts, kept together with their decoder.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum ResponsePolicy {
+    Json,
+    BuildConfirmation,
+    CloudJson,
+    CloudAcknowledgement,
+}
+
+impl ResponsePolicy {
+    fn allows_empty(self, status: u16) -> bool {
+        matches!(
+            (self, status),
+            (Self::BuildConfirmation, 201) | (Self::CloudAcknowledgement, 200)
+        )
+    }
+
+    pub fn parse(self, endpoint: &'static str, status: u16, bytes: &[u8]) -> Result<Response> {
+        if self == Self::CloudAcknowledgement && (!self.allows_empty(status) || !bytes.is_empty()) {
+            return Err(Error::Decode {
+                endpoint,
+                line: 0,
+                column: 0,
+            });
+        }
+        let payload = if bytes.is_empty() && self.allows_empty(status) {
+            Value::Null
+        } else {
+            let value: Value =
+                serde_json::from_slice(bytes).map_err(|error| Error::decode(endpoint, error))?;
+            if !value.is_object() {
+                return Err(Error::Decode {
+                    endpoint,
+                    line: 0,
+                    column: 0,
+                });
+            }
+            value
+        };
+        Ok(Response { status, payload })
+    }
+
+    pub fn validate_headers(self, endpoint: &'static str, headers: &HeaderMap) -> Result<()> {
+        let invalid = || Error::Decode {
+            endpoint,
+            line: 0,
+            column: 0,
+        };
+        let mut values = headers.get_all("x-eresult").iter();
+        let Some(value) = values.next() else {
+            return if matches!(self, Self::CloudJson | Self::CloudAcknowledgement) {
+                Err(invalid())
+            } else {
+                Ok(())
+            };
+        };
+        if values.next().is_some() {
+            return Err(invalid());
+        }
+        let code = value
+            .to_str()
+            .ok()
+            .and_then(|text| text.trim().parse::<i64>().ok())
+            .ok_or_else(invalid)?;
+        if code == 1 {
+            Ok(())
+        } else {
+            Err(Error::Api {
+                endpoint,
+                code: Some(code),
+            })
+        }
+    }
+}
 
 const ERROR_ENVELOPES: [&str; 4] = ["response", "params", "playerstats", "result"];
 
@@ -42,7 +118,7 @@ impl Response {
                 check_api(endpoint, &payload)?;
             }
         }
-        // Owned deserialization moves strings and arrays instead of cloning them.
+        // Owned deserialization can move strings into typed fields.
         // Only coordinates from an untrusted serde error may leave this layer.
         serde_json::from_value(payload)
             .map(|response| (self.status, response))
@@ -130,10 +206,69 @@ fn as_i64(value: &Value) -> Option<i64> {
 mod tests {
     #![allow(clippy::unwrap_used)]
     use super::*;
+    use reqwest::header::HeaderValue;
     use serde::Deserialize;
     use serde_json::json;
 
     const ENDPOINT: &str = "test/response/v1/";
+
+    #[test]
+    fn response_contracts_distinguish_cloud_acknowledgements_and_build_confirmation() {
+        for policy in [
+            ResponsePolicy::Json,
+            ResponsePolicy::BuildConfirmation,
+            ResponsePolicy::CloudJson,
+            ResponsePolicy::CloudAcknowledgement,
+        ] {
+            for status in [200, 201, 204] {
+                let expected = (policy == ResponsePolicy::BuildConfirmation && status == 201)
+                    || (policy == ResponsePolicy::CloudAcknowledgement && status == 200);
+                assert_eq!(policy.parse(ENDPOINT, status, b"").is_ok(), expected);
+            }
+            assert_eq!(
+                policy.parse(ENDPOINT, 200, b"{}").is_ok(),
+                policy != ResponsePolicy::CloudAcknowledgement
+            );
+            for bytes in [&b"null"[..], &b"[]"[..], &b"private invalid JSON"[..]] {
+                assert!(matches!(
+                    policy.parse(ENDPOINT, 200, bytes),
+                    Err(Error::Decode { .. })
+                ));
+            }
+        }
+    }
+
+    #[test]
+    fn steam_result_headers_are_checked_before_cloud_body_policies() {
+        let optional = ResponsePolicy::Json;
+        let required = ResponsePolicy::CloudAcknowledgement;
+        let mut headers = HeaderMap::new();
+        assert!(optional.validate_headers(ENDPOINT, &headers).is_ok());
+        assert!(matches!(
+            required.validate_headers(ENDPOINT, &headers),
+            Err(Error::Decode { .. })
+        ));
+        for (value, success) in [("1", true), (" 1 ", true), ("2", false), ("OK", false)] {
+            headers.insert("x-eresult", HeaderValue::from_static(value));
+            assert_eq!(
+                required.validate_headers(ENDPOINT, &headers).is_ok(),
+                success
+            );
+        }
+        headers.insert("x-eresult", HeaderValue::from_static("2"));
+        assert!(matches!(
+            optional.validate_headers(ENDPOINT, &headers),
+            Err(Error::Api { code: Some(2), .. })
+        ));
+        headers.append("x-eresult", HeaderValue::from_static("1"));
+        assert!(matches!(
+            required.validate_headers(ENDPOINT, &headers),
+            Err(Error::Decode { .. })
+        ));
+        assert!(required.allows_empty(200));
+        assert!(!required.allows_empty(201));
+        assert!(!ResponsePolicy::CloudJson.allows_empty(200));
+    }
 
     #[test]
     fn object_result_envelopes_preserve_success_and_reject_nested_failures() {

@@ -38,7 +38,6 @@ use reqwest::{
 };
 use rustls_platform_verifier::BuilderVerifierExt;
 use serde::de::DeserializeOwned;
-use serde_json::Value;
 use std::{
     fmt,
     net::IpAddr,
@@ -675,7 +674,9 @@ impl SteamClient {
                 retry_after,
             });
         }
-        check_steam_result(endpoint, response.headers())?;
+        endpoint
+            .response
+            .validate_headers(endpoint.path, response.headers())?;
         let limit = self.inner.max_response_bytes;
         if response
             .content_length()
@@ -697,57 +698,9 @@ impl SteamClient {
             }
             bytes.extend_from_slice(&chunk);
         }
-        if bytes.is_empty() && endpoint.body.allows_empty(status.as_u16()) {
-            return Ok(Response {
-                status: status.as_u16(),
-                payload: Value::Null,
-            });
-        }
-        let value: Value =
-            serde_json::from_slice(&bytes).map_err(|error| Error::decode(endpoint.path, error))?;
-        if !value.is_object() {
-            return Err(Error::Decode {
-                endpoint: endpoint.path,
-                line: 0,
-                column: 0,
-            });
-        }
-        Ok(Response {
-            status: status.as_u16(),
-            payload: value,
-        })
-    }
-}
-
-fn check_steam_result(endpoint: Endpoint, headers: &HeaderMap) -> Result<()> {
-    let invalid = || Error::Decode {
-        endpoint: endpoint.path,
-        line: 0,
-        column: 0,
-    };
-    let mut values = headers.get_all("x-eresult").iter();
-    let Some(value) = values.next() else {
-        return if endpoint.body.requires_steam_result() {
-            Err(invalid())
-        } else {
-            Ok(())
-        };
-    };
-    if values.next().is_some() {
-        return Err(invalid());
-    }
-    let code = value
-        .to_str()
-        .ok()
-        .and_then(|text| text.trim().parse::<i64>().ok())
-        .ok_or_else(invalid)?;
-    if code == 1 {
-        Ok(())
-    } else {
-        Err(Error::Api {
-            endpoint: endpoint.path,
-            code: Some(code),
-        })
+        endpoint
+            .response
+            .parse(endpoint.path, status.as_u16(), &bytes)
     }
 }
 
@@ -777,34 +730,6 @@ fn jitter(cap: Duration) -> Result<Duration> {
 mod tests {
     #![allow(clippy::unwrap_used)]
     use super::*;
-    #[test]
-    fn steam_result_headers_are_checked_before_cloud_body_policies() {
-        let optional = Endpoint::get("test/optional/v1/", Access::Anonymous);
-        let required = optional.empty_steam_result();
-        let mut headers = HeaderMap::new();
-        assert!(check_steam_result(optional, &headers).is_ok());
-        assert!(matches!(
-            check_steam_result(required, &headers),
-            Err(Error::Decode { .. })
-        ));
-        for (value, success) in [("1", true), (" 1 ", true), ("2", false), ("OK", false)] {
-            headers.insert("x-eresult", HeaderValue::from_static(value));
-            assert_eq!(check_steam_result(required, &headers).is_ok(), success);
-        }
-        headers.insert("x-eresult", HeaderValue::from_static("2"));
-        assert!(matches!(
-            check_steam_result(optional, &headers),
-            Err(Error::Api { code: Some(2), .. })
-        ));
-        headers.append("x-eresult", HeaderValue::from_static("1"));
-        assert!(matches!(
-            check_steam_result(required, &headers),
-            Err(Error::Decode { .. })
-        ));
-        assert!(required.body.allows_empty(200));
-        assert!(!required.body.allows_empty(201));
-        assert!(!optional.steam_result().body.allows_empty(200));
-    }
     #[test]
     fn retry_after_accepts_seconds_dates_and_past_dates() {
         assert_eq!(

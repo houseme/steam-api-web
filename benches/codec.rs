@@ -25,6 +25,7 @@ use error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use std::{hint::black_box, time::Instant};
+use steam_api_web::SteamId;
 
 // Match the public wrapper's representation while allowing the included private
 // decoder to construct it. This wrapper does no work beyond owning the Value.
