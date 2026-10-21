@@ -46,9 +46,9 @@ jobs:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
       - name: Build all targets
-        run: cargo build --all-targets --all-features --locked
+        run: cargo build --workspace --all-targets --all-features --locked
       - name: Test protocol, resilience and documentation
-        run: cargo test --all-features --locked
+        run: cargo test --workspace --all-features --locked
 
   lint:
     name: Rust, repository and workflow checks
@@ -62,15 +62,12 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
       - run: cargo fmt --all --check
-      - run: cargo clippy --all-targets --all-features --locked -- -D warnings
+      - run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
       - name: Check bilingual documentation, license headers and TLS graph
-        run: python3 scripts/check_repository.py
-      - name: Test release guards without credentials or network
-        run: python3 -m unittest discover -s scripts/tests -v
+        run: cargo xtask check-repository
+      - name: Check published package contents
+        run: cargo xtask release verify-package
       - name: Validate GitHub Actions workflows
         run: go run github.com/rhysd/actionlint/cmd/actionlint@latest
 
@@ -99,22 +96,17 @@ jobs:
           ref: ${{ inputs.revision || github.sha }}
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.x"
-      - run: cargo package --locked --registry crates-io
-      - name: Record package checksum
+      - run: cargo package --package steam-api-web --locked --registry crates-io
+      - name: Verify archive policy and record package checksum
         run: |
-          python3 <<'PY'
-          import hashlib
-          from pathlib import Path
-          archives = list(Path("target/package").glob("steam-api-web-*.crate"))
-          if len(archives) != 1:
-              raise SystemExit("expected exactly one crate archive")
-          archive = archives[0]
-          digest = hashlib.sha256(archive.read_bytes()).hexdigest()
-          archive.with_name("SHA256SUMS").write_text(digest + "  " + archive.name + "\n", encoding="utf-8")
-          PY
+          set -euo pipefail
+          archives=(target/package/steam-api-web-*.crate)
+          if [ "${#archives[@]}" -ne 1 ] || [ ! -f "${archives[0]}" ]; then
+            echo "::error::Expected exactly one crate archive."
+            exit 1
+          fi
+          cargo xtask release verify-package --archive "${archives[0]}"
+          cargo xtask release checksum --archive "${archives[0]}" --output target/package/SHA256SUMS
       - uses: actions/upload-artifact@v7
         with:
           name: steam-api-web-package

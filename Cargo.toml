@@ -15,6 +15,20 @@ homepage = "https://github.com/houseme/steam-api-web"
 documentation = "https://docs.rs/steam-api-web"
 keywords = ["steam", "steamworks", "webapi", "async"]
 categories = ["api-bindings", "games", "web-programming::http-client"]
+include = [
+    "/src/**",
+    "/examples/**",
+    "/README.md",
+    "/README_ZH.md",
+    "/CHANGELOG.md",
+    "/CHANGELOG_ZH.md",
+    "/LICENSE",
+]
+
+[workspace]
+members = ["xtask"]
+default-members = ["."]
+resolver = "3"
 
 [dependencies]
 aws-lc-rs = "1.18.2"
