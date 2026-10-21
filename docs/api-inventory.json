@@ -41,11 +41,11 @@
       "commit_sha": "d8114185613be4dbfe4897c8484d0b2670fd3cd7",
       "tree_sha": "4c43e2a86462b070f9c92758123efac23efb6318"
     },
-    "binding_version": "0.4.0",
-    "bound_interfaces": 30,
-    "bound_methods": 161,
-    "binding_validation": "Local protocol contracts; live OAuth and Publisher operations remain unverified.",
-    "bound_explicit_methods": 151,
+    "binding_version": "0.5.0",
+    "bound_interfaces": 33,
+    "bound_methods": 167,
+    "binding_validation": "Local protocol contracts only; live credentials, remote permissions, financial reconciliation, and production behavior remain unverified.",
+    "bound_explicit_methods": 157,
     "bound_inherited_methods": 10
   },
   "interfaces": [
@@ -56,12 +56,15 @@
         {
           "name": "PostGameDataFrame",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "post_game_data_frame",
+          "path": "IBroadcastService/PostGameDataFrame/v1/"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P4",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "broadcast"
     },
     {
       "interface": "ICheatReportingService",
@@ -71,43 +74,50 @@
           "name": "ReportPlayerCheating",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "report_player_cheating"
+          "rust_method": "report_player_cheating",
+          "path": "ICheatReportingService/ReportPlayerCheating/v1/"
         },
         {
           "name": "RequestPlayerGameBan",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "request_player_game_ban"
+          "rust_method": "request_player_game_ban",
+          "path": "ICheatReportingService/RequestPlayerGameBan/v1/"
         },
         {
           "name": "RemovePlayerGameBan",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "remove_player_game_ban"
+          "rust_method": "remove_player_game_ban",
+          "path": "ICheatReportingService/RemovePlayerGameBan/v1/"
         },
         {
           "name": "GetCheatingReports",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_cheating_reports"
+          "rust_method": "get_cheating_reports",
+          "path": "ICheatReportingService/GetCheatingReports/v1/"
         },
         {
           "name": "RequestVacStatusForUser",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "request_vac_status_for_user"
+          "rust_method": "request_vac_status_for_user",
+          "path": "ICheatReportingService/RequestVacStatusForUser/v1/"
         },
         {
           "name": "StartSecureMultiplayerSession",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "start_secure_multiplayer_session"
+          "rust_method": "start_secure_multiplayer_session",
+          "path": "ICheatReportingService/StartSecureMultiplayerSession/v1/"
         },
         {
           "name": "EndSecureMultiplayerSession",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "end_secure_multiplayer_session"
+          "rust_method": "end_secure_multiplayer_session",
+          "path": "ICheatReportingService/EndSecureMultiplayerSession/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -123,37 +133,43 @@
           "name": "EnumerateUserFiles",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "enumerate_user_files"
+          "rust_method": "enumerate_user_files",
+          "path": "ICloudService/EnumerateUserFiles/v1/"
         },
         {
           "name": "BeginAppUploadBatch",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "begin_app_upload_batch"
+          "rust_method": "begin_app_upload_batch",
+          "path": "ICloudService/BeginAppUploadBatch/v1/"
         },
         {
           "name": "CompleteAppUploadBatch",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "complete_app_upload_batch"
+          "rust_method": "complete_app_upload_batch",
+          "path": "ICloudService/CompleteAppUploadBatch/v1/"
         },
         {
           "name": "BeginHTTPUpload",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "begin_http_upload"
+          "rust_method": "begin_http_upload",
+          "path": "ICloudService/BeginHTTPUpload/v1/"
         },
         {
           "name": "CommitHTTPUpload",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "commit_http_upload"
+          "rust_method": "commit_http_upload",
+          "path": "ICloudService/CommitHTTPUpload/v1/"
         },
         {
           "name": "Delete",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "delete"
+          "rust_method": "delete",
+          "path": "ICloudService/Delete/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -169,25 +185,29 @@
           "name": "GetMarketEligibility",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_market_eligibility"
+          "rust_method": "get_market_eligibility",
+          "path": "IEconMarketService/GetMarketEligibility/v1/"
         },
         {
           "name": "CancelAppListingsForUser",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "cancel_app_listings_for_user"
+          "rust_method": "cancel_app_listings_for_user",
+          "path": "IEconMarketService/CancelAppListingsForUser/v1/"
         },
         {
           "name": "GetAssetID",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_asset_id"
+          "rust_method": "get_asset_id",
+          "path": "IEconMarketService/GetAssetID/v1/"
         },
         {
           "name": "GetPopular",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_popular"
+          "rust_method": "get_popular",
+          "path": "IEconMarketService/GetPopular/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -203,43 +223,50 @@
           "name": "GetTradeHistory",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_trade_history"
+          "rust_method": "get_trade_history",
+          "path": "IEconService/GetTradeHistory/v1/"
         },
         {
           "name": "FlushInventoryCache",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "flush_inventory_cache"
+          "rust_method": "flush_inventory_cache",
+          "path": "IEconService/FlushInventoryCache/v1/"
         },
         {
           "name": "FlushAssetAppearanceCache",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "flush_asset_appearance_cache"
+          "rust_method": "flush_asset_appearance_cache",
+          "path": "IEconService/FlushAssetAppearanceCache/v1/"
         },
         {
           "name": "FlushContextCache",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "flush_context_cache"
+          "rust_method": "flush_context_cache",
+          "path": "IEconService/FlushContextCache/v1/"
         },
         {
           "name": "GetTradeOffers",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_trade_offers"
+          "rust_method": "get_trade_offers",
+          "path": "IEconService/GetTradeOffers/v1/"
         },
         {
           "name": "GetTradeOffer",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_trade_offer"
+          "rust_method": "get_trade_offer",
+          "path": "IEconService/GetTradeOffer/v1/"
         },
         {
           "name": "GetTradeOffersSummary",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_trade_offers_summary"
+          "rust_method": "get_trade_offers_summary",
+          "path": "IEconService/GetTradeOffersSummary/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -255,32 +282,37 @@
           "name": "GetHistoryCommandDetails",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_history_command_details"
+          "rust_method": "get_history_command_details",
+          "path": "IGameInventory/GetHistoryCommandDetails/v1/"
         },
         {
           "name": "GetUserHistory",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_user_history"
+          "rust_method": "get_user_history",
+          "path": "IGameInventory/GetUserHistory/v1/"
         },
         {
           "name": "HistoryExecuteCommands",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "history_execute_commands"
+          "rust_method": "history_execute_commands",
+          "path": "IGameInventory/HistoryExecuteCommands/v1/"
         },
         {
           "name": "SupportGetAssetHistory",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "support_get_asset_history"
+          "rust_method": "support_get_asset_history",
+          "path": "IGameInventory/SupportGetAssetHistory/v1/"
         },
         {
           "name": "UpdateItemDefs",
           "version": 1,
           "http_method": "POST",
           "rust_method": "update_item_defs",
-          "path_version": "v0001"
+          "path_version": "v0001",
+          "path": "IGameInventory/UpdateItemDefs/v0001"
         }
       ],
       "discovery": "documented_endpoints",
@@ -296,43 +328,50 @@
           "name": "CreateSession",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "create_session"
+          "rust_method": "create_session",
+          "path": "IGameNotificationsService/CreateSession/v1/"
         },
         {
           "name": "UpdateSession",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "update_session"
+          "rust_method": "update_session",
+          "path": "IGameNotificationsService/UpdateSession/v1/"
         },
         {
           "name": "EnumerateSessionsForApp",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "enumerate_sessions_for_app"
+          "rust_method": "enumerate_sessions_for_app",
+          "path": "IGameNotificationsService/EnumerateSessionsForApp/v1/"
         },
         {
           "name": "GetSessionDetailsForApp",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_session_details_for_app"
+          "rust_method": "get_session_details_for_app",
+          "path": "IGameNotificationsService/GetSessionDetailsForApp/v1/"
         },
         {
           "name": "RequestNotifications",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "request_notifications"
+          "rust_method": "request_notifications",
+          "path": "IGameNotificationsService/RequestNotifications/v1/"
         },
         {
           "name": "DeleteSession",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "delete_session"
+          "rust_method": "delete_session",
+          "path": "IGameNotificationsService/DeleteSession/v1/"
         },
         {
           "name": "DeleteSessionBatch",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "delete_session_batch"
+          "rust_method": "delete_session_batch",
+          "path": "IGameNotificationsService/DeleteSessionBatch/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -347,47 +386,65 @@
         {
           "name": "GetAccountList",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_account_list",
+          "path": "IGameServersService/GetAccountList/v1/"
         },
         {
           "name": "CreateAccount",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "create_account",
+          "path": "IGameServersService/CreateAccount/v1/"
         },
         {
           "name": "SetMemo",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "set_memo",
+          "path": "IGameServersService/SetMemo/v1/"
         },
         {
           "name": "ResetLoginToken",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "reset_login_token",
+          "path": "IGameServersService/ResetLoginToken/v1/"
         },
         {
           "name": "DeleteAccount",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "delete_account",
+          "path": "IGameServersService/DeleteAccount/v1/"
         },
         {
           "name": "GetAccountPublicInfo",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_account_public_info",
+          "path": "IGameServersService/GetAccountPublicInfo/v1/"
         },
         {
           "name": "QueryLoginToken",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "query_login_token",
+          "path": "IGameServersService/QueryLoginToken/v1/"
         },
         {
           "name": "GetServerSteamIDsByIP",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_server_steam_ids_by_ip",
+          "path": "IGameServersService/GetServerSteamIDsByIP/v1/"
         },
         {
           "name": "GetServerIPsBySteamID",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_server_ips_by_steam_id",
+          "path": "IGameServersService/GetServerIPsBySteamID/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -403,61 +460,71 @@
           "name": "AddItem",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "add_item"
+          "rust_method": "add_item",
+          "path": "IInventoryService/AddItem/v1/"
         },
         {
           "name": "AddPromoItem",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "add_promo_item"
+          "rust_method": "add_promo_item",
+          "path": "IInventoryService/AddPromoItem/v1/"
         },
         {
           "name": "ConsumeItem",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "consume_item"
+          "rust_method": "consume_item",
+          "path": "IInventoryService/ConsumeItem/v1/"
         },
         {
           "name": "ExchangeItem",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "exchange_item"
+          "rust_method": "exchange_item",
+          "path": "IInventoryService/ExchangeItem/v1/"
         },
         {
           "name": "GetInventory",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_inventory"
+          "rust_method": "get_inventory",
+          "path": "IInventoryService/GetInventory/v1/"
         },
         {
           "name": "GetItemDefs",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_item_defs"
+          "rust_method": "get_item_defs",
+          "path": "IInventoryService/GetItemDefs/v1/"
         },
         {
           "name": "GetPriceSheet",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_price_sheet"
+          "rust_method": "get_price_sheet",
+          "path": "IInventoryService/GetPriceSheet/v1/"
         },
         {
           "name": "Consolidate",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "consolidate"
+          "rust_method": "consolidate",
+          "path": "IInventoryService/Consolidate/v1/"
         },
         {
           "name": "GetQuantity",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_quantity"
+          "rust_method": "get_quantity",
+          "path": "IInventoryService/GetQuantity/v1/"
         },
         {
           "name": "ModifyItems",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "modify_items"
+          "rust_method": "modify_items",
+          "path": "IInventoryService/ModifyItems/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -473,19 +540,22 @@
           "name": "CreateLobby",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "create_lobby"
+          "rust_method": "create_lobby",
+          "path": "ILobbyMatchmakingService/CreateLobby/v1/"
         },
         {
           "name": "RemoveUserFromLobby",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "remove_user_from_lobby"
+          "rust_method": "remove_user_from_lobby",
+          "path": "ILobbyMatchmakingService/RemoveUserFromLobby/v1/"
         },
         {
           "name": "GetLobbyData",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_lobby_data"
+          "rust_method": "get_lobby_data",
+          "path": "ILobbyMatchmakingService/GetLobbyData/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -500,22 +570,29 @@
         {
           "name": "GetChangedDatesForPartner",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_changed_dates_for_partner",
+          "path": "IPartnerFinancialsService/GetChangedDatesForPartner/v001/"
         },
         {
           "name": "GetDetailedSales",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_detailed_sales",
+          "path": "IPartnerFinancialsService/GetDetailedSales/v001/"
         },
         {
           "name": "GetAppWishlistReporting",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_app_wishlist_reporting",
+          "path": "IPartnerFinancialsService/GetAppWishlistReporting/v001/"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P4",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "partner_financials"
     },
     {
       "interface": "IPlayerService",
@@ -524,32 +601,44 @@
         {
           "name": "GetRecentlyPlayedGames",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_recently_played_games",
+          "path": "IPlayerService/GetRecentlyPlayedGames/v1/"
         },
         {
           "name": "GetSingleGamePlaytime",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_single_game_playtime",
+          "path": "IPlayerService/GetSingleGamePlaytime/v1/"
         },
         {
           "name": "GetOwnedGames",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_owned_games",
+          "path": "IPlayerService/GetOwnedGames/v1/"
         },
         {
           "name": "GetSteamLevel",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_steam_level",
+          "path": "IPlayerService/GetSteamLevel/v1/"
         },
         {
           "name": "GetBadges",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_badges",
+          "path": "IPlayerService/GetBadges/v1/"
         },
         {
           "name": "GetCommunityBadgeProgress",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_community_badge_progress",
+          "path": "IPlayerService/GetCommunityBadgeProgress/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -565,13 +654,15 @@
           "name": "GetAllApprovalRequests",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_all_approval_requests"
+          "rust_method": "get_all_approval_requests",
+          "path": "IPublishedFileModerationService/GetAllApprovalRequests/v1/"
         },
         {
           "name": "ProcessApprovalRequest",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "process_approval_request"
+          "rust_method": "process_approval_request",
+          "path": "IPublishedFileModerationService/ProcessApprovalRequest/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -587,43 +678,50 @@
           "name": "Delete",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "delete"
+          "rust_method": "delete",
+          "path": "IPublishedFileService/Delete/v1/"
         },
         {
           "name": "QueryFiles",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "query_files"
+          "rust_method": "query_files",
+          "path": "IPublishedFileService/QueryFiles/v1/"
         },
         {
           "name": "SetDeveloperMetadata",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "set_developer_metadata"
+          "rust_method": "set_developer_metadata",
+          "path": "IPublishedFileService/SetDeveloperMetadata/v1/"
         },
         {
           "name": "UpdateAppUGCBan",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "update_app_ugc_ban"
+          "rust_method": "update_app_ugc_ban",
+          "path": "IPublishedFileService/UpdateAppUGCBan/v1/"
         },
         {
           "name": "UpdateBanStatus",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "update_ban_status"
+          "rust_method": "update_ban_status",
+          "path": "IPublishedFileService/UpdateBanStatus/v1/"
         },
         {
           "name": "UpdateIncompatibleStatus",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "update_incompatible_status"
+          "rust_method": "update_incompatible_status",
+          "path": "IPublishedFileService/UpdateIncompatibleStatus/v1/"
         },
         {
           "name": "UpdateTags",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "update_tags"
+          "rust_method": "update_tags",
+          "path": "IPublishedFileService/UpdateTags/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -638,17 +736,22 @@
         {
           "name": "GetCurrentClientConnections",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_current_client_connections",
+          "path": "ISiteLicenseService/GetCurrentClientConnections/v1/"
         },
         {
           "name": "GetTotalPlaytime",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_total_playtime",
+          "path": "ISiteLicenseService/GetTotalPlaytime/v1/"
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P4",
-      "binding_status": "planned"
+      "binding_status": "bound_contract_tests_only",
+      "rust_module": "site_license"
     },
     {
       "interface": "ISteamApps",
@@ -657,52 +760,72 @@
         {
           "name": "GetAppBetas",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_app_betas",
+          "path": "ISteamApps/GetAppBetas/v1/"
         },
         {
           "name": "GetAppBuilds",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_app_builds",
+          "path": "ISteamApps/GetAppBuilds/v1/"
         },
         {
           "name": "GetAppDepotVersions",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_app_depot_versions",
+          "path": "ISteamApps/GetAppDepotVersions/v1/"
         },
         {
           "name": "GetAppList",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_app_list",
+          "path": "ISteamApps/GetAppList/v2/"
         },
         {
           "name": "GetPartnerAppListForWebAPIKey",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_partner_app_list_for_web_api_key",
+          "path": "ISteamApps/GetPartnerAppListForWebAPIKey/v2/"
         },
         {
           "name": "GetPlayersBanned",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_players_banned",
+          "path": "ISteamApps/GetPlayersBanned/v1/"
         },
         {
           "name": "GetServerList",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_server_list",
+          "path": "ISteamApps/GetServerList/v1/"
         },
         {
           "name": "GetServersAtAddress",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_servers_at_address",
+          "path": "ISteamApps/GetServersAtAddress/v1/"
         },
         {
           "name": "SetAppBuildLive",
           "version": 2,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "set_app_build_live",
+          "path": "ISteamApps/SetAppBuildLive/v2/"
         },
         {
           "name": "UpToDateCheck",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "up_to_date_check",
+          "path": "ISteamApps/UpToDateCheck/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -718,7 +841,8 @@
           "name": "ReportAbuse",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "report_abuse"
+          "rust_method": "report_abuse",
+          "path": "ISteamCommunity/ReportAbuse/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -734,49 +858,57 @@
           "name": "CanTrade",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "can_trade"
+          "rust_method": "can_trade",
+          "path": "ISteamEconomy/CanTrade/v1/"
         },
         {
           "name": "FinalizeAssetTransaction",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "finalize_asset_transaction"
+          "rust_method": "finalize_asset_transaction",
+          "path": "ISteamEconomy/FinalizeAssetTransaction/v1/"
         },
         {
           "name": "GetAssetClassInfo",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_asset_class_info"
+          "rust_method": "get_asset_class_info",
+          "path": "ISteamEconomy/GetAssetClassInfo/v1/"
         },
         {
           "name": "GetAssetPrices",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_asset_prices"
+          "rust_method": "get_asset_prices",
+          "path": "ISteamEconomy/GetAssetPrices/v1/"
         },
         {
           "name": "GetExportedAssetsForUser",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_exported_assets_for_user"
+          "rust_method": "get_exported_assets_for_user",
+          "path": "ISteamEconomy/GetExportedAssetsForUser/v1/"
         },
         {
           "name": "GetMarketPrices",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_market_prices"
+          "rust_method": "get_market_prices",
+          "path": "ISteamEconomy/GetMarketPrices/v1/"
         },
         {
           "name": "StartAssetTransaction",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "start_asset_transaction"
+          "rust_method": "start_asset_transaction",
+          "path": "ISteamEconomy/StartAssetTransaction/v1/"
         },
         {
           "name": "StartTrade",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "start_trade"
+          "rust_method": "start_trade",
+          "path": "ISteamEconomy/StartTrade/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -791,7 +923,9 @@
         {
           "name": "GetGameServerPlayerStatsForGame",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_game_server_player_stats_for_game",
+          "path": "ISteamGameServerStats/GetGameServerPlayerStatsForGame/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -806,37 +940,51 @@
         {
           "name": "DeleteLeaderboard",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "delete_leaderboard",
+          "path": "ISteamLeaderboards/DeleteLeaderboard/v1/"
         },
         {
           "name": "DeleteLeaderboardScore",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "delete_leaderboard_score",
+          "path": "ISteamLeaderboards/DeleteLeaderboardScore/v1/"
         },
         {
           "name": "FindOrCreateLeaderboard",
           "version": 2,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "find_or_create_leaderboard",
+          "path": "ISteamLeaderboards/FindOrCreateLeaderboard/v2/"
         },
         {
           "name": "GetLeaderboardEntries",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_leaderboard_entries",
+          "path": "ISteamLeaderboards/GetLeaderboardEntries/v1/"
         },
         {
           "name": "GetLeaderboardsForGame",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_leaderboards_for_game",
+          "path": "ISteamLeaderboards/GetLeaderboardsForGame/v2/"
         },
         {
           "name": "ResetLeaderboard",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "reset_leaderboard",
+          "path": "ISteamLeaderboards/ResetLeaderboard/v1/"
         },
         {
           "name": "SetLeaderboardScore",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "set_leaderboard_score",
+          "path": "ISteamLeaderboards/SetLeaderboardScore/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -852,61 +1000,71 @@
           "name": "AdjustAgreement",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "adjust_agreement"
+          "rust_method": "adjust_agreement",
+          "path": "ISteamMicroTxn/AdjustAgreement/v1/"
         },
         {
           "name": "CancelAgreement",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "cancel_agreement"
+          "rust_method": "cancel_agreement",
+          "path": "ISteamMicroTxn/CancelAgreement/v1/"
         },
         {
           "name": "FinalizeTxn",
           "version": 2,
           "http_method": "POST",
-          "rust_method": "finalize_txn"
+          "rust_method": "finalize_txn",
+          "path": "ISteamMicroTxn/FinalizeTxn/v2/"
         },
         {
           "name": "GetReport",
           "version": 5,
           "http_method": "GET",
-          "rust_method": "get_report"
+          "rust_method": "get_report",
+          "path": "ISteamMicroTxn/GetReport/v5/"
         },
         {
           "name": "GetUserAgreementInfo",
           "version": 2,
           "http_method": "GET",
-          "rust_method": "get_user_agreement_info"
+          "rust_method": "get_user_agreement_info",
+          "path": "ISteamMicroTxn/GetUserAgreementInfo/v2/"
         },
         {
           "name": "GetUserInfo",
           "version": 2,
           "http_method": "GET",
-          "rust_method": "get_user_info"
+          "rust_method": "get_user_info",
+          "path": "ISteamMicroTxn/GetUserInfo/v2/"
         },
         {
           "name": "InitTxn",
           "version": 3,
           "http_method": "POST",
-          "rust_method": "init_txn"
+          "rust_method": "init_txn",
+          "path": "ISteamMicroTxn/InitTxn/v3/"
         },
         {
           "name": "ProcessAgreement",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "process_agreement"
+          "rust_method": "process_agreement",
+          "path": "ISteamMicroTxn/ProcessAgreement/v1/"
         },
         {
           "name": "QueryTxn",
           "version": 3,
           "http_method": "GET",
-          "rust_method": "query_txn"
+          "rust_method": "query_txn",
+          "path": "ISteamMicroTxn/QueryTxn/v3/"
         },
         {
           "name": "RefundTxn",
           "version": 2,
           "http_method": "POST",
-          "rust_method": "refund_txn"
+          "rust_method": "refund_txn",
+          "path": "ISteamMicroTxn/RefundTxn/v2/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -923,70 +1081,80 @@
           "version": 1,
           "http_method": "POST",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "adjust_agreement"
+          "rust_method": "adjust_agreement",
+          "path": "ISteamMicroTxnSandbox/AdjustAgreement/v1/"
         },
         {
           "name": "CancelAgreement",
           "version": 1,
           "http_method": "POST",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "cancel_agreement"
+          "rust_method": "cancel_agreement",
+          "path": "ISteamMicroTxnSandbox/CancelAgreement/v1/"
         },
         {
           "name": "FinalizeTxn",
           "version": 2,
           "http_method": "POST",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "finalize_txn"
+          "rust_method": "finalize_txn",
+          "path": "ISteamMicroTxnSandbox/FinalizeTxn/v2/"
         },
         {
           "name": "GetReport",
           "version": 5,
           "http_method": "GET",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "get_report"
+          "rust_method": "get_report",
+          "path": "ISteamMicroTxnSandbox/GetReport/v5/"
         },
         {
           "name": "GetUserAgreementInfo",
           "version": 2,
           "http_method": "GET",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "get_user_agreement_info"
+          "rust_method": "get_user_agreement_info",
+          "path": "ISteamMicroTxnSandbox/GetUserAgreementInfo/v2/"
         },
         {
           "name": "GetUserInfo",
           "version": 2,
           "http_method": "GET",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "get_user_info"
+          "rust_method": "get_user_info",
+          "path": "ISteamMicroTxnSandbox/GetUserInfo/v2/"
         },
         {
           "name": "InitTxn",
           "version": 3,
           "http_method": "POST",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "init_txn"
+          "rust_method": "init_txn",
+          "path": "ISteamMicroTxnSandbox/InitTxn/v3/"
         },
         {
           "name": "ProcessAgreement",
           "version": 1,
           "http_method": "POST",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "process_agreement"
+          "rust_method": "process_agreement",
+          "path": "ISteamMicroTxnSandbox/ProcessAgreement/v1/"
         },
         {
           "name": "QueryTxn",
           "version": 3,
           "http_method": "GET",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "query_txn"
+          "rust_method": "query_txn",
+          "path": "ISteamMicroTxnSandbox/QueryTxn/v3/"
         },
         {
           "name": "RefundTxn",
           "version": 2,
           "http_method": "POST",
           "inherited_from": "ISteamMicroTxn",
-          "rust_method": "refund_txn"
+          "rust_method": "refund_txn",
+          "path": "ISteamMicroTxnSandbox/RefundTxn/v2/"
         }
       ],
       "discovery": "inherited_from_official_reference",
@@ -1001,12 +1169,16 @@
         {
           "name": "GetNewsForApp",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_news_for_app",
+          "path": "ISteamNews/GetNewsForApp/v2/"
         },
         {
           "name": "GetNewsForAppAuthed",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_news_for_app_authed",
+          "path": "ISteamNews/GetNewsForAppAuthed/v2/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1022,25 +1194,29 @@
           "name": "RankedByPublicationOrder",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "ranked_by_publication_order"
+          "rust_method": "ranked_by_publication_order",
+          "path": "ISteamPublishedItemSearch/RankedByPublicationOrder/v1/"
         },
         {
           "name": "RankedByTrend",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "ranked_by_trend"
+          "rust_method": "ranked_by_trend",
+          "path": "ISteamPublishedItemSearch/RankedByTrend/v1/"
         },
         {
           "name": "RankedByVote",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "ranked_by_vote"
+          "rust_method": "ranked_by_vote",
+          "path": "ISteamPublishedItemSearch/RankedByVote/v1/"
         },
         {
           "name": "ResultSetSummary",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "result_set_summary"
+          "rust_method": "result_set_summary",
+          "path": "ISteamPublishedItemSearch/ResultSetSummary/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1056,13 +1232,15 @@
           "name": "ItemVoteSummary",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "item_vote_summary"
+          "rust_method": "item_vote_summary",
+          "path": "ISteamPublishedItemVoting/ItemVoteSummary/v1/"
         },
         {
           "name": "UserVoteSummary",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "user_vote_summary"
+          "rust_method": "user_vote_summary",
+          "path": "ISteamPublishedItemVoting/UserVoteSummary/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1078,43 +1256,50 @@
           "name": "EnumerateUserSubscribedFiles",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "enumerate_user_subscribed_files"
+          "rust_method": "enumerate_user_subscribed_files",
+          "path": "ISteamRemoteStorage/EnumerateUserSubscribedFiles/v1/"
         },
         {
           "name": "GetCollectionDetails",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "get_collection_details"
+          "rust_method": "get_collection_details",
+          "path": "ISteamRemoteStorage/GetCollectionDetails/v1/"
         },
         {
           "name": "GetPublishedFileDetails",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "get_published_file_details"
+          "rust_method": "get_published_file_details",
+          "path": "ISteamRemoteStorage/GetPublishedFileDetails/v1/"
         },
         {
           "name": "GetUGCFileDetails",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_ugc_file_details"
+          "rust_method": "get_ugc_file_details",
+          "path": "ISteamRemoteStorage/GetUGCFileDetails/v1/"
         },
         {
           "name": "SetUGCUsedByGC",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "set_ugc_used_by_gc"
+          "rust_method": "set_ugc_used_by_gc",
+          "path": "ISteamRemoteStorage/SetUGCUsedByGC/v1/"
         },
         {
           "name": "SubscribePublishedFile",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "subscribe_published_file"
+          "rust_method": "subscribe_published_file",
+          "path": "ISteamRemoteStorage/SubscribePublishedFile/v1/"
         },
         {
           "name": "UnsubscribePublishedFile",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "unsubscribe_published_file"
+          "rust_method": "unsubscribe_published_file",
+          "path": "ISteamRemoteStorage/UnsubscribePublishedFile/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1129,47 +1314,65 @@
         {
           "name": "CheckAppOwnership",
           "version": 4,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "check_app_ownership",
+          "path": "ISteamUser/CheckAppOwnership/v4/"
         },
         {
           "name": "GetAppPriceInfo",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_app_price_info",
+          "path": "ISteamUser/GetAppPriceInfo/v1/"
         },
         {
           "name": "GetDeletedSteamIDs",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_deleted_steam_ids",
+          "path": "ISteamUser/GetDeletedSteamIDs/v1/"
         },
         {
           "name": "GetFriendList",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_friend_list",
+          "path": "ISteamUser/GetFriendList/v1/"
         },
         {
           "name": "GetPlayerBans",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_player_bans",
+          "path": "ISteamUser/GetPlayerBans/v1/"
         },
         {
           "name": "GetPlayerSummaries",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_player_summaries",
+          "path": "ISteamUser/GetPlayerSummaries/v2/"
         },
         {
           "name": "GetPublisherAppOwnership",
           "version": 4,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_publisher_app_ownership",
+          "path": "ISteamUser/GetPublisherAppOwnership/v4/"
         },
         {
           "name": "GetUserGroupList",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_user_group_list",
+          "path": "ISteamUser/GetUserGroupList/v1/"
         },
         {
           "name": "ResolveVanityURL",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "resolve_vanity_url",
+          "path": "ISteamUser/ResolveVanityURL/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1184,12 +1387,16 @@
         {
           "name": "AuthenticateUser",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "authenticate_user",
+          "path": "ISteamUserAuth/AuthenticateUser/v1/"
         },
         {
           "name": "AuthenticateUserTicket",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "authenticate_user_ticket",
+          "path": "ISteamUserAuth/AuthenticateUserTicket/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1204,37 +1411,51 @@
         {
           "name": "GetGlobalAchievementPercentagesForApp",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_global_achievement_percentages_for_app",
+          "path": "ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/"
         },
         {
           "name": "GetGlobalStatsForGame",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_global_stats_for_game",
+          "path": "ISteamUserStats/GetGlobalStatsForGame/v1/"
         },
         {
           "name": "GetNumberOfCurrentPlayers",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_number_of_current_players",
+          "path": "ISteamUserStats/GetNumberOfCurrentPlayers/v1/"
         },
         {
           "name": "GetPlayerAchievements",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_player_achievements",
+          "path": "ISteamUserStats/GetPlayerAchievements/v1/"
         },
         {
           "name": "GetSchemaForGame",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_schema_for_game",
+          "path": "ISteamUserStats/GetSchemaForGame/v2/"
         },
         {
           "name": "GetUserStatsForGame",
           "version": 2,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_user_stats_for_game",
+          "path": "ISteamUserStats/GetUserStatsForGame/v2/"
         },
         {
           "name": "SetUserStatsForGame",
           "version": 1,
-          "http_method": "POST"
+          "http_method": "POST",
+          "rust_method": "set_user_stats_for_game",
+          "path": "ISteamUserStats/SetUserStatsForGame/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1249,12 +1470,16 @@
         {
           "name": "GetServerInfo",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_server_info",
+          "path": "ISteamWebAPIUtil/GetServerInfo/v1/"
         },
         {
           "name": "GetSupportedAPIList",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_supported_api_list",
+          "path": "ISteamWebAPIUtil/GetSupportedAPIList/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1269,7 +1494,9 @@
         {
           "name": "GetAppList",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_app_list",
+          "path": "IStoreService/GetAppList/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1284,7 +1511,9 @@
         {
           "name": "GetAppReviews",
           "version": 1,
-          "http_method": "GET"
+          "http_method": "GET",
+          "rust_method": "get_app_reviews",
+          "path": "IUserReviewsService/GetAppReviews/v1/"
         }
       ],
       "discovery": "documented_endpoints",
@@ -1300,25 +1529,29 @@
           "name": "SetItemPaymentRules",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "set_item_payment_rules"
+          "rust_method": "set_item_payment_rules",
+          "path": "IWorkshopService/SetItemPaymentRules/v1/"
         },
         {
           "name": "GetFinalizedContributors",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_finalized_contributors"
+          "rust_method": "get_finalized_contributors",
+          "path": "IWorkshopService/GetFinalizedContributors/v1/"
         },
         {
           "name": "GetItemDailyRevenue",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_item_daily_revenue"
+          "rust_method": "get_item_daily_revenue",
+          "path": "IWorkshopService/GetItemDailyRevenue/v1/"
         },
         {
           "name": "PopulateItemDescriptions",
           "version": 1,
           "http_method": "POST",
-          "rust_method": "populate_item_descriptions"
+          "rust_method": "populate_item_descriptions",
+          "path": "IWorkshopService/PopulateItemDescriptions/v1/"
         }
       ],
       "discovery": "documented_endpoints",
