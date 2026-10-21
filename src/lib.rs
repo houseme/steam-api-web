@@ -22,6 +22,7 @@
 //! ```
 
 pub mod apps;
+pub mod broadcast;
 pub mod cheat_reporting;
 mod client;
 pub mod cloud;
@@ -39,6 +40,7 @@ pub mod leaderboards;
 pub mod lobby_matchmaking;
 pub mod micro_txn;
 pub mod news;
+pub mod partner_financials;
 pub mod player;
 pub mod published_file;
 pub mod published_file_moderation;
@@ -48,6 +50,7 @@ pub mod remote_storage;
 mod request;
 mod response;
 pub mod reviews;
+pub mod site_license;
 pub mod store;
 pub mod types;
 pub mod user;

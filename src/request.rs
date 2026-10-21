@@ -14,6 +14,7 @@ pub(crate) enum Access {
     Anonymous,
     User,
     Publisher,
+    Financial,
 }
 
 /// The method and replay policy cannot be configured inconsistently.
