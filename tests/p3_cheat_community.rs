@@ -482,9 +482,12 @@ async fn user_and_anonymous_credentials_cannot_reach_any_method() {
 #[tokio::test]
 async fn business_failures_and_malformed_json_never_leak_report_narratives_or_retry() {
     for (interface, name, verb) in METHODS {
-        for body in [
-            json!({"response":{"error":{"errorcode":15,"description":PRIVATE}}}).to_string(),
-            format!("{{\"private\":\"{PRIVATE}"),
+        for (body, business_error) in [
+            (
+                json!({"response":{"error":{"errorcode":15,"description":PRIVATE}}}).to_string(),
+                true,
+            ),
+            (format!("{{\"private\":\"{PRIVATE}"), false),
         ] {
             let server = MockServer::start().await;
             Mock::given(method(verb))
@@ -495,6 +498,14 @@ async fn business_failures_and_malformed_json_never_leak_report_narratives_or_re
                 .await;
             let client = client(&server, true);
             let error = call(&client, name).await.unwrap_err();
+            if business_error {
+                assert!(
+                    matches!(error, Error::Api { code: Some(15), .. }),
+                    "{name}: {error:?}"
+                );
+            } else {
+                assert!(matches!(error, Error::Decode { .. }), "{name}: {error:?}");
+            }
             let text = format!("{error:?} {error}");
             assert!(!text.contains(PRIVATE));
             assert!(!text.contains("test-publisher-key"));
