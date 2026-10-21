@@ -1,0 +1,45 @@
+# Copyright 2026 steam-api-web contributors.
+# SPDX-License-Identifier: Apache-2.0
+# Licensed under the Apache License, Version 2.0.
+# See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
+
+[package]
+name = "steam-api-web"
+version = "0.1.0"
+edition = "2024"
+description = "Resilient async Steam Web API client for user authentication, users, and statistics"
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/houseme/steam-api-web"
+homepage = "https://github.com/houseme/steam-api-web"
+documentation = "https://docs.rs/steam-api-web"
+keywords = ["steam", "steamworks", "webapi", "async"]
+categories = ["api-bindings", "games", "web-programming::http-client"]
+
+[dependencies]
+aws-lc-rs = "1.18.2"
+httpdate = "1.0.3"
+reqwest = { version = "0.13.5", default-features = false, features = ["rustls"] }
+rustls = { version = "0.23.46", default-features = false, features = ["aws-lc-rs", "std", "tls12"] }
+rustls-platform-verifier = "0.7.1"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+thiserror = "2.0.21"
+tokio = { version = "1.54.0", features = ["sync", "time"] }
+url = "2.5.8"
+zeroize = "1.9.1"
+
+[dev-dependencies]
+tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread", "test-util", "net", "io-util"] }
+wiremock = "0.6.5"
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+unwrap_used = "warn"
+expect_used = "warn"
+
+[package.metadata.docs.rs]
+all-features = true
