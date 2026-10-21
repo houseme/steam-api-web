@@ -71,10 +71,14 @@ jobs:
         run: cargo xtask check-repository
       - name: Report documented Web API binding coverage
         run: cargo xtask coverage --json > target/api-coverage.json
+      - name: Audit documented contracts and captured discovery
+        run: cargo xtask audit-api --json > target/api-audit.json
       - uses: actions/upload-artifact@v7
         with:
           name: steam-api-web-coverage
-          path: target/api-coverage.json
+          path: |
+            target/api-coverage.json
+            target/api-audit.json
           if-no-files-found: error
           retention-days: 14
       - name: Check published package contents

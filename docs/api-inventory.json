@@ -3,7 +3,7 @@
     "copyright": "Copyright 2026 steam-api-web contributors.",
     "license": "Apache-2.0",
     "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
-    "retrieved_on": "2026-10-21",
+    "retrieved_on": "2026-10-22",
     "source": "https://partner.steamgames.com/doc/webapi",
     "scope": "Publicly documented HTTP endpoints; missing signatures require manual review. Private and undocumented methods are not inferred.",
     "SPDX-License-Identifier": "Apache-2.0",
@@ -39,14 +39,16 @@
         "src/utils.rs"
       ],
       "commit_sha": "d8114185613be4dbfe4897c8484d0b2670fd3cd7",
-      "tree_sha": "4c43e2a86462b070f9c92758123efac23efb6318"
+      "tree_sha": "4c43e2a86462b070f9c92758123efac23efb6318",
+      "reviewed_on": "2026-10-22"
     },
     "binding_version": "0.5.0",
     "bound_interfaces": 33,
     "bound_methods": 167,
     "binding_validation": "Local protocol contracts only; live credentials, remote permissions, financial reconciliation, and production behavior remain unverified.",
     "bound_explicit_methods": 157,
-    "bound_inherited_methods": 10
+    "bound_inherited_methods": 10,
+    "reference_parameter_rows": 732
   },
   "interfaces": [
     {
@@ -58,13 +60,43 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "post_game_data_frame",
-          "path": "IBroadcastService/PostGameDataFrame/v1/"
+          "path": "IBroadcastService/PostGameDataFrame/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "broadcast_id",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "frame_data",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P4",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "broadcast"
+      "rust_module": "broadcast",
+      "documentation_sha256": "947149b620ff6c7314299bec109cb4fb341255ce211c1f48387f65f02eba2828"
     },
     {
       "interface": "ICheatReportingService",
@@ -75,55 +107,294 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "report_player_cheating",
-          "path": "ICheatReportingService/ReportPlayerCheating/v1/"
+          "path": "ICheatReportingService/ReportPlayerCheating/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamidreporter",
+              "requirement": "optional",
+              "type": "uint64"
+            },
+            {
+              "name": "appdata",
+              "requirement": "optional",
+              "type": "uint64"
+            },
+            {
+              "name": "heuristic",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "detection",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "playerreport",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "noreportid",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "gamemode",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "suspicionstarttime",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "severity",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "RequestPlayerGameBan",
           "version": 1,
           "http_method": "POST",
           "rust_method": "request_player_game_ban",
-          "path": "ICheatReportingService/RequestPlayerGameBan/v1/"
+          "path": "ICheatReportingService/RequestPlayerGameBan/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "reportid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "cheatdescription",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "duration",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "delayban",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "flags",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "RemovePlayerGameBan",
           "version": 1,
           "http_method": "POST",
           "rust_method": "remove_player_game_ban",
-          "path": "ICheatReportingService/RemovePlayerGameBan/v1/"
+          "path": "ICheatReportingService/RemovePlayerGameBan/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetCheatingReports",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_cheating_reports",
-          "path": "ICheatReportingService/GetCheatingReports/v1/"
+          "path": "ICheatReportingService/GetCheatingReports/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "timeend",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "timebegin",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "reportidmin",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "includereports",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "includebans",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "RequestVacStatusForUser",
           "version": 1,
           "http_method": "POST",
           "rust_method": "request_vac_status_for_user",
-          "path": "ICheatReportingService/RequestVacStatusForUser/v1/"
+          "path": "ICheatReportingService/RequestVacStatusForUser/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "session_id",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "StartSecureMultiplayerSession",
           "version": 1,
           "http_method": "POST",
           "rust_method": "start_secure_multiplayer_session",
-          "path": "ICheatReportingService/StartSecureMultiplayerSession/v1/"
+          "path": "ICheatReportingService/StartSecureMultiplayerSession/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "EndSecureMultiplayerSession",
           "version": 1,
           "http_method": "POST",
           "rust_method": "end_secure_multiplayer_session",
-          "path": "ICheatReportingService/EndSecureMultiplayerSession/v1/"
+          "path": "ICheatReportingService/EndSecureMultiplayerSession/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "session_id",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "cheat_reporting"
+      "rust_module": "cheat_reporting",
+      "documentation_sha256": "ea0eaf0c8e53152f3212ed0030069b99f9020dc0eca5b3902c2fbce880268647"
     },
     {
       "interface": "ICloudService",
@@ -134,48 +405,218 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "enumerate_user_files",
-          "path": "ICloudService/EnumerateUserFiles/v1/"
+          "path": "ICloudService/EnumerateUserFiles/v1/",
+          "reference_parameters": [
+            {
+              "name": "access_token",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "extended_details",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "count",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "start_index",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "BeginAppUploadBatch",
           "version": 1,
           "http_method": "POST",
           "rust_method": "begin_app_upload_batch",
-          "path": "ICloudService/BeginAppUploadBatch/v1/"
+          "path": "ICloudService/BeginAppUploadBatch/v1/",
+          "reference_parameters": [
+            {
+              "name": "access_token",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "machine_name",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "files_to_upload",
+              "requirement": "required",
+              "type": "string list"
+            },
+            {
+              "name": "files_to_delete",
+              "requirement": "required",
+              "type": "string list"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "CompleteAppUploadBatch",
           "version": 1,
           "http_method": "POST",
           "rust_method": "complete_app_upload_batch",
-          "path": "ICloudService/CompleteAppUploadBatch/v1/"
+          "path": "ICloudService/CompleteAppUploadBatch/v1/",
+          "reference_parameters": [
+            {
+              "name": "access_token",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "batch_id",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "batch_eresult",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "BeginHTTPUpload",
           "version": 1,
           "http_method": "POST",
           "rust_method": "begin_http_upload",
-          "path": "ICloudService/BeginHTTPUpload/v1/"
+          "path": "ICloudService/BeginHTTPUpload/v1/",
+          "reference_parameters": [
+            {
+              "name": "access_token",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "file_size",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "filename",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "file_sha",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "platforms_to_sync",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "upload_batch_id",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "CommitHTTPUpload",
           "version": 1,
           "http_method": "POST",
           "rust_method": "commit_http_upload",
-          "path": "ICloudService/CommitHTTPUpload/v1/"
+          "path": "ICloudService/CommitHTTPUpload/v1/",
+          "reference_parameters": [
+            {
+              "name": "access_token",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "transfer_succeeded",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "filename",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "file_sha",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "Delete",
           "version": 1,
           "http_method": "POST",
           "rust_method": "delete",
-          "path": "ICloudService/Delete/v1/"
+          "path": "ICloudService/Delete/v1/",
+          "reference_parameters": [
+            {
+              "name": "access_token",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "filename",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "cloud"
+      "rust_module": "cloud",
+      "documentation_sha256": "04957b82505eaa54ab639789963fbce700045ee5a41a1c60fc305c86ddf0fa5a"
     },
     {
       "interface": "IEconMarketService",
@@ -186,34 +627,126 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_market_eligibility",
-          "path": "IEconMarketService/GetMarketEligibility/v1/"
+          "path": "IEconMarketService/GetMarketEligibility/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "CancelAppListingsForUser",
           "version": 1,
           "http_method": "POST",
           "rust_method": "cancel_app_listings_for_user",
-          "path": "IEconMarketService/CancelAppListingsForUser/v1/"
+          "path": "IEconMarketService/CancelAppListingsForUser/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "synchronous",
+              "requirement": "required",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAssetID",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_asset_id",
-          "path": "IEconMarketService/GetAssetID/v1/"
+          "path": "IEconMarketService/GetAssetID/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "listingid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetPopular",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_popular",
-          "path": "IEconMarketService/GetPopular/v1/"
+          "path": "IEconMarketService/GetPopular/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "rows",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "start",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "filter_appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "ecurrency",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "econ_market"
+      "rust_module": "econ_market",
+      "documentation_sha256": "d5b5de08740e0a4cc4cbe9b2289635ff4ada2f3f82e9a3761df7bf9a5d73bfc1"
     },
     {
       "interface": "IEconService",
@@ -224,55 +757,234 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_trade_history",
-          "path": "IEconService/GetTradeHistory/v1/"
+          "path": "IEconService/GetTradeHistory/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "max_trades",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "start_after_time",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "start_after_tradeid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "navigating_back",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "get_descriptions",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "include_failed",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "include_total",
+              "requirement": "required",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "FlushInventoryCache",
           "version": 1,
           "http_method": "POST",
           "rust_method": "flush_inventory_cache",
-          "path": "IEconService/FlushInventoryCache/v1/"
+          "path": "IEconService/FlushInventoryCache/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "contextid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "FlushAssetAppearanceCache",
           "version": 1,
           "http_method": "POST",
           "rust_method": "flush_asset_appearance_cache",
-          "path": "IEconService/FlushAssetAppearanceCache/v1/"
+          "path": "IEconService/FlushAssetAppearanceCache/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "FlushContextCache",
           "version": 1,
           "http_method": "POST",
           "rust_method": "flush_context_cache",
-          "path": "IEconService/FlushContextCache/v1/"
+          "path": "IEconService/FlushContextCache/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetTradeOffers",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_trade_offers",
-          "path": "IEconService/GetTradeOffers/v1/"
+          "path": "IEconService/GetTradeOffers/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "get_sent_offers",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "get_received_offers",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "get_descriptions",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "active_only",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "historical_only",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "time_historical_cutoff",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetTradeOffer",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_trade_offer",
-          "path": "IEconService/GetTradeOffer/v1/"
+          "path": "IEconService/GetTradeOffer/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "tradeofferid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetTradeOffersSummary",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_trade_offers_summary",
-          "path": "IEconService/GetTradeOffersSummary/v1/"
+          "path": "IEconService/GetTradeOffersSummary/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "time_last_visit",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "econ"
+      "rust_module": "econ",
+      "documentation_sha256": "9a4a665280b8ec5ab3207c1959ba6195fa4c7715ccc4baf74be4203217dd7356"
     },
     {
       "interface": "IGameInventory",
@@ -283,28 +995,149 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_history_command_details",
-          "path": "IGameInventory/GetHistoryCommandDetails/v1/"
+          "path": "IGameInventory/GetHistoryCommandDetails/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "command",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "contextid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "arguments",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetUserHistory",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_user_history",
-          "path": "IGameInventory/GetUserHistory/v1/"
+          "path": "IGameInventory/GetUserHistory/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "contextid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "starttime",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "endtime",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "HistoryExecuteCommands",
           "version": 1,
           "http_method": "POST",
           "rust_method": "history_execute_commands",
-          "path": "IGameInventory/HistoryExecuteCommands/v1/"
+          "path": "IGameInventory/HistoryExecuteCommands/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "contextid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "actorid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "SupportGetAssetHistory",
           "version": 1,
           "http_method": "GET",
           "rust_method": "support_get_asset_history",
-          "path": "IGameInventory/SupportGetAssetHistory/v1/"
+          "path": "IGameInventory/SupportGetAssetHistory/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "assetid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "contextid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UpdateItemDefs",
@@ -312,13 +1145,33 @@
           "http_method": "POST",
           "rust_method": "update_item_defs",
           "path_version": "v0001",
-          "path": "IGameInventory/UpdateItemDefs/v0001"
+          "path": "IGameInventory/UpdateItemDefs/v0001",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "itemdefs",
+              "requirement": "required",
+              "type": "JSON array"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "game_inventory"
+      "rust_module": "game_inventory",
+      "documentation_sha256": "4a9118d273bde5fee23a66877f56370113d0cb9c2e85e47a90f025981b1c24aa"
     },
     {
       "interface": "IGameNotificationsService",
@@ -329,55 +1182,244 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "create_session",
-          "path": "IGameNotificationsService/CreateSession/v1/"
+          "path": "IGameNotificationsService/CreateSession/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "context",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "title",
+              "requirement": "required",
+              "type": "{message}"
+            },
+            {
+              "name": "users",
+              "requirement": "required",
+              "type": "{message}"
+            },
+            {
+              "name": "steamid",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UpdateSession",
           "version": 1,
           "http_method": "POST",
           "rust_method": "update_session",
-          "path": "IGameNotificationsService/UpdateSession/v1/"
+          "path": "IGameNotificationsService/UpdateSession/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "sessionid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "title",
+              "requirement": "required",
+              "type": "{message}"
+            },
+            {
+              "name": "users",
+              "requirement": "required",
+              "type": "{message}"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "EnumerateSessionsForApp",
           "version": 1,
           "http_method": "GET",
           "rust_method": "enumerate_sessions_for_app",
-          "path": "IGameNotificationsService/EnumerateSessionsForApp/v1/"
+          "path": "IGameNotificationsService/EnumerateSessionsForApp/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "include_all_user_messages",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "include_auth_user_message",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetSessionDetailsForApp",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_session_details_for_app",
-          "path": "IGameNotificationsService/GetSessionDetailsForApp/v1/"
+          "path": "IGameNotificationsService/GetSessionDetailsForApp/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "sessions",
+              "requirement": "required",
+              "type": "{message}"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "RequestNotifications",
           "version": 1,
           "http_method": "POST",
           "rust_method": "request_notifications",
-          "path": "IGameNotificationsService/RequestNotifications/v1/"
+          "path": "IGameNotificationsService/RequestNotifications/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "DeleteSession",
           "version": 1,
           "http_method": "POST",
           "rust_method": "delete_session",
-          "path": "IGameNotificationsService/DeleteSession/v1/"
+          "path": "IGameNotificationsService/DeleteSession/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "sessionid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "DeleteSessionBatch",
           "version": 1,
           "http_method": "POST",
           "rust_method": "delete_session_batch",
-          "path": "IGameNotificationsService/DeleteSessionBatch/v1/"
+          "path": "IGameNotificationsService/DeleteSessionBatch/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "sessionid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "game_notifications"
+      "rust_module": "game_notifications",
+      "documentation_sha256": "e46fa303d344362d5599203a5286ab978b5c8b1a3e5f0463e80a4730f2f33829"
     },
     {
       "interface": "IGameServersService",
@@ -388,69 +1430,201 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_account_list",
-          "path": "IGameServersService/GetAccountList/v1/"
+          "path": "IGameServersService/GetAccountList/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "CreateAccount",
           "version": 1,
           "http_method": "POST",
           "rust_method": "create_account",
-          "path": "IGameServersService/CreateAccount/v1/"
+          "path": "IGameServersService/CreateAccount/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "memo",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "SetMemo",
           "version": 1,
           "http_method": "POST",
           "rust_method": "set_memo",
-          "path": "IGameServersService/SetMemo/v1/"
+          "path": "IGameServersService/SetMemo/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "memo",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ResetLoginToken",
           "version": 1,
           "http_method": "POST",
           "rust_method": "reset_login_token",
-          "path": "IGameServersService/ResetLoginToken/v1/"
+          "path": "IGameServersService/ResetLoginToken/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "DeleteAccount",
           "version": 1,
           "http_method": "POST",
           "rust_method": "delete_account",
-          "path": "IGameServersService/DeleteAccount/v1/"
+          "path": "IGameServersService/DeleteAccount/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAccountPublicInfo",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_account_public_info",
-          "path": "IGameServersService/GetAccountPublicInfo/v1/"
+          "path": "IGameServersService/GetAccountPublicInfo/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "QueryLoginToken",
           "version": 1,
           "http_method": "GET",
           "rust_method": "query_login_token",
-          "path": "IGameServersService/QueryLoginToken/v1/"
+          "path": "IGameServersService/QueryLoginToken/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "login_token",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetServerSteamIDsByIP",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_server_steam_ids_by_ip",
-          "path": "IGameServersService/GetServerSteamIDsByIP/v1/"
+          "path": "IGameServersService/GetServerSteamIDsByIP/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "server_ips",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetServerIPsBySteamID",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_server_ips_by_steam_id",
-          "path": "IGameServersService/GetServerIPsBySteamID/v1/"
+          "path": "IGameServersService/GetServerIPsBySteamID/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "server_steamids",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "game_servers"
+      "rust_module": "game_servers",
+      "documentation_sha256": "41fc75c40601260b828db59d2e3ee1dfa9231d6767f1ae218ff8bf3872024b67"
     },
     {
       "interface": "IInventoryService",
@@ -461,76 +1635,382 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "add_item",
-          "path": "IInventoryService/AddItem/v1/"
+          "path": "IInventoryService/AddItem/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "itemdefid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "itempropsjson",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "notify",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "requestid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "trade_restriction",
+              "requirement": "required",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "AddPromoItem",
           "version": 1,
           "http_method": "POST",
           "rust_method": "add_promo_item",
-          "path": "IInventoryService/AddPromoItem/v1/"
+          "path": "IInventoryService/AddPromoItem/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "itemdefid",
+              "requirement": "optional",
+              "type": "uint64"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "notify",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "requestid",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ConsumeItem",
           "version": 1,
           "http_method": "POST",
           "rust_method": "consume_item",
-          "path": "IInventoryService/ConsumeItem/v1/"
+          "path": "IInventoryService/ConsumeItem/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "itemid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "quantity",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "requestid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ExchangeItem",
           "version": 1,
           "http_method": "POST",
           "rust_method": "exchange_item",
-          "path": "IInventoryService/ExchangeItem/v1/"
+          "path": "IInventoryService/ExchangeItem/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "materialsitemid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "materialsquantity",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "outputitemdefid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetInventory",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_inventory",
-          "path": "IInventoryService/GetInventory/v1/"
+          "path": "IInventoryService/GetInventory/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetItemDefs",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_item_defs",
-          "path": "IInventoryService/GetItemDefs/v1/"
+          "path": "IInventoryService/GetItemDefs/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "modifiedsince",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "itemdefids",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "workshopids",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "cache_max_age_seconds",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetPriceSheet",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_price_sheet",
-          "path": "IInventoryService/GetPriceSheet/v1/"
+          "path": "IInventoryService/GetPriceSheet/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "ecurrency",
+              "requirement": "required",
+              "type": "int32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "Consolidate",
           "version": 1,
           "http_method": "POST",
           "rust_method": "consolidate",
-          "path": "IInventoryService/Consolidate/v1/"
+          "path": "IInventoryService/Consolidate/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "itemdefid",
+              "requirement": "required",
+              "type": "uint64 array"
+            },
+            {
+              "name": "force",
+              "requirement": "optional",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetQuantity",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_quantity",
-          "path": "IInventoryService/GetQuantity/v1/"
+          "path": "IInventoryService/GetQuantity/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "itemdefid",
+              "requirement": "required",
+              "type": "uint64[]"
+            },
+            {
+              "name": "force",
+              "requirement": "optional",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ModifyItems",
           "version": 1,
           "http_method": "POST",
           "rust_method": "modify_items",
-          "path": "IInventoryService/ModifyItems/v1/"
+          "path": "IInventoryService/ModifyItems/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "input_json",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "timestamp",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "updates",
+              "requirement": "required",
+              "type": "message"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "inventory"
+      "rust_module": "inventory",
+      "documentation_sha256": "a395f8730b24c73af6a0bd3fdb846d02272aa12560efd619e6309c25acec50bf"
     },
     {
       "interface": "ILobbyMatchmakingService",
@@ -541,27 +2021,120 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "create_lobby",
-          "path": "ILobbyMatchmakingService/CreateLobby/v1/"
+          "path": "ILobbyMatchmakingService/CreateLobby/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "max_members",
+              "requirement": "required",
+              "type": "int32"
+            },
+            {
+              "name": "lobby_type",
+              "requirement": "required",
+              "type": "int32"
+            },
+            {
+              "name": "lobby_name",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "input_json",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "steamid_invited_members",
+              "requirement": "required",
+              "type": "array of uint64"
+            },
+            {
+              "name": "lobby_metadata",
+              "requirement": "optional",
+              "type": "message"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "RemoveUserFromLobby",
           "version": 1,
           "http_method": "POST",
           "rust_method": "remove_user_from_lobby",
-          "path": "ILobbyMatchmakingService/RemoveUserFromLobby/v1/"
+          "path": "ILobbyMatchmakingService/RemoveUserFromLobby/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid_to_remove",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "steamid_lobby",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "input_json",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetLobbyData",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_lobby_data",
-          "path": "ILobbyMatchmakingService/GetLobbyData/v1/"
+          "path": "ILobbyMatchmakingService/GetLobbyData/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid_lobby",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "lobby_matchmaking"
+      "rust_module": "lobby_matchmaking",
+      "documentation_sha256": "a37e6a5d8beea18f51506577ee65da13d86119fdd9e4421716ff7e4dfd593534"
     },
     {
       "interface": "IPartnerFinancialsService",
@@ -572,27 +2145,90 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_changed_dates_for_partner",
-          "path": "IPartnerFinancialsService/GetChangedDatesForPartner/v001/"
+          "path": "IPartnerFinancialsService/GetChangedDatesForPartner/v001/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "highwatermark",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "include_view_grants",
+              "requirement": "optional",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetDetailedSales",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_detailed_sales",
-          "path": "IPartnerFinancialsService/GetDetailedSales/v001/"
+          "path": "IPartnerFinancialsService/GetDetailedSales/v001/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "date",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "highwatermark_id",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "include_view_grants",
+              "requirement": "optional",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAppWishlistReporting",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_app_wishlist_reporting",
-          "path": "IPartnerFinancialsService/GetAppWishlistReporting/v001/"
+          "path": "IPartnerFinancialsService/GetAppWishlistReporting/v001/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "date",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P4",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "partner_financials"
+      "rust_module": "partner_financials",
+      "documentation_sha256": "e00f07d679522e877fe4e33880363f70dd2d04de8c0351673702ce560bd814ce"
     },
     {
       "interface": "IPlayerService",
@@ -603,48 +2239,163 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_recently_played_games",
-          "path": "IPlayerService/GetRecentlyPlayedGames/v1/"
+          "path": "IPlayerService/GetRecentlyPlayedGames/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "count",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetSingleGamePlaytime",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_single_game_playtime",
-          "path": "IPlayerService/GetSingleGamePlaytime/v1/"
+          "path": "IPlayerService/GetSingleGamePlaytime/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetOwnedGames",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_owned_games",
-          "path": "IPlayerService/GetOwnedGames/v1/"
+          "path": "IPlayerService/GetOwnedGames/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "include_appinfo",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "include_played_free_games",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "appids_filter",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetSteamLevel",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_steam_level",
-          "path": "IPlayerService/GetSteamLevel/v1/"
+          "path": "IPlayerService/GetSteamLevel/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetBadges",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_badges",
-          "path": "IPlayerService/GetBadges/v1/"
+          "path": "IPlayerService/GetBadges/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetCommunityBadgeProgress",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_community_badge_progress",
-          "path": "IPlayerService/GetCommunityBadgeProgress/v1/"
+          "path": "IPlayerService/GetCommunityBadgeProgress/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "badgeid",
+              "requirement": "required",
+              "type": "int32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "player"
+      "rust_module": "player",
+      "documentation_sha256": "1b59d7e5ecf34aed91b81ed5e9144347a89d5cb7146e802060dd206c56e57c46"
     },
     {
       "interface": "IPublishedFileModerationService",
@@ -655,20 +2406,84 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_all_approval_requests",
-          "path": "IPublishedFileModerationService/GetAllApprovalRequests/v1/"
+          "path": "IPublishedFileModerationService/GetAllApprovalRequests/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "revision",
+              "requirement": "optional",
+              "type": "IPublishedFileModerationService#EPublishedFileRevision"
+            },
+            {
+              "name": "start",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ProcessApprovalRequest",
           "version": 1,
           "http_method": "POST",
           "rust_method": "process_approval_request",
-          "path": "IPublishedFileModerationService/ProcessApprovalRequest/v1/"
+          "path": "IPublishedFileModerationService/ProcessApprovalRequest/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "revision",
+              "requirement": "required",
+              "type": "IPublishedFileModerationService#EPublishedFileRevision"
+            },
+            {
+              "name": "change_number",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "approved",
+              "requirement": "required",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "published_file_moderation"
+      "rust_module": "published_file_moderation",
+      "documentation_sha256": "a1f32e458f9123e101c6e61f6948bf156b0fecbac7893b42462dd95a95a63afd"
     },
     {
       "interface": "IPublishedFileService",
@@ -679,55 +2494,369 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "delete",
-          "path": "IPublishedFileService/Delete/v1/"
+          "path": "IPublishedFileService/Delete/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "QueryFiles",
           "version": 1,
           "http_method": "GET",
           "rust_method": "query_files",
-          "path": "IPublishedFileService/QueryFiles/v1/"
+          "path": "IPublishedFileService/QueryFiles/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "query_type",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "page",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "cursor",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "numperpage",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "creator_appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "requiredtags",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "excludedtags",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "match_all_tags",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "required_flags",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "omitted_flags",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "search_text",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "filetype",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "child_publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "days",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "include_recent_votes_only",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "cache_max_age_seconds",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "language",
+              "requirement": "optional",
+              "type": "int32"
+            },
+            {
+              "name": "required_kv_tags",
+              "requirement": "required",
+              "type": "{message}"
+            },
+            {
+              "name": "totalonly",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "ids_only",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "return_vote_data",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "return_tags",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "return_kv_tags",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "return_previews",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "return_children",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "return_short_description",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "return_for_sale_data",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "return_metadata",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "return_playtime_stats",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "SetDeveloperMetadata",
           "version": 1,
           "http_method": "POST",
           "rust_method": "set_developer_metadata",
-          "path": "IPublishedFileService/SetDeveloperMetadata/v1/"
+          "path": "IPublishedFileService/SetDeveloperMetadata/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "metadata",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UpdateAppUGCBan",
           "version": 1,
           "http_method": "POST",
           "rust_method": "update_app_ugc_ban",
-          "path": "IPublishedFileService/UpdateAppUGCBan/v1/"
+          "path": "IPublishedFileService/UpdateAppUGCBan/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "expiration_time",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "reason",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UpdateBanStatus",
           "version": 1,
           "http_method": "POST",
           "rust_method": "update_ban_status",
-          "path": "IPublishedFileService/UpdateBanStatus/v1/"
+          "path": "IPublishedFileService/UpdateBanStatus/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "banned",
+              "requirement": "required",
+              "type": "bool"
+            },
+            {
+              "name": "reason",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UpdateIncompatibleStatus",
           "version": 1,
           "http_method": "POST",
           "rust_method": "update_incompatible_status",
-          "path": "IPublishedFileService/UpdateIncompatibleStatus/v1/"
+          "path": "IPublishedFileService/UpdateIncompatibleStatus/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "incompatible",
+              "requirement": "required",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UpdateTags",
           "version": 1,
           "http_method": "POST",
           "rust_method": "update_tags",
-          "path": "IPublishedFileService/UpdateTags/v1/"
+          "path": "IPublishedFileService/UpdateTags/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "add_tags",
+              "requirement": "optional",
+              "type": "string[]"
+            },
+            {
+              "name": "remove_tags",
+              "requirement": "optional",
+              "type": "string[]"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "published_file"
+      "rust_module": "published_file",
+      "documentation_sha256": "3d01a881b8a4f1007722e6647b7845dbbea0ab43dfee7ccdeb005efb7d4f1144"
     },
     {
       "interface": "ISiteLicenseService",
@@ -738,20 +2867,59 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_current_client_connections",
-          "path": "ISiteLicenseService/GetCurrentClientConnections/v1/"
+          "path": "ISiteLicenseService/GetCurrentClientConnections/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "siteid",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetTotalPlaytime",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_total_playtime",
-          "path": "ISiteLicenseService/GetTotalPlaytime/v1/"
+          "path": "ISiteLicenseService/GetTotalPlaytime/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "start_time",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "end_time",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "siteid",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P4",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "site_license"
+      "rust_module": "site_license",
+      "documentation_sha256": "71e51a529259fddf103b6490e0819f0c7268311dc6a65b69b4e80d4b7e74774c"
     },
     {
       "interface": "ISteamApps",
@@ -762,76 +2930,233 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_app_betas",
-          "path": "ISteamApps/GetAppBetas/v1/"
+          "path": "ISteamApps/GetAppBetas/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAppBuilds",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_app_builds",
-          "path": "ISteamApps/GetAppBuilds/v1/"
+          "path": "ISteamApps/GetAppBuilds/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAppDepotVersions",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_app_depot_versions",
-          "path": "ISteamApps/GetAppDepotVersions/v1/"
+          "path": "ISteamApps/GetAppDepotVersions/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAppList",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_app_list",
-          "path": "ISteamApps/GetAppList/v2/"
+          "path": "ISteamApps/GetAppList/v2/",
+          "reference_parameters": [
+
+          ],
+          "reference_parameter_table": false,
+          "reference_deprecated": true
         },
         {
           "name": "GetPartnerAppListForWebAPIKey",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_partner_app_list_for_web_api_key",
-          "path": "ISteamApps/GetPartnerAppListForWebAPIKey/v2/"
+          "path": "ISteamApps/GetPartnerAppListForWebAPIKey/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "type_filter",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetPlayersBanned",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_players_banned",
-          "path": "ISteamApps/GetPlayersBanned/v1/"
+          "path": "ISteamApps/GetPlayersBanned/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetServerList",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_server_list",
-          "path": "ISteamApps/GetServerList/v1/"
+          "path": "ISteamApps/GetServerList/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "filter",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "limit",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetServersAtAddress",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_servers_at_address",
-          "path": "ISteamApps/GetServersAtAddress/v1/"
+          "path": "ISteamApps/GetServersAtAddress/v1/",
+          "reference_parameters": [
+            {
+              "name": "addr",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "SetAppBuildLive",
           "version": 2,
           "http_method": "POST",
           "rust_method": "set_app_build_live",
-          "path": "ISteamApps/SetAppBuildLive/v2/"
+          "path": "ISteamApps/SetAppBuildLive/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "buildid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "betakey",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "conditional",
+              "type": "uint64"
+            },
+            {
+              "name": "description",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UpToDateCheck",
           "version": 1,
           "http_method": "GET",
           "rust_method": "up_to_date_check",
-          "path": "ISteamApps/UpToDateCheck/v1/"
+          "path": "ISteamApps/UpToDateCheck/v1/",
+          "reference_parameters": [
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "version",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "apps"
+      "rust_module": "apps",
+      "documentation_sha256": "f4d4c22f07c85d9bb83d6ddb7f3f194036550a506c0a26c3f8ef3920b690c957"
     },
     {
       "interface": "ISteamCommunity",
@@ -842,13 +3167,58 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "report_abuse",
-          "path": "ISteamCommunity/ReportAbuse/v1/"
+          "path": "ISteamCommunity/ReportAbuse/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamidActor",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "steamidTarget",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "abuseType",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "contentType",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "description",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "gid",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "community"
+      "rust_module": "community",
+      "documentation_sha256": "112684d77d243172f9e1225d053ffbd5e57e9cfed469e849282a0dbfbea5063a"
     },
     {
       "interface": "ISteamEconomy",
@@ -859,62 +3229,290 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "can_trade",
-          "path": "ISteamEconomy/CanTrade/v1/"
+          "path": "ISteamEconomy/CanTrade/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "targetid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "FinalizeAssetTransaction",
           "version": 1,
           "http_method": "POST",
           "rust_method": "finalize_asset_transaction",
-          "path": "ISteamEconomy/FinalizeAssetTransaction/v1/"
+          "path": "ISteamEconomy/FinalizeAssetTransaction/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "txnid",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAssetClassInfo",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_asset_class_info",
-          "path": "ISteamEconomy/GetAssetClassInfo/v1/"
+          "path": "ISteamEconomy/GetAssetClassInfo/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "language",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "class_count",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "classid0",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "instanceid0",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAssetPrices",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_asset_prices",
-          "path": "ISteamEconomy/GetAssetPrices/v1/"
+          "path": "ISteamEconomy/GetAssetPrices/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "currency",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "language",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetExportedAssetsForUser",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_exported_assets_for_user",
-          "path": "ISteamEconomy/GetExportedAssetsForUser/v1/"
+          "path": "ISteamEconomy/GetExportedAssetsForUser/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "contextid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetMarketPrices",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_market_prices",
-          "path": "ISteamEconomy/GetMarketPrices/v1/"
+          "path": "ISteamEconomy/GetMarketPrices/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "StartAssetTransaction",
           "version": 1,
           "http_method": "POST",
           "rust_method": "start_asset_transaction",
-          "path": "ISteamEconomy/StartAssetTransaction/v1/"
+          "path": "ISteamEconomy/StartAssetTransaction/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "assetid0",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "assetquantity0",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "currency",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "ipaddress",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "referrer",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "clientauth",
+              "requirement": "optional",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "StartTrade",
           "version": 1,
           "http_method": "GET",
           "rust_method": "start_trade",
-          "path": "ISteamEconomy/StartTrade/v1/"
+          "path": "ISteamEconomy/StartTrade/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "partya",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "partyb",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "economy"
+      "rust_module": "economy",
+      "documentation_sha256": "2f655dcde458ea775c592e8e0dd8aeb6f5e0d9eeb229a34ae3528d72fae5d48c"
     },
     {
       "interface": "ISteamGameServerStats",
@@ -925,13 +3523,48 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_game_server_player_stats_for_game",
-          "path": "ISteamGameServerStats/GetGameServerPlayerStatsForGame/v1/"
+          "path": "ISteamGameServerStats/GetGameServerPlayerStatsForGame/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "gameid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "rangestart",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "rangeend",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "maxresults",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "game_server_stats"
+      "rust_module": "game_server_stats",
+      "documentation_sha256": "abb26cb94d49aa597334d8d235142299b83b65c4e3eabd53779d2110e847e68b"
     },
     {
       "interface": "ISteamLeaderboards",
@@ -942,55 +3575,254 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "delete_leaderboard",
-          "path": "ISteamLeaderboards/DeleteLeaderboard/v1/"
+          "path": "ISteamLeaderboards/DeleteLeaderboard/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "name",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "DeleteLeaderboardScore",
           "version": 1,
           "http_method": "POST",
           "rust_method": "delete_leaderboard_score",
-          "path": "ISteamLeaderboards/DeleteLeaderboardScore/v1/"
+          "path": "ISteamLeaderboards/DeleteLeaderboardScore/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "leaderboardid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "FindOrCreateLeaderboard",
           "version": 2,
           "http_method": "POST",
           "rust_method": "find_or_create_leaderboard",
-          "path": "ISteamLeaderboards/FindOrCreateLeaderboard/v2/"
+          "path": "ISteamLeaderboards/FindOrCreateLeaderboard/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "name",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "sortmethod",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "displaytype",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "createifnotfound",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "onlytrustedwrites",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "onlyfriendsreads",
+              "requirement": "optional",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetLeaderboardEntries",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_leaderboard_entries",
-          "path": "ISteamLeaderboards/GetLeaderboardEntries/v1/"
+          "path": "ISteamLeaderboards/GetLeaderboardEntries/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "rangestart",
+              "requirement": "required",
+              "type": "int32"
+            },
+            {
+              "name": "rangeend",
+              "requirement": "required",
+              "type": "int32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "optional",
+              "type": "uint64"
+            },
+            {
+              "name": "leaderboardid",
+              "requirement": "required",
+              "type": "int32"
+            },
+            {
+              "name": "datarequest",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetLeaderboardsForGame",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_leaderboards_for_game",
-          "path": "ISteamLeaderboards/GetLeaderboardsForGame/v2/"
+          "path": "ISteamLeaderboards/GetLeaderboardsForGame/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ResetLeaderboard",
           "version": 1,
           "http_method": "POST",
           "rust_method": "reset_leaderboard",
-          "path": "ISteamLeaderboards/ResetLeaderboard/v1/"
+          "path": "ISteamLeaderboards/ResetLeaderboard/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "leaderboardid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "SetLeaderboardScore",
           "version": 1,
           "http_method": "POST",
           "rust_method": "set_leaderboard_score",
-          "path": "ISteamLeaderboards/SetLeaderboardScore/v1/"
+          "path": "ISteamLeaderboards/SetLeaderboardScore/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "leaderboardid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "score",
+              "requirement": "required",
+              "type": "int32"
+            },
+            {
+              "name": "scoremethod",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "details",
+              "requirement": "optional",
+              "type": "rawbinary"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "leaderboards"
+      "rust_module": "leaderboards",
+      "documentation_sha256": "73447d09bfa4c43cb9635261cff0e94732cce98a20ac72ad2610564a6eb46790"
     },
     {
       "interface": "ISteamMicroTxn",
@@ -1001,76 +3833,432 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "adjust_agreement",
-          "path": "ISteamMicroTxn/AdjustAgreement/v1/"
+          "path": "ISteamMicroTxn/AdjustAgreement/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "agreementid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "nextprocessdate",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "oldnextprocessdate",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "CancelAgreement",
           "version": 1,
           "http_method": "POST",
           "rust_method": "cancel_agreement",
-          "path": "ISteamMicroTxn/CancelAgreement/v1/"
+          "path": "ISteamMicroTxn/CancelAgreement/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "agreementid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "FinalizeTxn",
           "version": 2,
           "http_method": "POST",
           "rust_method": "finalize_txn",
-          "path": "ISteamMicroTxn/FinalizeTxn/v2/"
+          "path": "ISteamMicroTxn/FinalizeTxn/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "orderid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetReport",
           "version": 5,
           "http_method": "GET",
           "rust_method": "get_report",
-          "path": "ISteamMicroTxn/GetReport/v5/"
+          "path": "ISteamMicroTxn/GetReport/v5/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "type",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "time",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "maxresults",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetUserAgreementInfo",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_user_agreement_info",
-          "path": "ISteamMicroTxn/GetUserAgreementInfo/v2/"
+          "path": "ISteamMicroTxn/GetUserAgreementInfo/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetUserInfo",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_user_info",
-          "path": "ISteamMicroTxn/GetUserInfo/v2/"
+          "path": "ISteamMicroTxn/GetUserInfo/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "ipaddress",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "InitTxn",
           "version": 3,
           "http_method": "POST",
           "rust_method": "init_txn",
-          "path": "ISteamMicroTxn/InitTxn/v3/"
+          "path": "ISteamMicroTxn/InitTxn/v3/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "orderid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "itemcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "language",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "currency",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "usersession",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "ipaddress",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "itemid[0]",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "qty[0]",
+              "requirement": "required",
+              "type": "int16"
+            },
+            {
+              "name": "amount[0]",
+              "requirement": "required",
+              "type": "int64"
+            },
+            {
+              "name": "description[0]",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "category[0]",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "associated_bundle[0]",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "billingtype[0]",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "period[0]",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "frequency[0]",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "recurringamt[0]",
+              "requirement": "optional",
+              "type": "int64"
+            },
+            {
+              "name": "bundlecount",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "bundleid[0]",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "bundle_qty[0]",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "bundle_desc[0]",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "bundle_category[0]",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ProcessAgreement",
           "version": 1,
           "http_method": "POST",
           "rust_method": "process_agreement",
-          "path": "ISteamMicroTxn/ProcessAgreement/v1/"
+          "path": "ISteamMicroTxn/ProcessAgreement/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "orderid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "agreementid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "amount",
+              "requirement": "required",
+              "type": "int32"
+            },
+            {
+              "name": "currency",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "QueryTxn",
           "version": 3,
           "http_method": "GET",
           "rust_method": "query_txn",
-          "path": "ISteamMicroTxn/QueryTxn/v3/"
+          "path": "ISteamMicroTxn/QueryTxn/v3/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "orderid",
+              "requirement": "optional",
+              "type": "uint64"
+            },
+            {
+              "name": "transid",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "RefundTxn",
           "version": 2,
           "http_method": "POST",
           "rust_method": "refund_txn",
-          "path": "ISteamMicroTxn/RefundTxn/v2/"
+          "path": "ISteamMicroTxn/RefundTxn/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "orderid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P3",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "micro_txn"
+      "rust_module": "micro_txn",
+      "documentation_sha256": "3a8a8cd7cf129fbd736a6782e9a003456b906372b53d3a5b53f858c006d9e217"
     },
     {
       "interface": "ISteamMicroTxnSandbox",
@@ -1160,7 +4348,8 @@
       "discovery": "inherited_from_official_reference",
       "phase": "P3",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "micro_txn"
+      "rust_module": "micro_txn",
+      "documentation_sha256": "8495636a1ad5a17fe3b6430eca9d8d8d62578f9e1e309872e40b89776ebc2686"
     },
     {
       "interface": "ISteamNews",
@@ -1171,20 +4360,84 @@
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_news_for_app",
-          "path": "ISteamNews/GetNewsForApp/v2/"
+          "path": "ISteamNews/GetNewsForApp/v2/",
+          "reference_parameters": [
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "maxlength",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "enddate",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "feeds",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetNewsForAppAuthed",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_news_for_app_authed",
-          "path": "ISteamNews/GetNewsForAppAuthed/v2/"
+          "path": "ISteamNews/GetNewsForAppAuthed/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "maxlength",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "enddate",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "feeds",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "news"
+      "rust_module": "news",
+      "documentation_sha256": "75c5f99e98e74f60e2174c6df5f26f9a7c94d7edb5b5b7b035c4015decb41211"
     },
     {
       "interface": "ISteamPublishedItemSearch",
@@ -1195,34 +4448,266 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "ranked_by_publication_order",
-          "path": "ISteamPublishedItemSearch/RankedByPublicationOrder/v1/"
+          "path": "ISteamPublishedItemSearch/RankedByPublicationOrder/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "startidx",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "tagcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "usertagcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "hasappadminaccess",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "fileType",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "tag[0]",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "usertag[0]",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "RankedByTrend",
           "version": 1,
           "http_method": "POST",
           "rust_method": "ranked_by_trend",
-          "path": "ISteamPublishedItemSearch/RankedByTrend/v1/"
+          "path": "ISteamPublishedItemSearch/RankedByTrend/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "startidx",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "tagcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "usertagcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "hasappadminaccess",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "fileType",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "days",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "tag[0]",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "usertag[0]",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "RankedByVote",
           "version": 1,
           "http_method": "POST",
           "rust_method": "ranked_by_vote",
-          "path": "ISteamPublishedItemSearch/RankedByVote/v1/"
+          "path": "ISteamPublishedItemSearch/RankedByVote/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "startidx",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "tagcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "usertagcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "hasappadminaccess",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "fileType",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "tag[0]",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "usertag[0]",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ResultSetSummary",
           "version": 1,
           "http_method": "POST",
           "rust_method": "result_set_summary",
-          "path": "ISteamPublishedItemSearch/ResultSetSummary/v1/"
+          "path": "ISteamPublishedItemSearch/ResultSetSummary/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "tagcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "usertagcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "hasappadminaccess",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "fileType",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "tag[0]",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "usertag[0]",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "published_item_search"
+      "rust_module": "published_item_search",
+      "documentation_sha256": "e5be86645037588046094e28c0fdafa70ba345fca724f6e809e41bd6bd944d58"
     },
     {
       "interface": "ISteamPublishedItemVoting",
@@ -1233,20 +4718,74 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "item_vote_summary",
-          "path": "ISteamPublishedItemVoting/ItemVoteSummary/v1/"
+          "path": "ISteamPublishedItemVoting/ItemVoteSummary/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "publishedfileid[0]",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UserVoteSummary",
           "version": 1,
           "http_method": "POST",
           "rust_method": "user_vote_summary",
-          "path": "ISteamPublishedItemVoting/UserVoteSummary/v1/"
+          "path": "ISteamPublishedItemVoting/UserVoteSummary/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "count",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "publishedfileid[0]",
+              "requirement": "optional",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "published_item_voting"
+      "rust_module": "published_item_voting",
+      "documentation_sha256": "60f77fb2e34d0cb7bb7b845a6b323349585504b198cad7467a9d42d33d4f521e"
     },
     {
       "interface": "ISteamRemoteStorage",
@@ -1257,55 +4796,209 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "enumerate_user_subscribed_files",
-          "path": "ISteamRemoteStorage/EnumerateUserSubscribedFiles/v1/"
+          "path": "ISteamRemoteStorage/EnumerateUserSubscribedFiles/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "listtype",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetCollectionDetails",
           "version": 1,
           "http_method": "POST",
           "rust_method": "get_collection_details",
-          "path": "ISteamRemoteStorage/GetCollectionDetails/v1/"
+          "path": "ISteamRemoteStorage/GetCollectionDetails/v1/",
+          "reference_parameters": [
+            {
+              "name": "collectioncount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "publishedfileids[0]",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetPublishedFileDetails",
           "version": 1,
           "http_method": "POST",
           "rust_method": "get_published_file_details",
-          "path": "ISteamRemoteStorage/GetPublishedFileDetails/v1/"
+          "path": "ISteamRemoteStorage/GetPublishedFileDetails/v1/",
+          "reference_parameters": [
+            {
+              "name": "itemcount",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "publishedfileids[0]",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetUGCFileDetails",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_ugc_file_details",
-          "path": "ISteamRemoteStorage/GetUGCFileDetails/v1/"
+          "path": "ISteamRemoteStorage/GetUGCFileDetails/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "optional",
+              "type": "uint64"
+            },
+            {
+              "name": "ugcid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "SetUGCUsedByGC",
           "version": 1,
           "http_method": "POST",
           "rust_method": "set_ugc_used_by_gc",
-          "path": "ISteamRemoteStorage/SetUGCUsedByGC/v1/"
+          "path": "ISteamRemoteStorage/SetUGCUsedByGC/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "ugcid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "used",
+              "requirement": "required",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "SubscribePublishedFile",
           "version": 1,
           "http_method": "POST",
           "rust_method": "subscribe_published_file",
-          "path": "ISteamRemoteStorage/SubscribePublishedFile/v1/"
+          "path": "ISteamRemoteStorage/SubscribePublishedFile/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "UnsubscribePublishedFile",
           "version": 1,
           "http_method": "POST",
           "rust_method": "unsubscribe_published_file",
-          "path": "ISteamRemoteStorage/UnsubscribePublishedFile/v1/"
+          "path": "ISteamRemoteStorage/UnsubscribePublishedFile/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "publishedfileid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "remote_storage"
+      "rust_module": "remote_storage",
+      "documentation_sha256": "f47f6e4bba9f63d5581e5d9028dbaf67b859cdbd5aa917fc2dc4db5d6232fcbd"
     },
     {
       "interface": "ISteamUser",
@@ -1316,69 +5009,216 @@
           "version": 4,
           "http_method": "GET",
           "rust_method": "check_app_ownership",
-          "path": "ISteamUser/CheckAppOwnership/v4/"
+          "path": "ISteamUser/CheckAppOwnership/v4/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetAppPriceInfo",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_app_price_info",
-          "path": "ISteamUser/GetAppPriceInfo/v1/"
+          "path": "ISteamUser/GetAppPriceInfo/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appids",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetDeletedSteamIDs",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_deleted_steam_ids",
-          "path": "ISteamUser/GetDeletedSteamIDs/v1/"
+          "path": "ISteamUser/GetDeletedSteamIDs/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "rowversion",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetFriendList",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_friend_list",
-          "path": "ISteamUser/GetFriendList/v1/"
+          "path": "ISteamUser/GetFriendList/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "relationship",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetPlayerBans",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_player_bans",
-          "path": "ISteamUser/GetPlayerBans/v1/"
+          "path": "ISteamUser/GetPlayerBans/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamids",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetPlayerSummaries",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_player_summaries",
-          "path": "ISteamUser/GetPlayerSummaries/v2/"
+          "path": "ISteamUser/GetPlayerSummaries/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamids",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetPublisherAppOwnership",
           "version": 4,
           "http_method": "GET",
           "rust_method": "get_publisher_app_ownership",
-          "path": "ISteamUser/GetPublisherAppOwnership/v4/"
+          "path": "ISteamUser/GetPublisherAppOwnership/v4/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetUserGroupList",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_user_group_list",
-          "path": "ISteamUser/GetUserGroupList/v1/"
+          "path": "ISteamUser/GetUserGroupList/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "ResolveVanityURL",
           "version": 1,
           "http_method": "GET",
           "rust_method": "resolve_vanity_url",
-          "path": "ISteamUser/ResolveVanityURL/v1/"
+          "path": "ISteamUser/ResolveVanityURL/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "vanityurl",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "url_type",
+              "requirement": "optional",
+              "type": "int32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P0",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "user"
+      "rust_module": "user",
+      "documentation_sha256": "02c952d394a48fb08b88490c7a2c56678f797da67ea2d342e3afbce00934ba27"
     },
     {
       "interface": "ISteamUserAuth",
@@ -1389,20 +5229,64 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "authenticate_user",
-          "path": "ISteamUserAuth/AuthenticateUser/v1/"
+          "path": "ISteamUserAuth/AuthenticateUser/v1/",
+          "reference_parameters": [
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "sessionkey",
+              "requirement": "required",
+              "type": "rawbinary"
+            },
+            {
+              "name": "encrypted_loginkey",
+              "requirement": "required",
+              "type": "rawbinary"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "AuthenticateUserTicket",
           "version": 1,
           "http_method": "GET",
           "rust_method": "authenticate_user_ticket",
-          "path": "ISteamUserAuth/AuthenticateUserTicket/v1/"
+          "path": "ISteamUserAuth/AuthenticateUserTicket/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "ticket",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "identity",
+              "requirement": "required",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P0",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "user_auth"
+      "rust_module": "user_auth",
+      "documentation_sha256": "977c08d555cbd9d2ea0c8cf3d79ff81f435264ffbd32c8f185cdc2a24aaf7851"
     },
     {
       "interface": "ISteamUserStats",
@@ -1413,55 +5297,204 @@
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_global_achievement_percentages_for_app",
-          "path": "ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/"
+          "path": "ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/",
+          "reference_parameters": [
+            {
+              "name": "gameid",
+              "requirement": "required",
+              "type": "uint64"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetGlobalStatsForGame",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_global_stats_for_game",
-          "path": "ISteamUserStats/GetGlobalStatsForGame/v1/"
+          "path": "ISteamUserStats/GetGlobalStatsForGame/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "name[0]",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "startdate",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "enddate",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetNumberOfCurrentPlayers",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_number_of_current_players",
-          "path": "ISteamUserStats/GetNumberOfCurrentPlayers/v1/"
+          "path": "ISteamUserStats/GetNumberOfCurrentPlayers/v1/",
+          "reference_parameters": [
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetPlayerAchievements",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_player_achievements",
-          "path": "ISteamUserStats/GetPlayerAchievements/v1/"
+          "path": "ISteamUserStats/GetPlayerAchievements/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "l",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetSchemaForGame",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_schema_for_game",
-          "path": "ISteamUserStats/GetSchemaForGame/v2/"
+          "path": "ISteamUserStats/GetSchemaForGame/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "l",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetUserStatsForGame",
           "version": 2,
           "http_method": "GET",
           "rust_method": "get_user_stats_for_game",
-          "path": "ISteamUserStats/GetUserStatsForGame/v2/"
+          "path": "ISteamUserStats/GetUserStatsForGame/v2/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "SetUserStatsForGame",
           "version": 1,
           "http_method": "POST",
           "rust_method": "set_user_stats_for_game",
-          "path": "ISteamUserStats/SetUserStatsForGame/v1/"
+          "path": "ISteamUserStats/SetUserStatsForGame/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "steamid",
+              "requirement": "required",
+              "type": "uint64"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "count",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "name[0]",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "value[0]",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P0",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "user_stats"
+      "rust_module": "user_stats",
+      "documentation_sha256": "d093af6138c3338df72f6e0d9f9b31f78ff52b81b792a2a1536dc8c22eed531a"
     },
     {
       "interface": "ISteamWebAPIUtil",
@@ -1472,20 +5505,35 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_server_info",
-          "path": "ISteamWebAPIUtil/GetServerInfo/v1/"
+          "path": "ISteamWebAPIUtil/GetServerInfo/v1/",
+          "reference_parameters": [
+
+          ],
+          "reference_parameter_table": false,
+          "reference_deprecated": false
         },
         {
           "name": "GetSupportedAPIList",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_supported_api_list",
-          "path": "ISteamWebAPIUtil/GetSupportedAPIList/v1/"
+          "path": "ISteamWebAPIUtil/GetSupportedAPIList/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "web_api_util"
+      "rust_module": "web_api_util",
+      "documentation_sha256": "882377f8703cda1ab3b4796266eb968e2e5ccef5b62a84bfbf772fce656d5933"
     },
     {
       "interface": "IStoreService",
@@ -1496,13 +5544,68 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_app_list",
-          "path": "IStoreService/GetAppList/v1/"
+          "path": "IStoreService/GetAppList/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "if_modified_since",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "have_description_language",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "include_games",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "include_dlc",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "include_software",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "include_videos",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "include_hardware",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "last_appid",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "max_results",
+              "requirement": "optional",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "store"
+      "rust_module": "store",
+      "documentation_sha256": "2478b5a7efe53a67d99ccbfb9c4dfbb475d6a9e95e69635855162bcfda8ebb10"
     },
     {
       "interface": "IUserReviewsService",
@@ -1513,13 +5616,128 @@
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_app_reviews",
-          "path": "IUserReviewsService/GetAppReviews/v1/"
+          "path": "IUserReviewsService/GetAppReviews/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "filter",
+              "requirement": "optional",
+              "type": "int32"
+            },
+            {
+              "name": "languages",
+              "requirement": "optional",
+              "type": "string[]"
+            },
+            {
+              "name": "day_range",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "cursor",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "review_type",
+              "requirement": "optional",
+              "type": "int32"
+            },
+            {
+              "name": "purchase_type",
+              "requirement": "optional",
+              "type": "int32"
+            },
+            {
+              "name": "num_per_page",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "filter_offtopic_activity",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "display_language",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "use_review_quality",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "date_range_start",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "date_range_end",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "date_range_exclude",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "playtime_min_hours",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "playtime_max_hours",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "primarily_steam_deck",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "hardware_os",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "hardware_cpu",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "hardware_gpu",
+              "requirement": "optional",
+              "type": "string"
+            },
+            {
+              "name": "hardware_device_type",
+              "requirement": "optional",
+              "type": "string"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "reviews"
+      "rust_module": "reviews",
+      "documentation_sha256": "b523645f88d8287c9c55ec11cdfb122abc5e3d9a4349c4fd66ee48011c7e8d02"
     },
     {
       "interface": "IWorkshopService",
@@ -1530,34 +5748,141 @@
           "version": 1,
           "http_method": "POST",
           "rust_method": "set_item_payment_rules",
-          "path": "IWorkshopService/SetItemPaymentRules/v1/"
+          "path": "IWorkshopService/SetItemPaymentRules/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "gameitemid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "associated_workshop_files",
+              "requirement": "required",
+              "type": "{message}"
+            },
+            {
+              "name": "partner_accounts",
+              "requirement": "required",
+              "type": "{message}"
+            },
+            {
+              "name": "validate_only",
+              "requirement": "optional",
+              "type": "bool"
+            },
+            {
+              "name": "make_workshop_files_subscribable",
+              "requirement": "required",
+              "type": "bool"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetFinalizedContributors",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_finalized_contributors",
-          "path": "IWorkshopService/GetFinalizedContributors/v1/"
+          "path": "IWorkshopService/GetFinalizedContributors/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "gameitemid",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "GetItemDailyRevenue",
           "version": 1,
           "http_method": "GET",
           "rust_method": "get_item_daily_revenue",
-          "path": "IWorkshopService/GetItemDailyRevenue/v1/"
+          "path": "IWorkshopService/GetItemDailyRevenue/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "item_id",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "date_start",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "date_end",
+              "requirement": "required",
+              "type": "uint32"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         },
         {
           "name": "PopulateItemDescriptions",
           "version": 1,
           "http_method": "POST",
           "rust_method": "populate_item_descriptions",
-          "path": "IWorkshopService/PopulateItemDescriptions/v1/"
+          "path": "IWorkshopService/PopulateItemDescriptions/v1/",
+          "reference_parameters": [
+            {
+              "name": "key",
+              "requirement": "required",
+              "type": "string"
+            },
+            {
+              "name": "appid",
+              "requirement": "required",
+              "type": "uint32"
+            },
+            {
+              "name": "languages",
+              "requirement": "required",
+              "type": "{message}"
+            }
+          ],
+          "reference_parameter_table": true,
+          "reference_deprecated": false
         }
       ],
       "discovery": "documented_endpoints",
       "phase": "P2",
       "binding_status": "bound_contract_tests_only",
-      "rust_module": "workshop"
+      "rust_module": "workshop",
+      "documentation_sha256": "343f52c6fb3872def1fac1b728f26329117d60e09769d03f9e946343c26c9267"
     }
   ]
 }

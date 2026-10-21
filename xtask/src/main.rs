@@ -3,6 +3,7 @@
 // Licensed under the Apache License, Version 2.0.
 // See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
+mod audit;
 mod dependencies;
 mod release;
 mod repository;
@@ -25,11 +26,12 @@ fn run() -> Result<()> {
     let mut args = std::env::args().skip(1);
     let command = args
         .next()
-        .ok_or("expected check-repository, coverage, check-dependencies, or release")?;
+        .ok_or("expected check-repository, coverage, audit-api, check-dependencies, or release")?;
     let rest: Vec<_> = args.collect();
     match command.as_str() {
         "check-repository" if rest.is_empty() => repository::check(),
         "coverage" => repository::coverage(&rest),
+        "audit-api" => audit::run(&rest),
         "check-dependencies" => dependencies::check(&rest),
         "release" => release::run(&rest),
         _ => Err(format!("unknown command or arguments: {command}").into()),

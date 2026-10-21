@@ -1,0 +1,1296 @@
+{
+  "_metadata": {
+    "copyright": "Copyright 2026 steam-api-web contributors.",
+    "license": "Apache-2.0",
+    "SPDX-License-Identifier": "Apache-2.0",
+    "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
+    "retrieved_on": "2026-10-22",
+    "source": "https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/",
+    "authentication": "anonymous; no key or OAuth token supplied",
+    "source_sha256": "bd9526d07598517c8c4dc1f76b78137106610be49783637438f660a819acf555",
+    "validation": "Discovery metadata only; listed methods were not invoked. No permissions, complete protobuf schemas, or stable availability are inferred."
+  },
+  "apilist": {
+    "interfaces": [
+      {
+        "name": "IClientStats_1046930",
+        "methods": [
+          {
+            "name": "ReportEvent",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IGCVersion_1046930",
+        "methods": [
+          {
+            "name": "GetClientVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          },
+          {
+            "name": "GetServerVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IGCVersion_1269260",
+        "methods": [
+          {
+            "name": "GetClientVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          },
+          {
+            "name": "GetServerVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IGCVersion_1422450",
+        "methods": [
+          {
+            "name": "GetClientVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          },
+          {
+            "name": "GetServerVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IGCVersion_440",
+        "methods": [
+          {
+            "name": "GetClientVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          },
+          {
+            "name": "GetServerVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IGCVersion_570",
+        "methods": [
+          {
+            "name": "GetClientVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          },
+          {
+            "name": "GetServerVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IGCVersion_583950",
+        "methods": [
+          {
+            "name": "GetClientVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          },
+          {
+            "name": "GetServerVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IGCVersion_730",
+        "methods": [
+          {
+            "name": "GetServerVersion",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IPortal2Leaderboards_620",
+        "methods": [
+          {
+            "name": "GetBucketizedData",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "leaderboardName",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ISteamApps",
+        "methods": [
+          {
+            "name": "GetSDRConfig",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetServersAtAddress",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "addr",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "UpToDateCheck",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "version",
+                "type": "uint32",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ISteamBroadcast",
+        "methods": [
+          {
+            "name": "PlayerStats",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+
+            ]
+          },
+          {
+            "name": "ViewerHeartbeat",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "sessionid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "token",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "stream",
+                "type": "int32",
+                "optional": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ISteamDirectory",
+        "methods": [
+          {
+            "name": "GetCMList",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "cellid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "maxcount",
+                "type": "uint32",
+                "optional": true
+              }
+            ]
+          },
+          {
+            "name": "GetCMListForConnect",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "cellid",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "cmtype",
+                "type": "string",
+                "optional": true
+              },
+              {
+                "name": "realm",
+                "type": "string",
+                "optional": true
+              },
+              {
+                "name": "maxcount",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "qoslevel",
+                "type": "uint32",
+                "optional": true
+              }
+            ]
+          },
+          {
+            "name": "GetSteamPipeDomains",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ISteamNews",
+        "methods": [
+          {
+            "name": "GetNewsForApp",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "maxlength",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "enddate",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "count",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "tags",
+                "type": "string",
+                "optional": true
+              }
+            ]
+          },
+          {
+            "name": "GetNewsForApp",
+            "version": 2,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "maxlength",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "enddate",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "count",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "feeds",
+                "type": "string",
+                "optional": true
+              },
+              {
+                "name": "tags",
+                "type": "string",
+                "optional": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ISteamRemoteStorage",
+        "methods": [
+          {
+            "name": "GetCollectionDetails",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "collectioncount",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "publishedfileids[0]",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetPublishedFileDetails",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "itemcount",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "publishedfileids[0]",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ISteamUserOAuth",
+        "methods": [
+          {
+            "name": "GetTokenDetails",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "access_token",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ISteamUserStats",
+        "methods": [
+          {
+            "name": "GetGlobalAchievementPercentagesForApp",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "gameid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetGlobalAchievementPercentagesForApp",
+            "version": 2,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "gameid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetGlobalStatsForGame",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "count",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "name[0]",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "startdate",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "enddate",
+                "type": "uint32",
+                "optional": true
+              }
+            ]
+          },
+          {
+            "name": "GetNumberOfCurrentPlayers",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ISteamWebAPIUtil",
+        "methods": [
+          {
+            "name": "GetServerInfo",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          },
+          {
+            "name": "GetSupportedAPIList",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "key",
+                "type": "string",
+                "optional": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "ITFSystem_440",
+        "methods": [
+          {
+            "name": "GetWorldStatus",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IAuthenticationService",
+        "methods": [
+          {
+            "name": "PollAuthSessionStatus",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "client_id",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "request_id",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "token_to_revoke",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetAuthSessionInfo",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "client_id",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetAuthSessionRiskInfo",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "client_id",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "language",
+                "type": "uint32",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "NotifyRiskQuizResults",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "client_id",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "results",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "selected_action",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "did_confirm_login",
+                "type": "bool",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetPasswordRSAPublicKey",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "account_name",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "BeginAuthSessionViaCredentials",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "device_friendly_name",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "account_name",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "encrypted_password",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "encryption_timestamp",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "remember_login",
+                "type": "bool",
+                "optional": false
+              },
+              {
+                "name": "platform_type",
+                "type": "{enum}",
+                "optional": false
+              },
+              {
+                "name": "persistence",
+                "type": "{enum}",
+                "optional": true
+              },
+              {
+                "name": "website_id",
+                "type": "string",
+                "optional": true
+              },
+              {
+                "name": "device_details",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "guard_data",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "language",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "qos_level",
+                "type": "int32",
+                "optional": true
+              }
+            ]
+          },
+          {
+            "name": "UpdateAuthSessionWithSteamGuardCode",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "client_id",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "code",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "code_type",
+                "type": "{enum}",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "BeginAuthSessionViaQR",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "device_friendly_name",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "platform_type",
+                "type": "{enum}",
+                "optional": false
+              },
+              {
+                "name": "device_details",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "website_id",
+                "type": "string",
+                "optional": true
+              }
+            ]
+          },
+          {
+            "name": "UpdateAuthSessionWithMobileConfirmation",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "version",
+                "type": "int32",
+                "optional": false
+              },
+              {
+                "name": "client_id",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "signature",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "confirm",
+                "type": "bool",
+                "optional": true
+              },
+              {
+                "name": "persistence",
+                "type": "{enum}",
+                "optional": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IBroadcastService",
+        "methods": [
+          {
+            "name": "PostGameDataFrameRTMP",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "rtmp_token",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "frame_data",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IContentServerDirectoryService",
+        "methods": [
+          {
+            "name": "GetCDNForVideo",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "property_type",
+                "type": "int32",
+                "optional": false
+              },
+              {
+                "name": "client_ip",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "client_region",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "PickSingleContentServer",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "property_type",
+                "type": "int32",
+                "optional": false
+              },
+              {
+                "name": "cell_id",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "client_ip",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetServersForSteamPipe",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "cell_id",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "max_servers",
+                "type": "uint32",
+                "optional": true
+              },
+              {
+                "name": "ip_override",
+                "type": "string",
+                "optional": true
+              },
+              {
+                "name": "launcher_type",
+                "type": "int32",
+                "optional": true
+              },
+              {
+                "name": "ipv6_public",
+                "type": "string",
+                "optional": true
+              },
+              {
+                "name": "current_connections",
+                "type": "{message}",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetClientUpdateHosts",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "cached_signature",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetDepotPatchInfo",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "depotid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "source_manifestid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "target_manifestid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IPublishedFileService",
+        "methods": [
+          {
+            "name": "GetUserVoteSummary",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "publishedfileids",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IPlayerService",
+        "methods": [
+          {
+            "name": "RecordOfflinePlaytime",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "ticket",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "play_sessions",
+                "type": "{message}",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IGameNotificationsService",
+        "methods": [
+          {
+            "name": "UserCreateSession",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "context",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "title",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "users",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "UserUpdateSession",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "sessionid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "title",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "users",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "UserDeleteSession",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "sessionid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IStoreService",
+        "methods": [
+          {
+            "name": "GetGamesFollowed",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetGamesFollowedCount",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetRecommendedTagsForUser",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "language",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "country_code",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "favor_rarer_tags",
+                "type": "bool",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IHelpRequestLogsService",
+        "methods": [
+          {
+            "name": "UploadUserApplicationLog",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              },
+              {
+                "name": "log_type",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "version_string",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "log_contents",
+                "type": "string",
+                "optional": false
+              },
+              {
+                "name": "request_id",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetApplicationLogDemand",
+            "version": 1,
+            "httpmethod": "POST",
+            "parameters": [
+              {
+                "name": "appid",
+                "type": "uint32",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IWishlistService",
+        "methods": [
+          {
+            "name": "GetWishlistSortedFiltered",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              },
+              {
+                "name": "context",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "data_request",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "sort_order",
+                "type": "{enum}",
+                "optional": true
+              },
+              {
+                "name": "filters",
+                "type": "{message}",
+                "optional": false
+              },
+              {
+                "name": "start_index",
+                "type": "int32",
+                "optional": true
+              },
+              {
+                "name": "page_size",
+                "type": "int32",
+                "optional": true
+              },
+              {
+                "name": "share_token",
+                "type": "string",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetWishlist",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          },
+          {
+            "name": "GetWishlistItemCount",
+            "version": 1,
+            "httpmethod": "GET",
+            "parameters": [
+              {
+                "name": "steamid",
+                "type": "uint64",
+                "optional": false
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

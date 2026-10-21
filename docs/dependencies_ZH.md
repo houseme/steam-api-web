@@ -9,7 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](dependencies.md) | 简体中文
 
-核对日期：2026-10-21。来源为各 crate 的 crates.io API，排除 yanked，按语义版本排序，包含 rc、beta、alpha 和 dev 预发布。可复核快照见 [dependency-versions.json](dependency-versions.json)。
+核对日期：2026-10-22。来源为各 crate 的 crates.io API，排除 yanked，按语义版本排序，包含 rc、beta、alpha 和 dev 预发布。可复核快照见 [dependency-versions.json](dependency-versions.json)。
 
 | 直接依赖 | 使用版本 | 用途 |
 | --- | --- | --- |
@@ -26,6 +26,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | itoa | 1.0.18 | 表单整数的栈缓冲区格式化 |
 | zeroize | 1.9.1 | 自有凭据清零 |
 | wiremock（测试） | 0.6.5 | HTTP 协议与故障测试 |
+| scraper（仅 xtask） | 0.29.0 | 维护工具 HTML5 契约审计，关闭默认 feature |
 
 Rustls 的最高版本为 **0.24.0-dev.2**，但 reqwest 0.13.5 使用 Rustls 0.23；`tls_backend_preconfigured` 根据类型识别 ClientConfig。将两个版本同时编入不能让其互操作，会在构造 client 时失败。采用同一条 0.23 的最新版本 0.23.46 是最高版本要求的兼容性例外；后续 reqwest 支持时同步升级。其余直接依赖均为查询时的最高语义版本，当前没有更高 rc/beta。
 
@@ -47,3 +48,5 @@ cargo test --workspace --all-features --locked
 JSON 清单作为共享的语言无关证据保留一份。cargo update 若重写 Cargo.lock，需要保留仓库版权/许可头。工作流采用已核对的 checkout v7、upload-artifact v7、download-artifact v8 和 action-gh-release v3；CI 用最新 actionlint，本地验证为 1.7.12。这些构建工具不改变 crate 运行时依赖图。
 
 `xtask` 是 publish=false 的独立 workspace 成员，其 blocking HTTP 与审计依赖不进入公开 crate 的依赖图。项目源码和 workflow 不再依赖 Python。
+
+本轮全部 14 个直接依赖已重新核对，包含预发布版本；运行库依赖不变。scraper 不进入发布库依赖图或归档。

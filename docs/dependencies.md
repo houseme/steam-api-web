@@ -9,7 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 English | [简体中文](dependencies_ZH.md)
 
-Checked on 2026-10-21 using each crate's crates.io API, excluding yanked versions and sorting semantic versions including rc, beta, alpha, and dev previews. The shared, language-neutral [dependency-versions.json](dependency-versions.json) records the evidence.
+Checked on 2026-10-22 using each crate's crates.io API, excluding yanked versions and sorting semantic versions including rc, beta, alpha, and dev previews. The shared, language-neutral [dependency-versions.json](dependency-versions.json) records the evidence.
 
 | Direct dependency | Selected version | Purpose |
 | --- | --- | --- |
@@ -26,6 +26,7 @@ Checked on 2026-10-21 using each crate's crates.io API, excluding yanked version
 | itoa | 1.0.18 | Stack-based integer formatting for form fields |
 | zeroize | 1.9.1 | Clearing owned credential strings |
 | wiremock (tests) | 0.6.5 | HTTP contract and failure tests |
+| scraper (xtask only) | 0.29.0 | Maintenance HTML5 contract auditing; default features disabled |
 
 The highest Rustls version is **0.24.0-dev.2**, while reqwest 0.13.5 uses Rustls 0.23 and identifies ClientConfig by its concrete type in `tls_backend_preconfigured`. Compiling both versions does not make them interoperable: client construction would fail. The latest 0.23 release, **0.23.46**, is therefore the compatibility exception to selecting the highest version. Upgrade it when reqwest supports the new line. Other direct dependencies use the highest observed semantic version, with no newer rc/beta.
 
@@ -47,3 +48,5 @@ The read-only audit uses the Rust xtask, cargo metadata, bounded worker threads,
 Workflow actions follow the reference project's structure while using the currently checked major versions: checkout v7, upload-artifact v7, download-artifact v8, and action-gh-release v3. Go's actionlint latest is used in CI for current workflow syntax; local validation used actionlint 1.7.12. These build tools do not change the crate's runtime dependency graph.
 
 `xtask` is a separate publish=false workspace member. Its blocking HTTP and audit dependencies do not enter the published library dependency graph. Repository source and workflows no longer require Python.
+
+All 14 direct dependencies were rechecked including prereleases. Runtime dependencies are unchanged; scraper does not enter the published library graph or archive.
