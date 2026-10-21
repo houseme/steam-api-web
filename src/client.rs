@@ -39,10 +39,11 @@ use reqwest::{
 use rustls_platform_verifier::BuilderVerifierExt;
 use serde::de::DeserializeOwned;
 use std::{
+    collections::HashMap,
     fmt,
     net::IpAddr,
     sync::{
-        Arc,
+        Arc, Mutex as SyncMutex,
         atomic::{AtomicU64, Ordering},
     },
     time::{Duration, SystemTime},
@@ -331,6 +332,7 @@ impl ClientBuilder {
                 retry: self.retry,
                 min_request_interval: self.min_request_interval,
                 pacing: Mutex::new(Pacing::default()),
+                urls: SyncMutex::new(HashMap::new()),
                 metrics: Metrics::default(),
             }),
         })
@@ -352,6 +354,9 @@ struct Inner {
     retry: RetryPolicy,
     min_request_interval: Duration,
     pacing: Mutex<Pacing>,
+    /// Endpoint paths are a fixed internal set, so each joined URL is parsed
+    /// once and cloned per call. The guard is never held across an await.
+    urls: SyncMutex<HashMap<&'static str, Url>>,
     metrics: Metrics,
 }
 
@@ -561,11 +566,7 @@ impl SteamClient {
         result
     }
     async fn execute(&self, endpoint: Endpoint, encoded: String) -> Result<Response> {
-        let mut url = self
-            .inner
-            .base_url
-            .join(endpoint.path)
-            .map_err(|_| Error::Configuration("invalid endpoint URL"))?;
+        let mut url = self.endpoint_url(&endpoint)?;
         if endpoint.operation != Operation::Post {
             url.set_query(Some(&encoded));
         }
@@ -623,6 +624,25 @@ impl SteamClient {
             tokio::time::sleep(delay).await;
         }
         Err(Error::Configuration("invalid retry state"))
+    }
+    /// Resolve an endpoint's URL from the per-client cache, parsing it only on
+    /// first use. Poisoning cannot occur because the guard never panics.
+    fn endpoint_url(&self, endpoint: &Endpoint) -> Result<Url> {
+        let mut urls = self
+            .inner
+            .urls
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        if let Some(url) = urls.get(endpoint.path) {
+            return Ok(url.clone());
+        }
+        let url = self
+            .inner
+            .base_url
+            .join(endpoint.path)
+            .map_err(|_| Error::Configuration("invalid endpoint URL"))?;
+        urls.insert(endpoint.path, url.clone());
+        Ok(url)
     }
     async fn pace(&self) {
         loop {
