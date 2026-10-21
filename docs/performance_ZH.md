@@ -65,3 +65,5 @@ cargo bench --bench codec --locked --offline
 | 100 行微交易购物车 | 17,552 | 5,640 | 67.9% | -4.6% |
 
 这些是本地编码器 CPU 测量，不是端到端时延承诺；输入数据的构造在计时区域外，最终表单缓冲的分配按设计保留。改动后整个 workspace（168 项测试，含新增 wire 拼写测试）、`-D warnings` 严格 Clippy、rustdoc 与格式检查全部通过。
+
+后续 [0.4 分支审查](review-0.4_ZH.md)记录统一 VAC 验证器、请求所有权重构及相对 ee0e71b 的测量。

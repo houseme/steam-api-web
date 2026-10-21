@@ -30,6 +30,8 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 ### Changed
 
 - Coverage guards distinguish explicit signatures from inherited Sandbox counterparts.
+- Preserve explicit VAC API errors before requiring readiness fields, using one scoped error traversal.
+- Move single-send URL/body ownership and the final read-attempt URL into reqwest; centralize concurrency, pacing and metrics at the send boundary.
 - Indexed form keys write directly into the final buffer, and each client caches fixed endpoint URLs without retaining queries or credentials.
 - Maintenance remains Rust. Tests, benchmarks, tools, workflows, documents and reference JSON stay on GitHub outside the distributable crate.
 
