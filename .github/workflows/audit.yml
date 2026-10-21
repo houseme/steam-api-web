@@ -1,0 +1,23 @@
+# Copyright 2026 steam-api-web contributors.
+# SPDX-License-Identifier: Apache-2.0
+# Licensed under the Apache License, Version 2.0.
+# See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
+
+name: Audit
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - name: Run audit check
+        uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
