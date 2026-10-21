@@ -20,11 +20,11 @@
 use crate::{
     Error, Result, SteamClient,
     request::{Access, Endpoint, Params},
-    types::{nonzero, valid_calendar_date},
+    types::{integer, nonzero, optional_integer, valid_calendar_date},
 };
-use serde::{Deserialize, Deserializer, Serialize, de};
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::{collections::BTreeMap, fmt, str::FromStr};
+use std::{collections::BTreeMap, fmt};
 
 /// Read-only access to the three documented financial-reporting methods.
 #[derive(Debug, Clone, Copy)]
@@ -362,40 +362,4 @@ fn validate_date(date: &str) -> Result<()> {
         ));
     }
     Ok(())
-}
-
-#[derive(Deserialize)]
-#[serde(untagged)]
-enum Integer<T> {
-    Number(T),
-    Text(String),
-}
-
-impl<T: FromStr> Integer<T> {
-    fn parse<E: de::Error>(self) -> std::result::Result<T, E> {
-        match self {
-            Self::Number(value) => Ok(value),
-            Self::Text(value) => value
-                .parse()
-                .map_err(|_| E::custom("expected exact decimal integer")),
-        }
-    }
-}
-
-fn integer<'de, D, T>(deserializer: D) -> std::result::Result<T, D::Error>
-where
-    D: Deserializer<'de>,
-    T: Deserialize<'de> + FromStr,
-{
-    Integer::<T>::deserialize(deserializer)?.parse()
-}
-
-fn optional_integer<'de, D, T>(deserializer: D) -> std::result::Result<Option<T>, D::Error>
-where
-    D: Deserializer<'de>,
-    T: Deserialize<'de> + FromStr,
-{
-    Option::<Integer<T>>::deserialize(deserializer)?
-        .map(Integer::parse)
-        .transpose()
 }

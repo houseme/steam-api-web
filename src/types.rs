@@ -7,7 +7,7 @@
 
 use serde::{Deserialize, Deserializer, Serialize, Serializer, de};
 use serde_json::Number;
-use std::{fmt, str::FromStr};
+use std::{fmt, marker::PhantomData, str::FromStr};
 
 /// A 64-bit Steam ID accepting JSON numbers and decimal strings.
 /// Zero is preserved in responses (e.g. a canceled license's owner). Request
@@ -49,24 +49,65 @@ impl Serialize for SteamId {
 }
 impl<'de> Deserialize<'de> for SteamId {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
-        u64_string(deserializer).map(Self)
+        integer(deserializer).map(Self)
     }
 }
-pub(crate) fn u64_string<'de, D: Deserializer<'de>>(
+/// Decode exact integers directly from numeric or borrowed decimal JSON input.
+/// Checked conversions reject signedness/width overflow and all floating points.
+pub(crate) fn integer<'de, D, T>(deserializer: D) -> std::result::Result<T, D::Error>
+where
+    D: Deserializer<'de>,
+    T: FromStr + TryFrom<u64> + TryFrom<i64>,
+{
+    struct IntegerVisitor<T>(PhantomData<T>);
+
+    impl<'de, T> de::Visitor<'de> for IntegerVisitor<T>
+    where
+        T: FromStr + TryFrom<u64> + TryFrom<i64>,
+    {
+        type Value = T;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+            formatter.write_str("an exact integer or decimal integer string")
+        }
+
+        fn visit_u64<E: de::Error>(self, value: u64) -> std::result::Result<T, E> {
+            T::try_from(value).map_err(|_| E::custom("integer outside destination range"))
+        }
+
+        fn visit_i64<E: de::Error>(self, value: i64) -> std::result::Result<T, E> {
+            T::try_from(value).map_err(|_| E::custom("integer outside destination range"))
+        }
+
+        fn visit_str<E: de::Error>(self, value: &str) -> std::result::Result<T, E> {
+            value
+                .parse()
+                .map_err(|_| E::custom("expected exact decimal integer"))
+        }
+    }
+
+    deserializer.deserialize_any(IntegerVisitor(PhantomData))
+}
+
+struct ParsedInteger<T>(T);
+
+impl<'de, T> Deserialize<'de> for ParsedInteger<T>
+where
+    T: FromStr + TryFrom<u64> + TryFrom<i64>,
+{
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
+        integer(deserializer).map(Self)
+    }
+}
+
+pub(crate) fn optional_integer<'de, D, T>(
     deserializer: D,
-) -> std::result::Result<u64, D::Error> {
-    #[derive(Deserialize)]
-    #[serde(untagged)]
-    enum Wire {
-        Integer(u64),
-        Text(String),
-    }
-    match Wire::deserialize(deserializer)? {
-        Wire::Integer(value) => Ok(value),
-        Wire::Text(value) => value
-            .parse()
-            .map_err(|_| de::Error::custom("expected unsigned 64-bit decimal")),
-    }
+) -> std::result::Result<Option<T>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: FromStr + TryFrom<u64> + TryFrom<i64>,
+{
+    Option::<ParsedInteger<T>>::deserialize(deserializer).map(|value| value.map(|value| value.0))
 }
 
 /// A JSON number or numeric string, preserving 64-bit signed/unsigned integers.
@@ -236,5 +277,119 @@ mod calendar_tests {
             assert_eq!(compare_utc_times(value, "2026-01-01T00:00:00Z"), None);
         }
         assert!(valid_utc_time("2024-02-29T23:59:59.12345678901234567890Z"));
+    }
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used)]
+mod integer_tests {
+    use super::*;
+    use serde_json::{Value, json};
+
+    fn check<T>(wire: &str, expected: T)
+    where
+        T: FromStr + TryFrom<u64> + TryFrom<i64> + fmt::Debug + PartialEq + Copy,
+    {
+        assert_eq!(
+            serde_json::from_str::<ParsedInteger<T>>(wire).unwrap().0,
+            expected
+        );
+        let value: Value = serde_json::from_str(wire).unwrap();
+        assert_eq!(ParsedInteger::<T>::deserialize(&value).unwrap().0, expected);
+        assert_eq!(
+            serde_json::from_value::<ParsedInteger<T>>(value).unwrap().0,
+            expected
+        );
+    }
+
+    #[test]
+    fn integers_preserve_width_boundaries_and_decimal_spellings() {
+        macro_rules! bounds {
+            ($type:ty) => {
+                for value in [<$type>::MIN, 0, <$type>::MAX] {
+                    check(&value.to_string(), value);
+                    check(&format!("\"{value}\""), value);
+                }
+            };
+        }
+        bounds!(u32);
+        bounds!(u64);
+        bounds!(i32);
+        bounds!(i64);
+        check("\"+0001\"", 1_u32);
+        check("\"-0\"", 0_i64);
+        check(r#""\u0031""#, 1_u64);
+    }
+
+    #[test]
+    fn integers_reject_floats_wrong_types_and_overflow() {
+        for wire in [
+            "1.0", "1e0", "null", "true", "[]", "{}", "\"\"", "\" 1\"", "\"1.0\"", "\"1e0\"",
+            "\"NaN\"",
+        ] {
+            macro_rules! reject {
+                ($type:ty) => {
+                    assert!(
+                        serde_json::from_str::<ParsedInteger<$type>>(wire).is_err(),
+                        "{wire}"
+                    );
+                    assert!(
+                        serde_json::from_value::<ParsedInteger<$type>>(
+                            serde_json::from_str(wire).unwrap()
+                        )
+                        .is_err(),
+                        "{wire}"
+                    );
+                };
+            }
+            reject!(u32);
+            reject!(u64);
+            reject!(i32);
+            reject!(i64);
+        }
+        macro_rules! overflow {
+            ($type:ty, $($wire:expr),+) => {
+                $(for wire in [$wire.to_owned(), format!("\"{}\"", $wire)] {
+                    assert!(serde_json::from_str::<ParsedInteger<$type>>(&wire).is_err(), "{wire}");
+                    assert!(serde_json::from_value::<ParsedInteger<$type>>(serde_json::from_str(&wire).unwrap()).is_err(), "{wire}");
+                })+
+            };
+        }
+        overflow!(u32, "-1", "4294967296");
+        overflow!(u64, "-1", "18446744073709551616");
+        overflow!(i32, "-2147483649", "2147483648");
+        overflow!(i64, "-9223372036854775809", "9223372036854775808");
+    }
+
+    #[test]
+    fn optional_integers_distinguish_absence_null_zero_and_invalid_values() {
+        #[derive(Deserialize)]
+        struct Row {
+            #[serde(default, deserialize_with = "optional_integer")]
+            unsigned: Option<u64>,
+            #[serde(default, deserialize_with = "optional_integer")]
+            signed: Option<i32>,
+        }
+        for value in [json!({}), json!({"unsigned": null, "signed": null})] {
+            let row: Row = serde_json::from_value(value).unwrap();
+            assert_eq!((row.unsigned, row.signed), (None, None));
+        }
+        for wire in [
+            r#"{"unsigned":0,"signed":-2147483648}"#,
+            r#"{"unsigned":"0","signed":"-2147483648"}"#,
+        ] {
+            let row: Row = serde_json::from_str(wire).unwrap();
+            assert_eq!((row.unsigned, row.signed), (Some(0), Some(i32::MIN)));
+            let row: Row = serde_json::from_value(serde_json::from_str(wire).unwrap()).unwrap();
+            assert_eq!((row.unsigned, row.signed), (Some(0), Some(i32::MIN)));
+        }
+        for value in [
+            json!({"unsigned": -1}),
+            json!({"signed": 2147483648_u64}),
+            json!({"unsigned": ""}),
+            json!({"signed": 1.0}),
+        ] {
+            assert!(serde_json::from_value::<Row>(value).is_err());
+        }
     }
 }

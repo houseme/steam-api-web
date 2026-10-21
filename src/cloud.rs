@@ -19,9 +19,9 @@
 use crate::{
     Error, Result, SteamClient, SteamId,
     request::{Access, Endpoint, Params},
-    types::{nonzero, text, u64_string},
+    types::{integer, nonzero, optional_integer, text},
 };
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{Deserialize, Serialize, Serializer};
 use serde_json::Value;
 use std::{
     collections::{BTreeMap, HashSet},
@@ -94,10 +94,10 @@ pub struct CloudFile {
     /// Application ID, when included.
     pub appid: Option<u32>,
     /// File ID, accepting a number or decimal string without rounding.
-    #[serde(default, deserialize_with = "optional_u64_string")]
+    #[serde(default, deserialize_with = "optional_integer")]
     pub ugcid: Option<u64>,
     /// Modification time in Unix seconds, when included.
-    #[serde(default, deserialize_with = "optional_u64_string")]
+    #[serde(default, deserialize_with = "optional_integer")]
     pub timestamp: Option<u64>,
     /// Byte length, when included.
     pub file_size: Option<u32>,
@@ -133,10 +133,10 @@ pub struct BeginAppUploadBatchRequest<'a> {
 #[derive(Debug, Clone, Deserialize)]
 pub struct CloudUploadBatch {
     /// Batch ID to retain for completion, preserving the full uint64 range.
-    #[serde(deserialize_with = "u64_string")]
+    #[serde(deserialize_with = "integer")]
     pub batch_id: u64,
     /// Steam's currently unused application change counter.
-    #[serde(deserialize_with = "u64_string")]
+    #[serde(deserialize_with = "integer")]
     pub app_change_number: u64,
 }
 
@@ -209,7 +209,7 @@ pub struct CloudUploadHeader {
 #[derive(Deserialize)]
 pub struct CloudHttpUpload {
     /// Staged UGC ID, accepting a number or decimal string.
-    #[serde(deserialize_with = "u64_string")]
+    #[serde(deserialize_with = "integer")]
     pub ugcid: u64,
     /// Timestamp assigned to the staged change.
     pub timestamp: u32,
@@ -448,14 +448,6 @@ fn validate_sha1(value: &str) -> Result<()> {
         ));
     }
     Ok(())
-}
-
-fn optional_u64_string<'de, D: Deserializer<'de>>(
-    deserializer: D,
-) -> std::result::Result<Option<u64>, D::Error> {
-    #[derive(Deserialize)]
-    struct Wire(#[serde(deserialize_with = "u64_string")] u64);
-    Option::<Wire>::deserialize(deserializer).map(|value| value.map(|value| value.0))
 }
 
 macro_rules! redacted_debug {

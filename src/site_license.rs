@@ -18,7 +18,7 @@
 use crate::{
     Error, Result, SteamClient,
     request::{Access, Endpoint, Params},
-    types::{compare_utc_times, u64_string},
+    types::{compare_utc_times, integer},
 };
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
@@ -121,7 +121,7 @@ pub struct SiteClient {
 #[derive(Deserialize)]
 pub struct CurrentSiteConnections {
     /// Full-width site identifier, accepting decimal strings and JSON integers.
-    #[serde(deserialize_with = "u64_string")]
+    #[serde(deserialize_with = "integer")]
     pub siteid: u64,
     /// Operator-assigned site name.
     pub site_name: String,
@@ -162,7 +162,7 @@ pub struct SiteGamePlaytime {
 #[derive(Deserialize)]
 pub struct SitePlaytime {
     /// Full-width site identifier, accepting decimal strings and JSON integers.
-    #[serde(deserialize_with = "u64_string")]
+    #[serde(deserialize_with = "integer")]
     pub siteid: u64,
     /// Operator-assigned site name.
     pub site_name: String,

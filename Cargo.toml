@@ -56,6 +56,10 @@ harness = false
 name = "request"
 harness = false
 
+[[bench]]
+name = "integer"
+harness = false
+
 [lints.rust]
 unsafe_code = "forbid"
 missing_docs = "warn"

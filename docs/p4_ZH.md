@@ -88,7 +88,7 @@ cargo xtask check-repository
 Sandbox 继承签名与生产原签名匹配。静态源码映射不是 AST 分析、线上探测或操作成功
 证明，协议 fixture 是独立验证层。CI 将 JSON 存为 `steam-api-web-coverage`。
 
-本地验证包含 207 项 workspace 测试，覆盖 P4 路径/编码/key、错误及重放、日期边界、
+本地验证包含 210 项 workspace 测试，覆盖 P4 路径/编码/key、错误及重放、日期边界、
 整数极值、隐私、覆盖检查及既有传输回归。独立复核未发现其他具体契约缺陷。本次未
 读取真实财务、站点或广播数据，真实授权及生产行为仍未验证。
 
@@ -96,3 +96,5 @@ Cargo 显式 include 白名单仅保留源码、示例、中英文 README/CHANGE
 Cargo 元数据；测试、基准、xtask、workflow、这些文档及参考 JSON 留在 GitHub。
 仓库保持零 Python，沿用每客户端 AWS-LC 后端，没有新增依赖。0.5.0 尚未发布，
 创建标签与发布是独立操作。
+
+[0.5 分支 Review](review-0.5_ZH.md)记录共享整数解码重构、回归边界与标量基准。
