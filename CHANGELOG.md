@@ -30,6 +30,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 ### Changed
 
 - Shared response validation accepts checked object-valued result envelopes while retaining strict scalar EResult handling; mutations still never replay, including side-effecting GETs.
+- Consolidate response contracts in ResponsePolicy and eliminate temporary scalar form strings using borrowed text and stack-formatted integers; add an offline benchmark against the reviewed 0.3 encoder.
 - Repository guards compare coverage/version, public modules and P2 method names. Maintenance remains Rust; tests, benchmarks, tools, workflows and reference material stay outside the published package.
 
 ### Validation boundaries

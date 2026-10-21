@@ -245,6 +245,7 @@ cargo fmt --all --check
 cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 cargo test --workspace --all-features --locked
 cargo bench --bench codec --locked --offline
+cargo bench --bench request --locked --offline
 cargo doc --no-deps --locked
 cargo xtask check-repository
 cargo xtask release verify-package
@@ -257,6 +258,8 @@ key，需要允许监听本地端口。离线测试通过不代表 Publisher 认
 ## 路线图
 
 [传输层 Review 与编解码测量](https://github.com/houseme/steam-api-web/blob/main/docs/performance_ZH.md)记录 0.2 重构依据与可复跑的离线基准。
+
+[0.3 传输层 Review](https://github.com/houseme/steam-api-web/blob/main/docs/review-0.3_ZH.md)记录响应策略集中处理和请求编码实测改进。
 
 0.3.0 已实现 P2 的 66 个方法及本地契约测试；公开 schema 有对应类型，未公开响应显式保留原始 JSON。凭据环境和生产验证仍需单独完成。
 

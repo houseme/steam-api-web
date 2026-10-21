@@ -92,4 +92,8 @@ Maintenance and release guards move to a separate, nonpublishable Rust xtask; wo
 
 ## 0.3 P2 and response policies
 
+ResponsePolicy owns result-header checks, empty-body rules and JSON root parsing;
+the client handles bounded transport. Scalar form fields borrow text and format
+integers on the stack. See the [0.3 review](review-0.3.md) for measured tradeoffs.
+
 The 0.3 development version adds 66 methods in 12 interfaces, bringing coverage to 123 methods in 24 interfaces. Cloud OAuth, x-eresult and empty HTTP 200 acknowledgements have an explicit response policy. Object-valued inventory result envelopes receive recursive checks. GET StartTrade and GET Delete are single-send operations; every POST remains non-replayed. See [P2 contracts](p2.md) for batch cleanup, deduplication, concurrency timestamps, cursors, revisions and unspecified schemas. Maintenance and distribution retain Rust xtask and the package allowlist.

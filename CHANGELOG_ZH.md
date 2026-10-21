@@ -30,6 +30,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 ### 调整
 
 - 共享响应支持经过内部错误校验的对象型 result，保留严格标量 EResult；写入仍禁止自动重放，包括有副作用的 GET。
+- 将响应契约集中到 ResponsePolicy，借用文本并在栈缓冲区格式化整数，消除表单标量临时字符串；新增对照原 0.3 编码器的离线基准。
 - 仓库检查核对覆盖率/版本、公开模块及 P2 方法；维护代码继续使用 Rust，测试、基准、工具、工作流和资料继续排除于发布包。
 
 ### 验证边界

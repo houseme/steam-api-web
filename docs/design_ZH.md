@@ -88,4 +88,6 @@ SetAppBuildLive 通过保留 HTTP 状态区分请求接受与 201 等待手机�
 
 ## 0.3 P2 与结果策略
 
+ResponsePolicy 负责 result header、空响应及 JSON 根结构，客户端负责有限传输。表单标量借用文本、在栈缓冲区格式化整数，实测取舍见 [0.3 Review](review-0.3_ZH.md)。
+
 0.3 开发版新增 12 个接口、66 个方法，累计 24 个接口、123 个方法。Cloud 的 OAuth、x-eresult 与空 HTTP 200 具有独立响应策略；库存定义对象型 result 也会递归校验。GET StartTrade 和 GET Delete 明确为单次发送，所有 POST 保持不重放。详见 [P2 契约](p2_ZH.md)，包括批次清理、去重、并发时间戳、cursor、修订号及未公开 schema 的边界。维护与分发继续使用现有 Rust xtask 和发布包白名单。

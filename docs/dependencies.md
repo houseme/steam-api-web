@@ -23,6 +23,7 @@ Checked on 2026-10-21 using each crate's crates.io API, excluding yanked version
 | thiserror | 2.0.21 | Matchable error variants |
 | url | 2.5.8 | URL and base URL validation |
 | httpdate | 1.0.3 | Retry-After dates |
+| itoa | 1.0.18 | Stack-based integer formatting for form fields |
 | zeroize | 1.9.1 | Clearing owned credential strings |
 | wiremock (tests) | 0.6.5 | HTTP contract and failure tests |
 

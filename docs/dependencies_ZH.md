@@ -23,6 +23,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | thiserror | 2.0.21 | 可匹配错误类型 |
 | url | 2.5.8 | URL 与 base URL 校验 |
 | httpdate | 1.0.3 | Retry-After 日期 |
+| itoa | 1.0.18 | 表单整数的栈缓冲区格式化 |
 | zeroize | 1.9.1 | 自有凭据清零 |
 | wiremock（测试） | 0.6.5 | HTTP 协议与故障测试 |
 

@@ -269,6 +269,7 @@ cargo fmt --all --check
 cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
 cargo test --workspace --all-features --locked
 cargo bench --bench codec --locked --offline
+cargo bench --bench request --locked --offline
 cargo doc --no-deps --all-features --locked
 cargo xtask check-repository
 cargo xtask release verify-package
@@ -284,6 +285,9 @@ checks cover bilingual links, licensing, reference inventory, and the AWS-LC dep
 
 The [transport review and codec measurements](https://github.com/houseme/steam-api-web/blob/main/docs/performance.md)
 record the 0.2 refactor and its reproducible offline benchmarks.
+
+The [0.3 transport review](https://github.com/houseme/steam-api-web/blob/main/docs/review-0.3.md)
+records response-policy consolidation and measured request-encoding improvements.
 
 Version 0.3.0 implements all 66 P2 request bindings and local contract tests. Published response schemas have types; undocumented results explicitly retain raw JSON. Credentialed integration and production validation remain separate.
 
