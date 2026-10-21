@@ -120,3 +120,5 @@ workspace (168 tests including the new wire-spelling test), strict Clippy with
 `-D warnings`, rustdoc and formatting checks pass after the change.
 
 The subsequent [0.4 branch review](review-0.4.md) records the unified VAC validator, request ownership refactor and measurements against ee0e71b.
+
+The [0.5 branch review](review-0.5.md) adds shared integer decoding and scalar measurements against 0a4617b.

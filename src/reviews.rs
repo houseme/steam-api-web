@@ -12,7 +12,7 @@
 use crate::{
     Error, Result, SteamClient, SteamId,
     request::{Access, Endpoint, Params},
-    types::{nonzero, text, u64_string},
+    types::{integer, nonzero, text},
 };
 use serde::{Deserialize, Serialize, Serializer};
 use serde_json::Value;
@@ -191,7 +191,7 @@ pub struct ReviewAuthor {
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppReview {
     /// Unique review ID, accepting numeric or decimal-string wire values.
-    #[serde(deserialize_with = "u64_string")]
+    #[serde(deserialize_with = "integer")]
     pub recommendationid: u64,
     /// Public information about the author.
     pub author: ReviewAuthor,

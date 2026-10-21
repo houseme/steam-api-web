@@ -29,6 +29,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ### 调整
 
+- 将报表及 ID 的有符号/无符号精确整数解码统一为检查转换、借用文本的 Visitor，删除 untagged 分支重试与重复可选包装；可复跑的标量测量见仓库中双语 0.5 Review。
 - MicroTxn、财务日期及站点报表复用日历/UTC 校验，保留原始日期拼写和任意小数精度。
 - 维护工具继续使用 Rust，保留发布白名单；测试、基准、工具、工作流、覆盖数据及文档均留在 GitHub。
 

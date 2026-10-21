@@ -8,7 +8,7 @@
 use crate::{
     Error, Result, SteamClient, SteamId,
     request::{Access, Endpoint, Params},
-    types::{nonzero, text, u64_string},
+    types::{integer, nonzero, text},
     user_auth::OpaqueResponse,
 };
 use serde::Deserialize;
@@ -172,7 +172,7 @@ pub struct PlayerSummary {
 #[derive(Debug, Clone, Deserialize)]
 pub struct UserGroup {
     /// Group ID represented as a number or decimal string.
-    #[serde(deserialize_with = "u64_string")]
+    #[serde(deserialize_with = "integer")]
     pub gid: u64,
 }
 /// Profile types accepted by ResolveVanityURL.
