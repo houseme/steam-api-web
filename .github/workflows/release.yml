@@ -1,0 +1,181 @@
+# Copyright 2026 steam-api-web contributors.
+# SPDX-License-Identifier: Apache-2.0
+# Licensed under the Apache License, Version 2.0.
+# See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version matching Cargo.toml and both changelogs, such as 0.1.0 or 0.2.0-rc.1.
+        required: true
+        type: string
+      dry_run:
+        description: Validate and package only; do not publish or create a release.
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: steam-api-web-release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Resolve version and tagged revision
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.release.outputs.version }}
+      tag: ${{ steps.release.outputs.tag }}
+      revision: ${{ steps.release.outputs.revision }}
+      is_dry_run: ${{ steps.release.outputs.is_dry_run }}
+      prerelease: ${{ steps.release.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && !inputs.dry_run && format('refs/tags/v{0}', inputs.version) || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+      - name: Validate version, changelogs and release tag
+        id: release
+        env:
+          REQUESTED_VERSION: ${{ inputs.version }}
+          RELEASE_EVENT: ${{ github.event_name }}
+          RELEASE_REF: ${{ github.ref_name }}
+          RELEASE_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+        run: |
+          python3 scripts/release.py prepare \
+            --version "$REQUESTED_VERSION" --event "$RELEASE_EVENT" \
+            --ref "$RELEASE_REF" --dry-run "$RELEASE_DRY_RUN" \
+            --output "$GITHUB_OUTPUT"
+
+  validate:
+    name: Complete release validation
+    needs: prepare
+    uses: ./.github/workflows/ci.yml
+    with:
+      revision: ${{ needs.prepare.outputs.revision }}
+    permissions:
+      contents: read
+
+  publish:
+    name: Publish and verify crates.io archive
+    needs: [prepare, validate]
+    if: needs.prepare.outputs.is_dry_run == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.revision }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+      - uses: actions/download-artifact@v8
+        with:
+          name: steam-api-web-package
+          path: ${{ runner.temp }}/validated-package
+      - name: Verify CI artifact and reproduce the package
+        env:
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          archive="steam-api-web-$RELEASE_VERSION.crate"
+          python3 scripts/release.py verify-archive \
+            --archive "$RUNNER_TEMP/validated-package/$archive" \
+            --checksums "$RUNNER_TEMP/validated-package/SHA256SUMS"
+          cargo package --locked --registry crates-io
+          cmp "$RUNNER_TEMP/validated-package/$archive" "target/package/$archive"
+      - name: Publish and confirm the exact registry checksum
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          set -euo pipefail
+          if [ -z "$CARGO_REGISTRY_TOKEN" ]; then
+            echo "::error::Configure CARGO_REGISTRY_TOKEN with publish permission for steam-api-web."
+            exit 1
+          fi
+          if ! cargo publish --locked --registry crates-io; then
+            echo "Upload did not complete; checking whether the identical archive was published."
+          fi
+          python3 scripts/verify_registry.py steam-api-web "$RELEASE_VERSION" \
+            --archive "$RUNNER_TEMP/validated-package/steam-api-web-$RELEASE_VERSION.crate"
+
+  github-release:
+    name: Create GitHub release from the validated changelog
+    needs: [prepare, publish]
+    if: needs.prepare.outputs.is_dry_run == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.revision }}
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+      - uses: actions/download-artifact@v8
+        with:
+          name: steam-api-web-package
+          path: ${{ runner.temp }}/validated-package
+      - name: Prepare release notes and verify the attached archive
+        env:
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          python3 scripts/release.py check --version "$RELEASE_VERSION" \
+            --notes "$RUNNER_TEMP/release-notes.md"
+          python3 scripts/release.py verify-archive \
+            --archive "$RUNNER_TEMP/validated-package/steam-api-web-$RELEASE_VERSION.crate" \
+            --checksums "$RUNNER_TEMP/validated-package/SHA256SUMS"
+      - uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          target_commitish: ${{ needs.prepare.outputs.revision }}
+          name: v${{ needs.prepare.outputs.version }}
+          body_path: ${{ runner.temp }}/release-notes.md
+          files: |
+            ${{ runner.temp }}/validated-package/*.crate
+            ${{ runner.temp }}/validated-package/SHA256SUMS
+          fail_on_unmatched_files: true
+          prerelease: ${{ needs.prepare.outputs.prerelease == 'true' }}
+          draft: false
+          generate_release_notes: false
+
+  dry-run-summary:
+    name: Dry run complete
+    needs: [prepare, validate]
+    if: needs.prepare.outputs.is_dry_run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Summarize validated artifacts
+        env:
+          RELEASE_VERSION: ${{ needs.prepare.outputs.version }}
+          RELEASE_REVISION: ${{ needs.prepare.outputs.revision }}
+        run: |
+          {
+            echo "## Release dry run passed"
+            printf '\nVersion: %s\nRevision: %s\n' "$RELEASE_VERSION" "$RELEASE_REVISION"
+            echo "Tests, lint, documentation and package verification passed."
+            echo "The steam-api-web-package artifact contains the crate and its checksum."
+            echo "No crates.io publication or GitHub release was performed."
+          } >> "$GITHUB_STEP_SUMMARY"
