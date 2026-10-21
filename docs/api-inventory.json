@@ -1,0 +1,1189 @@
+{
+  "_metadata": {
+    "copyright": "Copyright 2026 steam-api-web contributors.",
+    "license": "Apache-2.0",
+    "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
+    "retrieved_on": "2026-10-21",
+    "source": "https://partner.steamgames.com/doc/webapi",
+    "scope": "Publicly documented HTTP endpoints; missing signatures require manual review. Private and undocumented methods are not inferred.",
+    "SPDX-License-Identifier": "Apache-2.0",
+    "explicit_signatures": 157,
+    "inherited_sandbox_signatures": 10,
+    "sdk_reference": {
+      "repository": "https://github.com/Noxime/steamworks-rs",
+      "source_modules": [
+        "src/app.rs",
+        "src/callback.rs",
+        "src/error.rs",
+        "src/friends.rs",
+        "src/input.rs",
+        "src/lib.rs",
+        "src/matchmaking.rs",
+        "src/matchmaking_servers.rs",
+        "src/networking.rs",
+        "src/networking_messages.rs",
+        "src/networking_sockets.rs",
+        "src/networking_sockets_callback.rs",
+        "src/networking_types.rs",
+        "src/networking_utils.rs",
+        "src/remote_play.rs",
+        "src/remote_storage.rs",
+        "src/screenshots.rs",
+        "src/server.rs",
+        "src/timeline.rs",
+        "src/ugc.rs",
+        "src/user.rs",
+        "src/user_stats.rs",
+        "src/user_stats/stat_callback.rs",
+        "src/user_stats/stats.rs",
+        "src/utils.rs"
+      ],
+      "commit_sha": "d8114185613be4dbfe4897c8484d0b2670fd3cd7",
+      "tree_sha": "4c43e2a86462b070f9c92758123efac23efb6318"
+    }
+  },
+  "interfaces": [
+    {
+      "interface": "IBroadcastService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IBroadcastService",
+      "methods": [
+        {
+          "name": "PostGameDataFrame",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P4",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ICheatReportingService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ICheatReportingService",
+      "methods": [
+        {
+          "name": "ReportPlayerCheating",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "RequestPlayerGameBan",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "RemovePlayerGameBan",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetCheatingReports",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "RequestVacStatusForUser",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "StartSecureMultiplayerSession",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "EndSecureMultiplayerSession",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P3",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ICloudService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ICloudService",
+      "methods": [
+        {
+          "name": "EnumerateUserFiles",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "BeginAppUploadBatch",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "CompleteAppUploadBatch",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "BeginHTTPUpload",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "CommitHTTPUpload",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "Delete",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IEconMarketService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IEconMarketService",
+      "methods": [
+        {
+          "name": "GetMarketEligibility",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "CancelAppListingsForUser",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetAssetID",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetPopular",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IEconService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IEconService",
+      "methods": [
+        {
+          "name": "GetTradeHistory",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "FlushInventoryCache",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "FlushAssetAppearanceCache",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "FlushContextCache",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetTradeOffers",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetTradeOffer",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetTradeOffersSummary",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IGameInventory",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IGameInventory",
+      "methods": [
+        {
+          "name": "GetHistoryCommandDetails",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetUserHistory",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "HistoryExecuteCommands",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "SupportGetAssetHistory",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "UpdateItemDefs",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IGameNotificationsService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IGameNotificationsService",
+      "methods": [
+        {
+          "name": "CreateSession",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "UpdateSession",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "EnumerateSessionsForApp",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetSessionDetailsForApp",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "RequestNotifications",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "DeleteSession",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "DeleteSessionBatch",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P3",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IGameServersService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IGameServersService",
+      "methods": [
+        {
+          "name": "GetAccountList",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "CreateAccount",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "SetMemo",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "ResetLoginToken",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "DeleteAccount",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetAccountPublicInfo",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "QueryLoginToken",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetServerSteamIDsByIP",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetServerIPsBySteamID",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IInventoryService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IInventoryService",
+      "methods": [
+        {
+          "name": "AddItem",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "AddPromoItem",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "ConsumeItem",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "ExchangeItem",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetInventory",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetItemDefs",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetPriceSheet",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "Consolidate",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetQuantity",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "ModifyItems",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ILobbyMatchmakingService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService",
+      "methods": [
+        {
+          "name": "CreateLobby",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "RemoveUserFromLobby",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetLobbyData",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P3",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IPartnerFinancialsService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService",
+      "methods": [
+        {
+          "name": "GetChangedDatesForPartner",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetDetailedSales",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetAppWishlistReporting",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P4",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IPlayerService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IPlayerService",
+      "methods": [
+        {
+          "name": "GetRecentlyPlayedGames",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetSingleGamePlaytime",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetOwnedGames",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetSteamLevel",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetBadges",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetCommunityBadgeProgress",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IPublishedFileModerationService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService",
+      "methods": [
+        {
+          "name": "GetAllApprovalRequests",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "ProcessApprovalRequest",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IPublishedFileService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IPublishedFileService",
+      "methods": [
+        {
+          "name": "Delete",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "QueryFiles",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "SetDeveloperMetadata",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "UpdateAppUGCBan",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "UpdateBanStatus",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "UpdateIncompatibleStatus",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "UpdateTags",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISiteLicenseService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISiteLicenseService",
+      "methods": [
+        {
+          "name": "GetCurrentClientConnections",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetTotalPlaytime",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P4",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamApps",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamApps",
+      "methods": [
+        {
+          "name": "GetAppBetas",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetAppBuilds",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetAppDepotVersions",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetAppList",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetPartnerAppListForWebAPIKey",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetPlayersBanned",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetServerList",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetServersAtAddress",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "SetAppBuildLive",
+          "version": 2,
+          "http_method": "POST"
+        },
+        {
+          "name": "UpToDateCheck",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamCommunity",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamCommunity",
+      "methods": [
+        {
+          "name": "ReportAbuse",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P3",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamEconomy",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamEconomy",
+      "methods": [
+        {
+          "name": "CanTrade",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "FinalizeAssetTransaction",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetAssetClassInfo",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetAssetPrices",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetExportedAssetsForUser",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetMarketPrices",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "StartAssetTransaction",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "StartTrade",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamGameServerStats",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamGameServerStats",
+      "methods": [
+        {
+          "name": "GetGameServerPlayerStatsForGame",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamLeaderboards",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamLeaderboards",
+      "methods": [
+        {
+          "name": "DeleteLeaderboard",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "DeleteLeaderboardScore",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "FindOrCreateLeaderboard",
+          "version": 2,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetLeaderboardEntries",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetLeaderboardsForGame",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "ResetLeaderboard",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "SetLeaderboardScore",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamMicroTxn",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamMicroTxn",
+      "methods": [
+        {
+          "name": "AdjustAgreement",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "CancelAgreement",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "FinalizeTxn",
+          "version": 2,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetReport",
+          "version": 5,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetUserAgreementInfo",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetUserInfo",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "InitTxn",
+          "version": 3,
+          "http_method": "POST"
+        },
+        {
+          "name": "ProcessAgreement",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "QueryTxn",
+          "version": 3,
+          "http_method": "GET"
+        },
+        {
+          "name": "RefundTxn",
+          "version": 2,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P3",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamMicroTxnSandbox",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamMicroTxnSandbox",
+      "methods": [
+        {
+          "name": "AdjustAgreement",
+          "version": 1,
+          "http_method": "POST",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "CancelAgreement",
+          "version": 1,
+          "http_method": "POST",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "FinalizeTxn",
+          "version": 2,
+          "http_method": "POST",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "GetReport",
+          "version": 5,
+          "http_method": "GET",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "GetUserAgreementInfo",
+          "version": 2,
+          "http_method": "GET",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "GetUserInfo",
+          "version": 2,
+          "http_method": "GET",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "InitTxn",
+          "version": 3,
+          "http_method": "POST",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "ProcessAgreement",
+          "version": 1,
+          "http_method": "POST",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "QueryTxn",
+          "version": 3,
+          "http_method": "GET",
+          "inherited_from": "ISteamMicroTxn"
+        },
+        {
+          "name": "RefundTxn",
+          "version": 2,
+          "http_method": "POST",
+          "inherited_from": "ISteamMicroTxn"
+        }
+      ],
+      "discovery": "inherited_from_official_reference",
+      "phase": "P3",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamNews",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamNews",
+      "methods": [
+        {
+          "name": "GetNewsForApp",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetNewsForAppAuthed",
+          "version": 2,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamPublishedItemSearch",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch",
+      "methods": [
+        {
+          "name": "RankedByPublicationOrder",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "RankedByTrend",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "RankedByVote",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "ResultSetSummary",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamPublishedItemVoting",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamPublishedItemVoting",
+      "methods": [
+        {
+          "name": "ItemVoteSummary",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "UserVoteSummary",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamRemoteStorage",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage",
+      "methods": [
+        {
+          "name": "EnumerateUserSubscribedFiles",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetCollectionDetails",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetPublishedFileDetails",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetUGCFileDetails",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "SetUGCUsedByGC",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "SubscribePublishedFile",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "UnsubscribePublishedFile",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "ISteamUser",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamUser",
+      "methods": [
+        {
+          "name": "CheckAppOwnership",
+          "version": 4,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetAppPriceInfo",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetDeletedSteamIDs",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetFriendList",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetPlayerBans",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetPlayerSummaries",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetPublisherAppOwnership",
+          "version": 4,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetUserGroupList",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "ResolveVanityURL",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P0",
+      "binding_status": "bound_contract_tests_only"
+    },
+    {
+      "interface": "ISteamUserAuth",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamUserAuth",
+      "methods": [
+        {
+          "name": "AuthenticateUser",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "AuthenticateUserTicket",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P0",
+      "binding_status": "bound_contract_tests_only"
+    },
+    {
+      "interface": "ISteamUserStats",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamUserStats",
+      "methods": [
+        {
+          "name": "GetGlobalAchievementPercentagesForApp",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetGlobalStatsForGame",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetNumberOfCurrentPlayers",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetPlayerAchievements",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetSchemaForGame",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetUserStatsForGame",
+          "version": 2,
+          "http_method": "GET"
+        },
+        {
+          "name": "SetUserStatsForGame",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P0",
+      "binding_status": "bound_contract_tests_only"
+    },
+    {
+      "interface": "ISteamWebAPIUtil",
+      "documentation": "https://partner.steamgames.com/doc/webapi/ISteamWebAPIUtil",
+      "methods": [
+        {
+          "name": "GetServerInfo",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetSupportedAPIList",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IStoreService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IStoreService",
+      "methods": [
+        {
+          "name": "GetAppList",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IUserReviewsService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IUserReviewsService",
+      "methods": [
+        {
+          "name": "GetAppReviews",
+          "version": 1,
+          "http_method": "GET"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P1",
+      "binding_status": "planned"
+    },
+    {
+      "interface": "IWorkshopService",
+      "documentation": "https://partner.steamgames.com/doc/webapi/IWorkshopService",
+      "methods": [
+        {
+          "name": "SetItemPaymentRules",
+          "version": 1,
+          "http_method": "POST"
+        },
+        {
+          "name": "GetFinalizedContributors",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "GetItemDailyRevenue",
+          "version": 1,
+          "http_method": "GET"
+        },
+        {
+          "name": "PopulateItemDescriptions",
+          "version": 1,
+          "http_method": "POST"
+        }
+      ],
+      "discovery": "documented_endpoints",
+      "phase": "P2",
+      "binding_status": "planned"
+    }
+  ]
+}

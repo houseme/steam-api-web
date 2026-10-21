@@ -1,0 +1,93 @@
+{
+  "_metadata": {
+    "copyright": "Copyright 2026 steam-api-web contributors.",
+    "license": "Apache-2.0",
+    "SPDX-License-Identifier": "Apache-2.0",
+    "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
+    "retrieved_on": "2026-10-21"
+  },
+  "aws-lc-rs": {
+    "latest_including_prerelease": "1.18.2",
+    "latest_rust_version": "1.71.0",
+    "manifest_minimum": "1.18.2",
+    "source": "https://crates.io/api/v1/crates/aws-lc-rs",
+    "status": "current"
+  },
+  "httpdate": {
+    "latest_including_prerelease": "1.0.3",
+    "latest_rust_version": "1.56",
+    "manifest_minimum": "1.0.3",
+    "source": "https://crates.io/api/v1/crates/httpdate",
+    "status": "current"
+  },
+  "reqwest": {
+    "latest_including_prerelease": "0.13.5",
+    "latest_rust_version": "1.85.0",
+    "manifest_minimum": "0.13.5",
+    "source": "https://crates.io/api/v1/crates/reqwest",
+    "status": "current"
+  },
+  "rustls": {
+    "latest_including_prerelease": "0.24.0-dev.2",
+    "latest_rust_version": "1.85",
+    "manifest_minimum": "0.23.46",
+    "source": "https://crates.io/api/v1/crates/rustls",
+    "status": "compatible_exception"
+  },
+  "rustls-platform-verifier": {
+    "latest_including_prerelease": "0.7.1",
+    "latest_rust_version": "1.85",
+    "manifest_minimum": "0.7.1",
+    "source": "https://crates.io/api/v1/crates/rustls-platform-verifier",
+    "status": "current"
+  },
+  "serde": {
+    "latest_including_prerelease": "1.0.229",
+    "latest_rust_version": "1.56",
+    "manifest_minimum": "1.0.229",
+    "source": "https://crates.io/api/v1/crates/serde",
+    "status": "current"
+  },
+  "serde_json": {
+    "latest_including_prerelease": "1.0.154",
+    "latest_rust_version": "1.71",
+    "manifest_minimum": "1.0.154",
+    "source": "https://crates.io/api/v1/crates/serde_json",
+    "status": "current"
+  },
+  "thiserror": {
+    "latest_including_prerelease": "2.0.21",
+    "latest_rust_version": "1.77",
+    "manifest_minimum": "2.0.21",
+    "source": "https://crates.io/api/v1/crates/thiserror",
+    "status": "current"
+  },
+  "tokio": {
+    "latest_including_prerelease": "1.54.0",
+    "latest_rust_version": "1.85",
+    "manifest_minimum": "1.54.0",
+    "source": "https://crates.io/api/v1/crates/tokio",
+    "status": "current"
+  },
+  "url": {
+    "latest_including_prerelease": "2.5.8",
+    "latest_rust_version": "1.63",
+    "manifest_minimum": "2.5.8",
+    "source": "https://crates.io/api/v1/crates/url",
+    "status": "current"
+  },
+  "wiremock": {
+    "latest_including_prerelease": "0.6.5",
+    "latest_rust_version": null,
+    "manifest_minimum": "0.6.5",
+    "source": "https://crates.io/api/v1/crates/wiremock",
+    "status": "current"
+  },
+  "zeroize": {
+    "latest_including_prerelease": "1.9.1",
+    "latest_rust_version": "1.85",
+    "manifest_minimum": "1.9.1",
+    "source": "https://crates.io/api/v1/crates/zeroize",
+    "status": "current"
+  }
+}
