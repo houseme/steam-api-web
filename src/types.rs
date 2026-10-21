@@ -118,19 +118,56 @@ pub struct StatValue(pub Number);
 
 impl<'de> Deserialize<'de> for StatValue {
     fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
-        #[derive(Deserialize)]
-        #[serde(untagged)]
-        enum Wire {
-            Number(Number),
-            Text(String),
+        struct StatisticVisitor;
+
+        impl<'de> de::Visitor<'de> for StatisticVisitor {
+            type Value = StatValue;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+                formatter.write_str("a finite JSON number or numeric string")
+            }
+
+            fn visit_u64<E: de::Error>(self, value: u64) -> std::result::Result<Self::Value, E> {
+                Ok(StatValue(value.into()))
+            }
+
+            fn visit_i64<E: de::Error>(self, value: i64) -> std::result::Result<Self::Value, E> {
+                Ok(StatValue(value.into()))
+            }
+
+            fn visit_u128<E: de::Error>(self, value: u128) -> std::result::Result<Self::Value, E> {
+                Number::deserialize(de::value::U128Deserializer::<E>::new(value)).map(StatValue)
+            }
+
+            fn visit_i128<E: de::Error>(self, value: i128) -> std::result::Result<Self::Value, E> {
+                Number::deserialize(de::value::I128Deserializer::<E>::new(value)).map(StatValue)
+            }
+
+            fn visit_f64<E: de::Error>(self, value: f64) -> std::result::Result<Self::Value, E> {
+                Number::from_f64(value)
+                    .map(StatValue)
+                    .ok_or_else(|| E::custom("expected finite numeric statistic"))
+            }
+
+            fn visit_str<E: de::Error>(self, value: &str) -> std::result::Result<Self::Value, E> {
+                value
+                    .parse()
+                    .map(StatValue)
+                    .map_err(|_| E::custom("expected numeric statistic"))
+            }
+
+            fn visit_map<M: de::MapAccess<'de>>(
+                self,
+                map: M,
+            ) -> std::result::Result<Self::Value, M::Error> {
+                // Delegate Number's private representation when a downstream
+                // crate enables serde_json/arbitrary_precision. Normal objects
+                // remain subject to Number's own rejection rules.
+                Number::deserialize(de::value::MapAccessDeserializer::new(map)).map(StatValue)
+            }
         }
-        match Wire::deserialize(deserializer)? {
-            Wire::Number(value) => Ok(Self(value)),
-            Wire::Text(value) => value
-                .parse()
-                .map(Self)
-                .map_err(|_| de::Error::custom("expected numeric statistic")),
-        }
+
+        deserializer.deserialize_any(StatisticVisitor)
     }
 }
 pub(crate) fn nonzero(value: u64, name: &'static str) -> crate::Result<()> {
@@ -390,6 +427,70 @@ mod integer_tests {
             json!({"signed": 1.0}),
         ] {
             assert!(serde_json::from_value::<Row>(value).is_err());
+        }
+    }
+}
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used)]
+mod statistic_tests {
+    use super::*;
+    use serde_json::Value;
+
+    #[test]
+    fn statistics_preserve_numbers_and_numeric_text_without_narrowing() {
+        for text in [
+            "0",
+            "18446744073709551615",
+            "340282366920938463463374607431768211455",
+            "-9223372036854775808",
+            "-170141183460469231731687303715884105728",
+            "-0.0",
+            "1.25",
+            "1e100",
+            "1.23456789012345678901234567890123456789",
+        ] {
+            let expected: Number = serde_json::from_str(text).unwrap();
+            for wire in [text.to_owned(), serde_json::to_string(text).unwrap()] {
+                let actual: StatValue = serde_json::from_str(&wire).unwrap();
+                assert_eq!(actual.0, expected);
+                let value: Value = serde_json::from_str(&wire).unwrap();
+                assert_eq!(StatValue::deserialize(&value).unwrap().0, expected);
+                assert_eq!(
+                    serde_json::from_value::<StatValue>(value).unwrap().0,
+                    expected
+                );
+                assert_eq!(
+                    serde_json::to_string(&actual).unwrap(),
+                    serde_json::to_string(&expected).unwrap()
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn statistics_reject_wrong_types_malformed_text_and_nonfinite_floats() {
+        for wire in [
+            "null",
+            "true",
+            "false",
+            "[]",
+            "{}",
+            "\"\"",
+            "\"1.0e\"",
+            "\"0x10\"",
+            "\"NaN\"",
+            "\"Infinity\"",
+        ] {
+            assert!(serde_json::from_str::<StatValue>(wire).is_err(), "{wire}");
+            assert!(
+                serde_json::from_value::<StatValue>(serde_json::from_str(wire).unwrap()).is_err(),
+                "{wire}"
+            );
+        }
+        for value in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+            let deserializer = de::value::F64Deserializer::<de::value::Error>::new(value);
+            assert!(StatValue::deserialize(deserializer).is_err());
         }
     }
 }

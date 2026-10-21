@@ -29,6 +29,8 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 
 ### Changed
 
+- Fix valid 128-bit statistics being rejected during Value-to-typed decoding when downstream arbitrary_precision is enabled; delegate range and precision behavior to Number.
+- Decode statistic numbers and borrowed text directly while preserving floats, negative zero and downstream arbitrary_precision compatibility; add complete-response CPU benchmarks and Linux feature-unification checks.
 - Consolidate exact signed/unsigned integer decoding across reports and IDs in one checked, borrowed-text Visitor, removing untagged branch retries and duplicate optional wrappers; see the repository's bilingual 0.5 review for reproducible scalar measurements.
 - Share Gregorian/UTC validation across MicroTxn, financial dates and site reporting, retaining original date spelling and arbitrary fractional precision.
 - Keep repository maintenance in Rust and preserve the package allowlist; tests, benchmarks, tooling, workflows, coverage data and prose docs remain on GitHub.

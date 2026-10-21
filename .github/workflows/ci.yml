@@ -49,6 +49,9 @@ jobs:
         run: cargo build --workspace --all-targets --all-features --locked
       - name: Test protocol, resilience and documentation
         run: cargo test --workspace --all-features --locked
+      - name: Test downstream arbitrary-precision compatibility
+        if: runner.os == 'Linux'
+        run: cargo test --lib --features serde_json/arbitrary_precision --locked
 
   lint:
     name: Rust, repository and workflow checks

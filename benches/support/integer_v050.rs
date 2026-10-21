@@ -6,6 +6,7 @@
 //! Exact financial integer decoder from 0a4617b, before the 0.5 review.
 
 use serde::{Deserialize, Deserializer, de};
+use serde_json::Number;
 use std::str::FromStr;
 
 #[derive(Deserialize)]
@@ -25,5 +26,27 @@ where
         Integer::Text(value) => value
             .parse()
             .map_err(|_| de::Error::custom("expected exact decimal integer")),
+    }
+}
+
+// StatValue's number/string decoder from the same reviewed revision.
+#[derive(serde::Serialize)]
+#[serde(transparent)]
+pub struct PreviousStatistic(pub Number);
+impl<'de> Deserialize<'de> for PreviousStatistic {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> std::result::Result<Self, D::Error> {
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum Wire {
+            Number(Number),
+            Text(String),
+        }
+        match Wire::deserialize(deserializer)? {
+            Wire::Number(value) => Ok(Self(value)),
+            Wire::Text(value) => value
+                .parse()
+                .map(Self)
+                .map_err(|_| de::Error::custom("expected numeric statistic")),
+        }
     }
 }

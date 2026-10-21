@@ -88,7 +88,7 @@ cargo xtask check-repository
 Sandbox 继承签名与生产原签名匹配。静态源码映射不是 AST 分析、线上探测或操作成功
 证明，协议 fixture 是独立验证层。CI 将 JSON 存为 `steam-api-web-coverage`。
 
-本地验证包含 210 项 workspace 测试，覆盖 P4 路径/编码/key、错误及重放、日期边界、
+本地验证包含 212 项 workspace 测试，覆盖 P4 路径/编码/key、错误及重放、日期边界、
 整数极值、隐私、覆盖检查及既有传输回归。独立复核未发现其他具体契约缺陷。本次未
 读取真实财务、站点或广播数据，真实授权及生产行为仍未验证。
 
