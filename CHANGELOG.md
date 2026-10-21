@@ -22,6 +22,8 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 
 ### Added
 
+- Rust API completeness auditing for 732 parameter rows and 167 binding/fixture mappings, with 53 discovery-only candidates and separate response/acceptance states; add bilingual feature matrices and P5 native interoperability design.
+- Public User-key ticket and conditional build-confirmation protocol fixtures; CI retains offline audit reports. HTML5 parsing is confined to the unpublished xtask.
 - All six P4 methods for financial reports, PC Cafe site activity/playtime and broadcast frames; the documented snapshot now binds all 33 interfaces and 167 routes (157 explicit, ten inherited Sandbox routes).
 - A dedicated Financial API Group key kind and isolated access policy, lossless report money/cursors, conditional sales/wishlist models and a read-only change-batch example.
 - Site models with private-field Debug redaction, response-local game IDs, future license types and exact UTC interval comparison; explicit single-send broadcast frames.

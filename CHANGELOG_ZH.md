@@ -22,6 +22,8 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ### 新增
 
+- Rust API 完整性审计核对 732 行参数及 167 条绑定/fixture 引用，区分 53 条目录外发现候选、类型化/opaque 和未完成验收；补充中英文全功能矩阵及 P5 原生互操作设计。
+- 增加公开 User-key 票据验证和条件确认账户的协议测试；CI 保存离线审计报告。HTML5 解析仅用于不发布的 xtask。
 - P4 财务报表、PC Cafe 站点活动/时长及广播帧共六个方法；文档快照已封装全部 33 接口、167 条路径（157 显式、10 条 Sandbox 继承路径）。
 - 独立 Financial API Group key 种类和访问隔离，精确金额/游标、条件销售/愿望单模型及只读变更批次示例。
 - Site 私密字段 Debug 脱敏、响应内游戏字典 ID、未知许可类型与精确 UTC 区间比较，以及显式单次发送的广播帧。

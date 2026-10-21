@@ -176,3 +176,5 @@ cargo run --example current_players -- 480
 ## 封装覆盖报告
 
 `cargo xtask coverage --json` 将 33 接口、167 路径快照与公开模块、Rust 方法及准确路径字面量逐项核对，区分 157 条显式签名和 10 条 Sandbox 继承路径。CI 将静态报告保留为 `steam-api-web-coverage`，它与协议 fixture、真实权限及生产验证分别处理。覆盖数据和本指南仅留在 GitHub，不进入 crate 白名单。
+
+`cargo xtask audit-api --json` 补充正式参数表、响应形式、匿名发现候选及未完成验收；`--live` 只读取公开来源。详见 [API 审计](api-audit_ZH.md)和 [P5 设计](p5-design_ZH.md)。
