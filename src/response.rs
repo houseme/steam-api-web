@@ -89,55 +89,48 @@ impl ResponsePolicy {
     }
 
     fn validate_business(self, endpoint: &'static str, value: &Value) -> Result<()> {
-        if self == Self::VacStatus {
-            check_local(endpoint, value, Self::Json)?;
-            let body = value
-                .get("response")
-                .filter(|body| body.is_object())
-                .ok_or(Error::Decode {
-                    endpoint,
-                    line: 0,
-                    column: 0,
-                })?;
-            if body.get("success").and_then(Value::as_bool).is_none() {
-                return Err(Error::Decode {
-                    endpoint,
-                    line: 0,
-                    column: 0,
-                });
-            }
-            check_local(endpoint, body, Self::VacStatus)?;
-            check_envelopes(endpoint, body)?;
-            // Only the canonical VAC response may use false as pending. Root
-            // markers, sibling envelopes and nested failures remain strict.
-            for key in ERROR_ENVELOPES {
-                if key != "response"
-                    && let Some(child) = value.get(key)
-                {
-                    check_api(endpoint, child)?;
-                }
-            }
+        let scope = if self == Self::VacStatus {
+            ErrorScope::VacRoot
         } else {
-            check_api(endpoint, value)?;
-        }
-        if self == Self::MicroTransaction
-            && value
-                .get("response")
-                .and_then(|body| body.get("result"))
-                .and_then(Value::as_str)
-                != Some("OK")
-        {
-            return Err(Error::Decode {
+            ErrorScope::Standard
+        };
+        // Check every standard error envelope before requiring successful reply
+        // fields. Error-only responses need not carry readiness or payment ACKs.
+        check_api(endpoint, value, scope)?;
+        let body = value.get("response");
+        let acknowledged = match self {
+            Self::VacStatus => body
+                .and_then(|body| body.get("success"))
+                .is_some_and(Value::is_boolean),
+            Self::MicroTransaction => {
+                body.and_then(|body| body.get("result"))
+                    .and_then(Value::as_str)
+                    == Some("OK")
+            }
+            _ => true,
+        };
+        if acknowledged {
+            Ok(())
+        } else {
+            Err(Error::Decode {
                 endpoint,
                 line: 0,
                 column: 0,
-            });
+            })
         }
-        Ok(())
     }
 }
 
 const ERROR_ENVELOPES: [&str; 4] = ["response", "params", "playerstats", "result"];
+
+/// Only the immediate canonical VAC body defers its success marker to the
+/// endpoint ACK check. Nested and sibling envelopes always use standard rules.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ErrorScope {
+    Standard,
+    VacRoot,
+    VacBody,
+}
 
 pub(crate) struct Response {
     pub status: u16,
@@ -170,7 +163,7 @@ impl Response {
             // Standard error envelopes were already checked recursively. Other
             // selected envelopes need checking once when entering their subtree.
             if !ERROR_ENVELOPES.contains(key) {
-                check_api(endpoint, &payload)?;
+                check_api(endpoint, &payload, ErrorScope::Standard)?;
             }
         }
         // Owned deserialization can move strings into typed fields.
@@ -181,12 +174,22 @@ impl Response {
     }
 }
 
-fn check_api(endpoint: &'static str, value: &Value) -> Result<()> {
-    check_local(endpoint, value, ResponsePolicy::Json)?;
-    check_envelopes(endpoint, value)
+fn check_api(endpoint: &'static str, value: &Value, scope: ErrorScope) -> Result<()> {
+    check_local(endpoint, value, scope)?;
+    for key in ERROR_ENVELOPES {
+        if let Some(child) = value.get(key) {
+            let child_scope = if scope == ErrorScope::VacRoot && key == "response" {
+                ErrorScope::VacBody
+            } else {
+                ErrorScope::Standard
+            };
+            check_api(endpoint, child, child_scope)?;
+        }
+    }
+    Ok(())
 }
 
-fn check_local(endpoint: &'static str, value: &Value, policy: ResponsePolicy) -> Result<()> {
+fn check_local(endpoint: &'static str, value: &Value, scope: ErrorScope) -> Result<()> {
     if value.get("error").is_some_and(|error| !error.is_null()) {
         let code = value
             .get("error")
@@ -194,10 +197,11 @@ fn check_local(endpoint: &'static str, value: &Value, policy: ResponsePolicy) ->
             .and_then(as_i64);
         return Err(Error::Api { endpoint, code });
     }
-    if let Some(success) = value.get("success") {
+    if let Some(success) = value.get("success")
+        && scope != ErrorScope::VacBody
+    {
         match (success.as_bool(), as_i64(success)) {
             (Some(true), _) | (_, Some(1)) => (),
-            (Some(false), _) if policy == ResponsePolicy::VacStatus => (),
             (Some(false), _) => {
                 return Err(Error::Api {
                     endpoint,
@@ -253,16 +257,6 @@ fn check_local(endpoint: &'static str, value: &Value, policy: ResponsePolicy) ->
     Ok(())
 }
 
-fn check_envelopes(endpoint: &'static str, value: &Value) -> Result<()> {
-    // Some methods with undocumented response schemas return opaque JSON.
-    // Still inspect their standard error envelopes before handing it to callers.
-    for key in ERROR_ENVELOPES {
-        if let Some(child) = value.get(key) {
-            check_api(endpoint, child)?;
-        }
-    }
-    Ok(())
-}
 fn as_i64(value: &Value) -> Option<i64> {
     value.as_i64().or_else(|| value.as_str()?.parse().ok())
 }
@@ -357,6 +351,34 @@ mod tests {
                     .opaque(ENDPOINT),
                 Err(Error::Decode { .. })
             ));
+        }
+    }
+
+    #[test]
+    fn vac_business_errors_precede_required_readiness_fields() {
+        for (payload, expected) in [
+            (json!({"response": {"error": {"errorcode": 15}}}), 15),
+            (json!({"response": {"eresult": 42}}), 42),
+            (json!({"response": {"result": 15}}), 15),
+            (
+                json!({"response": {"success": "invalid", "error": {"errorcode": 42}}}),
+                42,
+            ),
+            (
+                json!({"response": {}, "params": {"error": {"errorcode": 15}}}),
+                15,
+            ),
+        ] {
+            let error = ResponsePolicy::VacStatus
+                .parse(ENDPOINT, 200, &serde_json::to_vec(&payload).unwrap())
+                .unwrap()
+                .opaque(ENDPOINT)
+                .err()
+                .unwrap();
+            assert!(
+                matches!(error, Error::Api { code: Some(code), .. } if code == expected),
+                "{error:?}"
+            );
         }
     }
 
