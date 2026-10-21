@@ -6,12 +6,23 @@
 use crate::{
     Error, Result,
     apps::Apps,
+    cloud::Cloud,
+    econ::EconService,
+    econ_market::EconMarketService,
+    economy::Economy,
+    game_inventory::GameInventory,
     game_server_stats::GameServerStats,
     game_servers::GameServers,
+    inventory::Inventory,
     leaderboards::Leaderboards,
     news::News,
     player::PlayerService,
-    request::{Access, BodyPolicy, Endpoint, Operation, Params},
+    published_file::PublishedFileService,
+    published_file_moderation::PublishedFileModerationService,
+    published_item_search::PublishedItemSearch,
+    published_item_voting::PublishedItemVoting,
+    remote_storage::RemoteStorage,
+    request::{Access, Endpoint, Operation, Params},
     response::Response,
     reviews::UserReviewsService,
     store::StoreService,
@@ -19,6 +30,7 @@ use crate::{
     user_auth::{OpaqueResponse, UserAuth},
     user_stats::UserStats,
     web_api_util::WebApiUtil,
+    workshop::WorkshopService,
 };
 use reqwest::{
     Method,
@@ -432,6 +444,54 @@ impl SteamClient {
     pub fn leaderboards(&self) -> Leaderboards<'_> {
         Leaderboards(self)
     }
+    /// OAuth-authorized Steam Cloud files and upload stages.
+    pub fn cloud(&self) -> Cloud<'_> {
+        Cloud(self)
+    }
+    /// Publisher inventory grants, crafting and dynamic properties.
+    pub fn inventory(&self) -> Inventory<'_> {
+        Inventory(self)
+    }
+    /// Publisher inventory history and item definitions.
+    pub fn game_inventory(&self) -> GameInventory<'_> {
+        GameInventory(self)
+    }
+    /// Asset prices, transactions and trade initiation.
+    pub fn economy(&self) -> Economy<'_> {
+        Economy(self)
+    }
+    /// Trade history, offers and inventory cache operations.
+    pub fn econ(&self) -> EconService<'_> {
+        EconService(self)
+    }
+    /// Market eligibility, assets, popular items and listing cancellation.
+    pub fn econ_market(&self) -> EconMarketService<'_> {
+        EconMarketService(self)
+    }
+    /// Workshop file queries and publisher administration.
+    pub fn published_file(&self) -> PublishedFileService<'_> {
+        PublishedFileService(self)
+    }
+    /// Workshop approval requests and decisions.
+    pub fn published_file_moderation(&self) -> PublishedFileModerationService<'_> {
+        PublishedFileModerationService(self)
+    }
+    /// Workshop publication, trend and vote searches.
+    pub fn published_item_search(&self) -> PublishedItemSearch<'_> {
+        PublishedItemSearch(self)
+    }
+    /// Published-item voting summaries.
+    pub fn published_item_voting(&self) -> PublishedItemVoting<'_> {
+        PublishedItemVoting(self)
+    }
+    /// Remote UGC details, collections and subscriptions.
+    pub fn remote_storage(&self) -> RemoteStorage<'_> {
+        RemoteStorage(self)
+    }
+    /// Workshop payments, contributors, revenue and descriptions.
+    pub fn workshop(&self) -> WorkshopService<'_> {
+        WorkshopService(self)
+    }
     /// Inspect counters without logging sensitive requests or responses.
     pub fn metrics(&self) -> ClientMetrics {
         let m = &self.inner.metrics;
@@ -615,6 +675,7 @@ impl SteamClient {
                 retry_after,
             });
         }
+        check_steam_result(endpoint, response.headers())?;
         let limit = self.inner.max_response_bytes;
         if response
             .content_length()
@@ -636,9 +697,9 @@ impl SteamClient {
             }
             bytes.extend_from_slice(&chunk);
         }
-        if bytes.is_empty() && endpoint.body == BodyPolicy::EmptyCreated && status.as_u16() == 201 {
+        if bytes.is_empty() && endpoint.body.allows_empty(status.as_u16()) {
             return Ok(Response {
-                status: 201,
+                status: status.as_u16(),
                 payload: Value::Null,
             });
         }
@@ -654,6 +715,38 @@ impl SteamClient {
         Ok(Response {
             status: status.as_u16(),
             payload: value,
+        })
+    }
+}
+
+fn check_steam_result(endpoint: Endpoint, headers: &HeaderMap) -> Result<()> {
+    let invalid = || Error::Decode {
+        endpoint: endpoint.path,
+        line: 0,
+        column: 0,
+    };
+    let mut values = headers.get_all("x-eresult").iter();
+    let Some(value) = values.next() else {
+        return if endpoint.body.requires_steam_result() {
+            Err(invalid())
+        } else {
+            Ok(())
+        };
+    };
+    if values.next().is_some() {
+        return Err(invalid());
+    }
+    let code = value
+        .to_str()
+        .ok()
+        .and_then(|text| text.trim().parse::<i64>().ok())
+        .ok_or_else(invalid)?;
+    if code == 1 {
+        Ok(())
+    } else {
+        Err(Error::Api {
+            endpoint: endpoint.path,
+            code: Some(code),
         })
     }
 }
@@ -684,6 +777,34 @@ fn jitter(cap: Duration) -> Result<Duration> {
 mod tests {
     #![allow(clippy::unwrap_used)]
     use super::*;
+    #[test]
+    fn steam_result_headers_are_checked_before_cloud_body_policies() {
+        let optional = Endpoint::get("test/optional/v1/", Access::Anonymous);
+        let required = optional.empty_steam_result();
+        let mut headers = HeaderMap::new();
+        assert!(check_steam_result(optional, &headers).is_ok());
+        assert!(matches!(
+            check_steam_result(required, &headers),
+            Err(Error::Decode { .. })
+        ));
+        for (value, success) in [("1", true), (" 1 ", true), ("2", false), ("OK", false)] {
+            headers.insert("x-eresult", HeaderValue::from_static(value));
+            assert_eq!(check_steam_result(required, &headers).is_ok(), success);
+        }
+        headers.insert("x-eresult", HeaderValue::from_static("2"));
+        assert!(matches!(
+            check_steam_result(optional, &headers),
+            Err(Error::Api { code: Some(2), .. })
+        ));
+        headers.append("x-eresult", HeaderValue::from_static("1"));
+        assert!(matches!(
+            check_steam_result(required, &headers),
+            Err(Error::Decode { .. })
+        ));
+        assert!(required.body.allows_empty(200));
+        assert!(!required.body.allows_empty(201));
+        assert!(!optional.steam_result().body.allows_empty(200));
+    }
     #[test]
     fn retry_after_accepts_seconds_dates_and_past_dates() {
         assert_eq!(

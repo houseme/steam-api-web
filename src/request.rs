@@ -26,6 +26,21 @@ pub(crate) enum Operation {
 pub(crate) enum BodyPolicy {
     Json,
     EmptyCreated,
+    SteamResultJson,
+    SteamResultEmpty,
+}
+
+impl BodyPolicy {
+    pub const fn requires_steam_result(self) -> bool {
+        matches!(self, Self::SteamResultJson | Self::SteamResultEmpty)
+    }
+
+    pub const fn allows_empty(self, status: u16) -> bool {
+        matches!(
+            (self, status),
+            (Self::EmptyCreated, 201) | (Self::SteamResultEmpty, 200)
+        )
+    }
 }
 
 /// Only fixed internal paths may reach the transport.
@@ -64,6 +79,19 @@ impl Endpoint {
         self.body = BodyPolicy::EmptyCreated;
         self
     }
+
+    /// Cloud calls require an explicit successful Steam result header and JSON.
+    pub const fn steam_result(mut self) -> Self {
+        self.body = BodyPolicy::SteamResultJson;
+        self
+    }
+
+    /// Bodyless Cloud methods require a successful result header before HTTP 200
+    /// can represent success without JSON.
+    pub const fn empty_steam_result(mut self) -> Self {
+        self.body = BodyPolicy::SteamResultEmpty;
+        self
+    }
 }
 
 /// Encode directly into the final form, without owning each key/value pair.
@@ -90,12 +118,16 @@ impl Params {
 
     pub fn json(value: &impl Serialize) -> Result<Self> {
         let mut params = Self::new();
-        params.key("input_json");
+        params.push_json("input_json", value)?;
+        Ok(params)
+    }
+
+    pub fn push_json<T: Serialize + ?Sized>(&mut self, name: &str, value: &T) -> Result<()> {
+        self.key(name);
         // Serialize into the percent encoder, avoiding an intermediate JSON DOM
         // or serialized String and preserving borrowed request fields.
-        serde_json::to_writer(Encoded(&mut params.0), value)
-            .map_err(|_| Error::InvalidParameter("service request must serialize as JSON"))?;
-        Ok(params)
+        serde_json::to_writer(Encoded(&mut self.0), value)
+            .map_err(|_| Error::InvalidParameter("request field must serialize as JSON"))
     }
 
     fn key(&mut self, name: &str) {

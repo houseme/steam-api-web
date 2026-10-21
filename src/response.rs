@@ -7,7 +7,7 @@ use crate::{Error, Result, user_auth::OpaqueResponse};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 
-const ERROR_ENVELOPES: [&str; 3] = ["response", "params", "playerstats"];
+const ERROR_ENVELOPES: [&str; 4] = ["response", "params", "playerstats", "result"];
 
 pub(crate) struct Response {
     pub status: u16,
@@ -84,6 +84,11 @@ fn check_api(endpoint: &'static str, value: &Value) -> Result<()> {
     }
     for key in ["result", "eresult"] {
         if let Some(result) = value.get(key) {
+            // UpdateItemDefs documents an object-valued result envelope. It is
+            // checked recursively below; scalar result/eresult remain strict.
+            if key == "result" && result.is_object() {
+                continue;
+            }
             match (as_i64(result), result.as_str()) {
                 (Some(1), _) | (_, Some("OK")) => (),
                 (Some(code), _) => {
@@ -129,6 +134,41 @@ mod tests {
     use serde_json::json;
 
     const ENDPOINT: &str = "test/response/v1/";
+
+    #[test]
+    fn object_result_envelopes_preserve_success_and_reject_nested_failures() {
+        let payload = json!({"result": {"updated": ["418"], "failed": [], "success": true}});
+        let (_, response) = Response {
+            status: 200,
+            payload,
+        }
+        .opaque(ENDPOINT)
+        .unwrap();
+        assert_eq!(response.as_json()["result"]["updated"][0], "418");
+        for payload in [
+            json!({"result": {"success": false}}),
+            json!({"result": {"error": "private"}}),
+            json!({"result": {"params": {"eresult": 2}}}),
+            json!({"result": 2}),
+        ] {
+            assert!(matches!(
+                Response {
+                    status: 200,
+                    payload
+                }
+                .opaque(ENDPOINT),
+                Err(Error::Api { .. })
+            ));
+        }
+        assert!(matches!(
+            Response {
+                status: 200,
+                payload: json!({"result": []})
+            }
+            .opaque(ENDPOINT),
+            Err(Error::Decode { .. })
+        ));
+    }
 
     #[test]
     fn typed_strings_are_moved_from_the_selected_envelope() {

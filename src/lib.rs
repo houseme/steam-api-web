@@ -23,12 +23,23 @@
 
 pub mod apps;
 mod client;
+pub mod cloud;
+pub mod econ;
+pub mod econ_market;
+pub mod economy;
 mod error;
+pub mod game_inventory;
 pub mod game_server_stats;
 pub mod game_servers;
+pub mod inventory;
 pub mod leaderboards;
 pub mod news;
 pub mod player;
+pub mod published_file;
+pub mod published_file_moderation;
+pub mod published_item_search;
+pub mod published_item_voting;
+pub mod remote_storage;
 mod request;
 mod response;
 pub mod reviews;
@@ -38,6 +49,7 @@ pub mod user;
 pub mod user_auth;
 pub mod user_stats;
 pub mod web_api_util;
+pub mod workshop;
 
 pub use client::{ApiKey, ClientBuilder, ClientMetrics, Host, RetryPolicy, SteamClient};
 pub use error::{Error, Result};

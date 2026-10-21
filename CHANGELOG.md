@@ -18,6 +18,25 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
+## [0.3.0] - Unreleased
+
+### Added
+
+- All 66 P2 methods for Cloud, inventory, asset economy, trades, market, remote UGC, Workshop search/voting/moderation and payment configuration; 123 methods across 24 interfaces in total.
+- Cloud OAuth, strict x-eresult validation, redacted signed transfer instructions and explicit batch/file-commit/completion stages; callers retain file-byte transport responsibility.
+- Inventory request IDs, typed dynamic properties and concurrency timestamps, trade pagination, Workshop cursors/revisions and the verbatim v0001 item-definition path.
+- A read-only Cloud example, complete protocol/error/replay tests and bilingual P2 contract documentation.
+
+### Changed
+
+- Shared response validation accepts checked object-valued result envelopes while retaining strict scalar EResult handling; mutations still never replay, including side-effecting GETs.
+- Repository guards compare coverage/version, public modules and P2 method names. Maintenance remains Rust; tests, benchmarks, tools, workflows and reference material stay outside the published package.
+
+### Validation boundaries
+
+- No live OAuth/Publisher credentials or Cloud, inventory, trade, listing or Workshop writes were used. Actual authorization, deduplication and persistence outcomes remain unverified.
+- Version 0.3.0 is unreleased; existing 0.1.0 and 0.2.0 tags are unchanged.
+
 ## [0.2.0] - 2026-10-21
 
 ### Added
