@@ -9,7 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 English | [简体中文](roadmap_ZH.md)
 
-Reviewed on 2026-10-21 against every interface in the [official Web API index](https://partner.steamgames.com/doc/webapi): **33 interfaces**, **157 explicit HTTP signatures**, and **10 Sandbox signatures inherited from ISteamMicroTxn**. This is a documentation snapshot, not an inventory of private methods or a claim that all bindings are implemented.
+Reviewed on 2026-10-22 against every interface in the [official Web API index](https://partner.steamgames.com/doc/webapi): **33 interfaces**, **157 explicit HTTP signatures**, and **10 Sandbox signatures inherited from ISteamMicroTxn**. This snapshots the partner-reference surface; source/fixture coverage and operational acceptance are reported separately.
 
 The shared machine inventory is [api-inventory.json](api-inventory.json). The 0.5.0 development version binds all P0–P4 routes in this snapshot: 167 routes across 33 interfaces, comprising 157 explicit signatures and ten inherited Sandbox routes, with local contract tests. Missing or undocumented protocols and live permissions remain separate concerns.
 
@@ -22,13 +22,18 @@ The shared machine inventory is [api-inventory.json](api-inventory.json). The 0.
 | P2 / 0.3 | Cloud, inventory, economy, trading and Workshop | Pagination, upload stages, trade idempotency, inventory concurrency and permissions |
 | P3 / 0.4 | Microtransaction Sandbox, production transactions, anti-cheat and sessions | Sandbox first, reconciliation, no blind write replay, revocation/ban permissions |
 | P4 / 0.5 | Finance, site licenses, broadcasts and coverage closure | Data access controls, reporting periods and coverage report for all 33 interfaces |
-| P5 / separate proposal | Optional native SDK interoperability companion crate | Lifecycle/thread/callback contracts; base HTTP crate stays SDK-independent |
+| P5 / separate companion | [Design delivered](p5-design.md); implementation not started | Lifecycle/thread/callback and platform runtime acceptance; HTTP remains SDK-independent |
+| P6 / next HTTP proposal | 53 anonymous-discovery candidates inventoried; no new bindings | Review authoritative contracts, credentials, replay and lifecycle before expansion |
 
-Versions describe sequencing, not release dates. P0–P4 protocol bindings are implemented; P5 remains a separate native interoperability proposal. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
+Versions describe sequencing, not release dates. P0–P4 protocol bindings are implemented; P5 design is delivered; native implementation and runtime acceptance remain open. Each HTTP method needs an exact path/version, credential kind, replay classification, parameter constraints, error fixtures, documentation, and applicable credentialed validation.
 
 ## Reproducible coverage report
 
 `cargo xtask coverage` or `cargo xtask coverage --json` derives totals from the inventory and verifies every public module, Rust method and verbatim path in source. It reports 33/33 interfaces and 167/167 routes (157 explicit, ten inherited), with no remaining documented routes. CI saves the JSON as the `steam-api-web-coverage` artifact. This static mapping report does not establish credentialed permissions, wire availability or production readiness; local protocol tests are a separate gate. Financial, Site and Broadcast boundaries are detailed in [P4 contracts](p4.md).
+
+## Completeness and remaining acceptance
+
+The [API audit](api-audit.md) checks 732 formal parameter rows, all routes and fixture references, distinguishing 29 typed results, two empty acknowledgements and 136 opaque results. The 53 discovery-only observations, P0–P4 credentialed/business acceptance and P5 implementation remain incomplete; 167/167 bindings do not mean every Steam feature is complete.
 
 ## Complete Web API interface matrix
 

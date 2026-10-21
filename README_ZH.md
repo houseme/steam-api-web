@@ -77,6 +77,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 | 计费、反作弊与会话契约 | [P3 契约](https://github.com/houseme/steam-api-web/blob/main/docs/p3_ZH.md) |
 | 财务权限、站点报表、广播与覆盖 | [P4 契约](https://github.com/houseme/steam-api-web/blob/main/docs/p4_ZH.md) |
 | 路线图、方法清单与 steamworks-rs 模块映射 | [路线图](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap_ZH.md) |
+| 全功能核对、发现候选与剩余验收 | [API 审计](https://github.com/houseme/steam-api-web/blob/main/docs/api-audit_ZH.md) |
+| 原生 SDK 互操作设计与实施门槛 | [P5 设计](https://github.com/houseme/steam-api-web/blob/main/docs/p5-design_ZH.md) |
 | 传输层 Review 与编解码测量 | [性能](https://github.com/houseme/steam-api-web/blob/main/docs/performance_ZH.md) |
 | 依赖审计 | [依赖记录](https://github.com/houseme/steam-api-web/blob/main/docs/dependencies_ZH.md) |
 | 发布流程 | [发布说明](https://github.com/houseme/steam-api-web/blob/main/docs/releases_ZH.md) |

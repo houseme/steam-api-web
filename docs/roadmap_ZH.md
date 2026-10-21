@@ -9,7 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](roadmap.md) | 简体中文
 
-核对日期：2026-10-21。范围覆盖[官方 Web API 索引](https://partner.steamgames.com/doc/webapi)的全部 **33 个接口**，包含 **157 个显式 HTTP 签名**，以及 Sandbox 从 ISteamMicroTxn 继承的 **10 个签名**。这是文档快照清单，不包含私有或未公开方法，也不是已实现覆盖率声明。
+核对日期：2026-10-22。范围覆盖[官方 Web API 索引](https://partner.steamgames.com/doc/webapi)的全部 **33 个接口**，包含 **157 个显式 HTTP 签名**，以及 Sandbox 从 ISteamMicroTxn 继承的 **10 个签名**。清单范围为伙伴参考目录；源码/fixture 映射与运行验收分别追踪。
 
 共享机器清单：[api-inventory.json](api-inventory.json)。0.5.0 开发版已封装此快照的 P0–P4 全部路径：33 个接口、167 条路径，包括 157 条显式签名及 10 条继承 Sandbox 路径，并有本地契约测试；未公开协议与真实权限仍分别验证。
 
@@ -22,13 +22,18 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | P2 / 0.3 | Cloud、库存、经济、交易与 Workshop | 分页、上传阶段、交易幂等性、库存并发和权限验证 |
 | P3 / 0.4 | 微交易 Sandbox、生产微交易、反作弊和会话 | 先 Sandbox、账务核对、写入不重放、撤销/封禁权限验证 |
 | P4 / 0.5 | 财务、站点许可、广播及覆盖收敛 | 数据访问权限、账期/时间范围、所有 33 个接口的覆盖报告 |
-| P5 / 单独提案 | 可选原生 SDK 互操作 companion crate | 生命周期/线程/回调契约；基础 HTTP crate 继续不依赖原生 SDK |
+| P5 / 独立 companion | [设计已交付](p5-design_ZH.md)，实现未开始 | 生命周期/线程/回调及平台运行验收；HTTP 包不依赖 SDK |
+| P6 / 下一轮 HTTP 提案 | 53 条匿名发现候选已盘点，未新增绑定 | 先核对权威协议、凭据、重放与生命周期；不推测私有 schema |
 
-版本是规划顺序，不是发布日期；P0–P4 已有协议封装，P5 仍为单独的原生互操作提案。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
+版本是规划顺序，不是发布日期；P0–P4 已有协议封装，P5 已完成设计，原生实现和运行验收仍未开始。每个 HTTP 方法交付须包含准确路径/版本、凭据种类、重放分类、参数约束、错误 fixtures、文档和适用的凭据验证。
 
 ## 可复现覆盖报告
 
 `cargo xtask coverage` 或 `cargo xtask coverage --json` 从机器清单推导数量，并逐项检查公开模块、Rust 方法及源码中的准确路径拼写。当前为 33/33 接口、167/167 路径（157 显式、10 继承），没有剩余文档路径。CI 将 JSON 保存为 `steam-api-web-coverage` artifact。该静态映射报告不证明真实凭据权限、wire 可用性或生产就绪；本地协议测试仍是独立检查。财务、站点和广播边界见 [P4 契约](p4_ZH.md)。
+
+## 完整性与后续验收
+
+[本轮 API 审计](api-audit_ZH.md)核对 732 行正式参数、全部路径与 fixture 引用，区分 29 个类型化结果、2 个空确认和 136 个 opaque 结果。匿名发现额外的 53 条观察签名、P0–P4 凭据/业务验收及 P5 实现均保留为未完成，不把 167/167 绑定等同于全部 Steam 功能完成。
 
 ## 全部 Web API 接口
 

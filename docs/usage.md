@@ -260,3 +260,5 @@ authentication, writes or production concurrency.
 ## Binding coverage report
 
 `cargo xtask coverage --json` checks the complete 33-interface, 167-route snapshot against public modules, Rust methods and exact path literals. It distinguishes 157 explicit signatures from ten inherited Sandbox routes. CI retains this static report as `steam-api-web-coverage`; it remains separate from protocol fixtures, live permissions and production validation. Coverage data and this guide stay on GitHub outside the crate allowlist.
+
+`cargo xtask audit-api --json` adds formal parameters, response shapes, discovery-only candidates and incomplete acceptance; `--live` reads public sources only. See the [API audit](api-audit.md) and [P5 design](p5-design.md).

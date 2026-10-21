@@ -96,6 +96,8 @@ and the complete [roadmap inventory](https://github.com/houseme/steam-api-web/bl
 | Billing, anti-cheat and session contracts | [P3 contracts](https://github.com/houseme/steam-api-web/blob/main/docs/p3.md) |
 | Financial authority, site reports, broadcasts and coverage | [P4 contracts](https://github.com/houseme/steam-api-web/blob/main/docs/p4.md) |
 | Roadmap, inventory and steamworks-rs module map | [Roadmap](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap.md) |
+| Feature completeness, discovery candidates and remaining acceptance | [API audit](https://github.com/houseme/steam-api-web/blob/main/docs/api-audit.md) |
+| Native SDK interoperability design and implementation gates | [P5 design](https://github.com/houseme/steam-api-web/blob/main/docs/p5-design.md) |
 | Transport reviews and codec measurements | [Performance](https://github.com/houseme/steam-api-web/blob/main/docs/performance.md) |
 | Dependency audit | [Dependencies](https://github.com/houseme/steam-api-web/blob/main/docs/dependencies.md) |
 | Release process | [Releases](https://github.com/houseme/steam-api-web/blob/main/docs/releases.md) |
