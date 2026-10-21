@@ -19,11 +19,11 @@ An independent asynchronous Rust client covering all **18 methods** documented f
 
 ## Usage
 
-Use a path dependency until the first crates.io release is published. The crates.io and docs.rs badges become available after publication.
+Install a published release from crates.io using the manifest below. Before the initial publication or for local development, replace the crate dependency with `{ path = "../steam-api-web" }`. The crates.io and docs.rs badges reflect published versions.
 
 ```toml
 [dependencies]
-steam-api-web = { path = "../steam-api-web" }
+steam-api-web = "0.1.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -177,7 +177,7 @@ Each phase requires explicit method/version coverage, read/write replay classifi
 
 ## Releases and changelog
 
-[CHANGELOG.md](CHANGELOG.md) records changes; [release instructions](docs/releases.md) describe tag/version checks, default manual dry runs, shared CI, package checksums, crates.io publication, and GitHub release notes. The initial 0.1.0 entry is prepared and remains unreleased. The release workflow requires a configured `CARGO_REGISTRY_TOKEN` for actual publication.
+[CHANGELOG.md](CHANGELOG.md) records changes; [release instructions](docs/releases.md) describe tag/version checks, default manual dry runs, shared CI, package checksums, crates.io publication, and GitHub release notes. The release workflow requires a configured `CARGO_REGISTRY_TOKEN` for actual publication.
 
 ## References and license
 

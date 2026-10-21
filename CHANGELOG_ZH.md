@@ -18,7 +18,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - 按完整 Web API 与原生 SDK 互操作路线图扩展覆盖范围。
 - 使用有权限的凭据验证 Publisher 接口、删除游标、写入结果和所有权 v5。
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-10-21
 
 ### 新增
 
@@ -32,6 +32,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ### 验证边界
 
+- 打标签前，Linux、macOS、Windows stable CI、文档、工作流检查和分发归档验证均已通过。
 - 已实测匿名 Steam HTTPS 读取；Publisher 认证、写入、v5 所有权和生产负载尚未验证。
 - 三个官方响应 schema 不完整的方法保留原始结果；旧式登录要求调用方提供准备好的密文。
 - Rustls 使用 reqwest 兼容的 0.23.46，而非类型不兼容的 0.24.0-dev.2 预览版。

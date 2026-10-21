@@ -18,7 +18,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
-## [0.1.0] - Unreleased
+## [0.1.0] - 2026-10-21
 
 ### Added
 
@@ -32,6 +32,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 
 ### Validation boundaries
 
+- Stable Linux, macOS, and Windows CI, documentation, workflow checks, and distributable crate verification passed before tagging.
 - Anonymous Steam HTTPS reads have been exercised; Publisher authentication, writes, v5 ownership, and production load remain unverified.
 - Three methods retain opaque results where the official response schema is incomplete. Legacy login requires prepared ciphertext.
 - Rustls 0.23.46 is retained for reqwest compatibility rather than the incompatible 0.24.0-dev.2 preview.

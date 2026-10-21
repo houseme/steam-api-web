@@ -19,11 +19,11 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ## 使用
 
-当前可通过路径依赖使用，尚未发布到 crates.io；发布后 crates.io 和 docs.rs 徽章才会显示对应版本：
+已发布版本可按下面的配置通过 crates.io 使用。首次发布完成前或本地开发时，将 crate 依赖改为 `{ path = "../steam-api-web" }`；crates.io 和 docs.rs 徽章以实际发布版本为准：
 
 ```toml
 [dependencies]
-steam-api-web = { path = "../steam-api-web" }
+steam-api-web = "0.1.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -175,7 +175,7 @@ cargo run --example current_players -- 480
 
 ## 发布与变更记录
 
-[CHANGELOG_ZH.md](CHANGELOG_ZH.md)记录变更，[发布流程](docs/releases_ZH.md)说明标签/版本检查、默认手动 dry-run、共享 CI、归档校验和、crates.io 发布及 GitHub 发布说明。0.1.0 条目处于准备状态，尚未发布。真正发布需要配置 CARGO_REGISTRY_TOKEN。
+[CHANGELOG_ZH.md](CHANGELOG_ZH.md)记录变更，[发布流程](docs/releases_ZH.md)说明标签/版本检查、默认手动 dry-run、共享 CI、归档校验和、crates.io 发布及 GitHub 发布说明。真正发布需要配置 CARGO_REGISTRY_TOKEN。
 
 ## 参考
 
