@@ -4,8 +4,10 @@
 // See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 use crate::{Error, Result, SteamId, response::ResponsePolicy};
+use reqwest::{Client, RequestBuilder, header::CONTENT_TYPE};
 use serde::Serialize;
 use std::io;
+use url::Url;
 
 #[derive(Clone, Copy)]
 pub(crate) enum Access {
@@ -50,6 +52,20 @@ impl Endpoint {
             access,
             operation,
             response: ResponsePolicy::Json,
+        }
+    }
+
+    /// Prepare a single send by moving the URL and form into reqwest. The
+    /// transport uses this path for writes, single GETs and reads with no retries.
+    pub fn request(self, client: &Client, mut url: Url, encoded: String) -> RequestBuilder {
+        if self.operation == Operation::Post {
+            client
+                .post(url)
+                .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .body(encoded)
+        } else {
+            url.set_query(Some(&encoded));
+            client.get(url)
         }
     }
 
