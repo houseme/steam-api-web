@@ -66,6 +66,14 @@ jobs:
       - run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
       - name: Check bilingual documentation, license headers and TLS graph
         run: cargo xtask check-repository
+      - name: Report documented Web API binding coverage
+        run: cargo xtask coverage --json > target/api-coverage.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: steam-api-web-coverage
+          path: target/api-coverage.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Check published package contents
         run: cargo xtask release verify-package
       - name: Validate GitHub Actions workflows

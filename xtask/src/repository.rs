@@ -5,7 +5,11 @@
 
 use crate::{Result, output, root};
 use serde_json::Value;
-use std::{collections::BTreeSet, fs, path::Path};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    fs,
+    path::Path,
+};
 
 fn has_han(value: &str) -> bool {
     value
@@ -81,39 +85,269 @@ fn check_markdown(path: &Path, text: &str, errors: &mut Vec<String>) -> Result<(
     Ok(())
 }
 
-fn binding_coverage(inventory: &Value) -> Result<(u64, u64)> {
-    let mut interface_count = 0;
-    let mut method_count = 0;
-    let mut inherited_count = 0;
+#[derive(Debug, Default, PartialEq, Eq)]
+struct BindingCoverage {
+    total_interfaces: u64,
+    total_methods: u64,
+    total_explicit_methods: u64,
+    total_inherited_methods: u64,
+    bound_interfaces: u64,
+    bound_methods: u64,
+    bound_explicit_methods: u64,
+    bound_inherited_methods: u64,
+    remaining: Vec<String>,
+}
+
+fn required_text<'a>(value: &'a Value, field: &str) -> Result<&'a str> {
+    value[field]
+        .as_str()
+        .filter(|value| !value.is_empty())
+        .ok_or_else(|| format!("missing inventory field {field}").into())
+}
+
+fn rust_identifier(value: &str) -> bool {
+    let mut bytes = value.bytes();
+    bytes
+        .next()
+        .is_some_and(|first| first.is_ascii_lowercase() || first == b'_')
+        && bytes.all(|byte| byte.is_ascii_lowercase() || byte.is_ascii_digit() || byte == b'_')
+}
+
+fn binding_coverage(inventory: &Value) -> Result<BindingCoverage> {
+    let interfaces = inventory["interfaces"]
+        .as_array()
+        .ok_or("missing interfaces")?;
+    let mut coverage = BindingCoverage::default();
+    let mut interface_names = BTreeSet::new();
+    for interface in interfaces {
+        let name = required_text(interface, "interface")?;
+        if !interface_names.insert(name) {
+            return Err(format!("duplicate inventory interface {name}").into());
+        }
+        let bound = match required_text(interface, "binding_status")? {
+            "bound_contract_tests_only" => true,
+            "planned" => false,
+            status => return Err(format!("unknown binding status {status} for {name}").into()),
+        };
+        coverage.total_interfaces += 1;
+        coverage.bound_interfaces += u64::from(bound);
+        if bound && !rust_identifier(required_text(interface, "rust_module")?) {
+            return Err(format!("invalid bound Rust module for {name}").into());
+        }
+        let methods = interface["methods"]
+            .as_array()
+            .filter(|methods| !methods.is_empty())
+            .ok_or_else(|| format!("{name} has no method signatures"))?;
+        let mut signatures = BTreeSet::new();
+        for method in methods {
+            let method_name = required_text(method, "name")?;
+            let verb = required_text(method, "http_method")?;
+            if !matches!(verb, "GET" | "POST") {
+                return Err(format!("unsupported HTTP method for {name}/{method_name}").into());
+            }
+            let version = method["version"]
+                .as_u64()
+                .filter(|version| *version > 0)
+                .ok_or("method version must be a positive integer")?;
+            if !signatures.insert((method_name, version, verb)) {
+                return Err(format!("duplicate inventory signature {name}/{method_name}").into());
+            }
+            let path = required_text(method, "path")?;
+            let prefix = format!("{name}/{method_name}/v");
+            let path_version = path
+                .strip_prefix(&prefix)
+                .map(|suffix| suffix.strip_suffix('/').unwrap_or(suffix))
+                .filter(|suffix| !suffix.is_empty() && suffix.bytes().all(|b| b.is_ascii_digit()))
+                .and_then(|suffix| suffix.parse::<u64>().ok());
+            if path_version != Some(version) {
+                return Err(format!("path does not match signature {name}/{method_name}").into());
+            }
+            if bound && !rust_identifier(required_text(method, "rust_method")?) {
+                return Err(format!("invalid bound Rust method for {name}/{method_name}").into());
+            }
+            let inherited = method
+                .get("inherited_from")
+                .is_some_and(|value| !value.is_null());
+            if inherited {
+                let parent_name = required_text(method, "inherited_from")?;
+                let parent = interfaces
+                    .iter()
+                    .find(|candidate| candidate["interface"] == parent_name)
+                    .filter(|_| parent_name != name)
+                    .ok_or_else(|| {
+                        format!("missing inheritance source for {name}/{method_name}")
+                    })?;
+                let original = parent["methods"]
+                    .as_array()
+                    .and_then(|methods| {
+                        methods.iter().find(|original| {
+                            original["name"] == method["name"]
+                                && original["version"] == method["version"]
+                                && original["http_method"] == method["http_method"]
+                                && original.get("inherited_from").is_none_or(Value::is_null)
+                        })
+                    })
+                    .ok_or_else(|| {
+                        format!("inherited signature differs for {name}/{method_name}")
+                    })?;
+                if bound
+                    && (parent["rust_module"] != interface["rust_module"]
+                        || original["rust_method"] != method["rust_method"])
+                {
+                    return Err(
+                        format!("inherited Rust mapping differs for {name}/{method_name}").into(),
+                    );
+                }
+            }
+            coverage.total_methods += 1;
+            coverage.total_explicit_methods += u64::from(!inherited);
+            coverage.total_inherited_methods += u64::from(inherited);
+            if bound {
+                coverage.bound_methods += 1;
+                coverage.bound_explicit_methods += u64::from(!inherited);
+                coverage.bound_inherited_methods += u64::from(inherited);
+            } else {
+                coverage.remaining.push(format!("{verb} {path}"));
+            }
+        }
+    }
+    for (field, count) in [
+        ("explicit_signatures", coverage.total_explicit_methods),
+        (
+            "inherited_sandbox_signatures",
+            coverage.total_inherited_methods,
+        ),
+        ("bound_interfaces", coverage.bound_interfaces),
+        ("bound_methods", coverage.bound_methods),
+        ("bound_explicit_methods", coverage.bound_explicit_methods),
+        ("bound_inherited_methods", coverage.bound_inherited_methods),
+    ] {
+        if inventory["_metadata"][field].as_u64() != Some(count) {
+            return Err(format!("inventory total {field} disagrees with its signatures").into());
+        }
+    }
+    Ok(coverage)
+}
+
+fn check_binding_sources(
+    inventory: &Value,
+    exports: &str,
+    mut source: impl FnMut(&str) -> Result<String>,
+) -> Result<()> {
+    let mut errors = Vec::new();
+    let mut sources = BTreeMap::new();
     for interface in inventory["interfaces"]
         .as_array()
         .ok_or("missing interfaces")?
     {
-        if interface["binding_status"] == "bound_contract_tests_only" {
-            interface_count += 1;
-            let methods = interface["methods"]
-                .as_array()
-                .ok_or("bound interface has no methods")?;
-            method_count += methods.len() as u64;
-            inherited_count += methods
-                .iter()
-                .filter(|method| {
-                    method
-                        .get("inherited_from")
-                        .is_some_and(|value| !value.is_null())
-                })
-                .count() as u64;
+        if interface["binding_status"] != "bound_contract_tests_only" {
+            continue;
+        }
+        let module = required_text(interface, "rust_module")?;
+        let export = format!("pub mod {module};");
+        if !exports.lines().any(|line| line.trim() == export) {
+            errors.push(format!("bound module {module} is not publicly exported"));
+        }
+        let source = match sources.entry(module) {
+            std::collections::btree_map::Entry::Occupied(entry) => entry.into_mut(),
+            std::collections::btree_map::Entry::Vacant(entry) => entry.insert(source(module)?),
+        };
+        for method in interface["methods"].as_array().ok_or("missing methods")? {
+            let name = required_text(method, "rust_method")?;
+            let declaration = format!("pub async fn {name}(");
+            if !source
+                .lines()
+                .any(|line| line.trim_start().starts_with(&declaration))
+            {
+                errors.push(format!("bound method {module}::{name} is absent"));
+            }
+            let path = required_text(method, "path")?;
+            if !source.contains(&format!("\"{path}\"")) {
+                errors.push(format!("bound route {path} is absent from {module}"));
+            }
         }
     }
-    if inventory["_metadata"]["bound_interfaces"].as_u64() != Some(interface_count)
-        || inventory["_metadata"]["bound_methods"].as_u64() != Some(method_count)
-        || inventory["_metadata"]["bound_explicit_methods"].as_u64()
-            != Some(method_count - inherited_count)
-        || inventory["_metadata"]["bound_inherited_methods"].as_u64() != Some(inherited_count)
-    {
-        return Err("bound interface/method totals disagree with the inventory".into());
+    if !errors.is_empty() {
+        return Err(errors.join("\n").into());
     }
-    Ok((interface_count, method_count))
+    Ok(())
+}
+
+fn inventory() -> Result<Value> {
+    Ok(serde_json::from_str(&fs::read_to_string(
+        root().join("docs/api-inventory.json"),
+    )?)?)
+}
+
+fn check_sources(inventory: &Value) -> Result<()> {
+    check_binding_sources(
+        inventory,
+        &fs::read_to_string(root().join("src/lib.rs"))?,
+        |module| Ok(fs::read_to_string(root().join(format!("src/{module}.rs")))?),
+    )
+}
+
+impl BindingCoverage {
+    fn json(&self, inventory: &Value) -> Value {
+        serde_json::json!({
+            "_metadata": {
+                "copyright": "Copyright 2026 steam-api-web contributors.",
+                "license": "Apache-2.0",
+                "license_url": "https://www.apache.org/licenses/LICENSE-2.0",
+                "SPDX-License-Identifier": "Apache-2.0",
+            },
+            "scope": "protocol_bindings",
+            "binding_version": inventory["_metadata"]["binding_version"],
+            "validation": "Static source mapping coverage only; contract tests, live permissions, and production behavior require separate validation.",
+            "interfaces": {"total": self.total_interfaces, "bound": self.bound_interfaces},
+            "method_routes": {"total": self.total_methods, "bound": self.bound_methods},
+            "explicit_signatures": {"total": self.total_explicit_methods, "bound": self.bound_explicit_methods},
+            "inherited_routes": {"total": self.total_inherited_methods, "bound": self.bound_inherited_methods},
+            "remaining": self.remaining,
+        })
+    }
+}
+
+pub(crate) fn coverage(args: &[String]) -> Result<()> {
+    if !args.is_empty() && args != ["--json"] {
+        return Err("coverage accepts only --json".into());
+    }
+    let inventory = inventory()?;
+    let coverage = binding_coverage(&inventory)?;
+    check_sources(&inventory)?;
+    if args == ["--json"] {
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&coverage.json(&inventory))?
+        );
+    } else {
+        println!(
+            "Protocol binding coverage {}: {}/{} interfaces, {}/{} method routes (explicit {}/{}, inherited {}/{})",
+            inventory["_metadata"]["binding_version"]
+                .as_str()
+                .unwrap_or("unknown"),
+            coverage.bound_interfaces,
+            coverage.total_interfaces,
+            coverage.bound_methods,
+            coverage.total_methods,
+            coverage.bound_explicit_methods,
+            coverage.total_explicit_methods,
+            coverage.bound_inherited_methods,
+            coverage.total_inherited_methods,
+        );
+        if coverage.remaining.is_empty() {
+            println!("Remaining documented method routes: none");
+        } else {
+            println!("Remaining documented method routes:");
+            for method in &coverage.remaining {
+                println!("  {method}");
+            }
+        }
+        println!(
+            "Static source mapping coverage only; contract tests, live permissions, and production behavior require separate validation."
+        );
+    }
+    Ok(())
 }
 
 pub(crate) fn check() -> Result<()> {
@@ -189,14 +423,13 @@ pub(crate) fn check() -> Result<()> {
             check_markdown(&path, &text, &mut errors)?;
         }
     }
-    let inventory: Value =
-        serde_json::from_str(&fs::read_to_string(root().join("docs/api-inventory.json"))?)?;
-    let (bound_interfaces, bound_methods) = binding_coverage(&inventory)?;
+    let inventory = inventory()?;
+    let coverage = binding_coverage(&inventory)?;
+    check_sources(&inventory)?;
     let package_metadata = crate::metadata()?;
     if inventory["_metadata"]["binding_version"] != crate::package(&package_metadata)?["version"] {
         errors.push("binding inventory version must match the public crate".to_owned());
     }
-    let exports = fs::read_to_string(root().join("src/lib.rs"))?;
     let interfaces = inventory["interfaces"]
         .as_array()
         .ok_or("missing interface inventory")?;
@@ -206,46 +439,6 @@ pub(crate) fn check() -> Result<()> {
         .collect();
     if interfaces.len() != 33 || unique.len() != 33 {
         errors.push("reference inventory must cover all 33 reviewed interfaces".to_owned());
-    }
-    let mut explicit = 0;
-    for interface in interfaces {
-        if interface["binding_status"] == "bound_contract_tests_only" {
-            let module = interface["rust_module"]
-                .as_str()
-                .ok_or("bound interface has no Rust module")?;
-            if module.is_empty()
-                || !module
-                    .bytes()
-                    .all(|byte| byte.is_ascii_lowercase() || byte == b'_')
-            {
-                return Err("invalid bound Rust module name".into());
-            }
-            if !exports.contains(&format!("pub mod {module};")) {
-                errors.push(format!("bound module {module} is not publicly exported"));
-            }
-            let source = fs::read_to_string(root().join(format!("src/{module}.rs")))?;
-            for method in interface["methods"]
-                .as_array()
-                .ok_or("bound interface has no methods")?
-            {
-                if let Some(name) = method["rust_method"].as_str()
-                    && !source.contains(&format!("pub async fn {name}("))
-                {
-                    errors.push(format!("bound method {module}::{name} is absent"));
-                }
-            }
-        }
-        for method in interface["methods"]
-            .as_array()
-            .ok_or("missing interface methods")?
-        {
-            if method.get("inherited_from").is_none_or(Value::is_null) {
-                explicit += 1;
-            }
-        }
-    }
-    if inventory["_metadata"]["explicit_signatures"].as_u64() != Some(explicit) {
-        errors.push("documented signature total does not match inventory metadata".to_owned());
     }
     for language in ["", "_ZH"] {
         let roadmap = fs::read_to_string(root().join(format!("docs/roadmap{language}.md")))?;
@@ -288,7 +481,8 @@ pub(crate) fn check() -> Result<()> {
         return Err(errors.join("\n").into());
     }
     println!(
-        "Repository checks passed: legal headers, bilingual links, 33 interfaces ({bound_interfaces} bound, {bound_methods} methods), SDK modules, no Python and AWS-LC graph"
+        "Repository checks passed: legal headers, bilingual links, {} interfaces ({} bound, {} method routes), Rust mappings, SDK modules, no Python and AWS-LC graph",
+        coverage.total_interfaces, coverage.bound_interfaces, coverage.bound_methods,
     );
     Ok(())
 }
@@ -297,27 +491,170 @@ pub(crate) fn check() -> Result<()> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn binding_counts_cannot_inflate_planned_interfaces_or_missing_methods() -> Result<()> {
-        let mut inventory = serde_json::json!({
-            "_metadata": {"bound_interfaces": 1, "bound_methods": 2, "bound_explicit_methods": 2, "bound_inherited_methods": 0},
+    fn coverage_fixture() -> Value {
+        serde_json::json!({
+            "_metadata": {
+                "binding_version": "0.5.0",
+                "explicit_signatures": 3,
+                "inherited_sandbox_signatures": 1,
+                "bound_interfaces": 2,
+                "bound_methods": 3,
+                "bound_explicit_methods": 2,
+                "bound_inherited_methods": 1,
+            },
             "interfaces": [
-                {"binding_status": "bound_contract_tests_only", "methods": [{}, {}]},
-                {"binding_status": "planned", "methods": [{}]}
-            ]
-        });
-        assert_eq!(binding_coverage(&inventory)?, (1, 2));
-        inventory["_metadata"]["bound_methods"] = serde_json::json!(3);
-        assert!(binding_coverage(&inventory).is_err());
-        inventory["_metadata"]["bound_methods"] = serde_json::json!(2);
-        inventory["interfaces"][0]["methods"][0]["inherited_from"] =
-            serde_json::json!("ISteamMicroTxn");
-        assert!(binding_coverage(&inventory).is_err());
-        inventory["_metadata"]["bound_explicit_methods"] = serde_json::json!(1);
-        inventory["_metadata"]["bound_inherited_methods"] = serde_json::json!(1);
-        assert_eq!(binding_coverage(&inventory)?, (1, 2));
+                {
+                    "interface": "IPrimary", "binding_status": "bound_contract_tests_only", "rust_module": "primary",
+                    "methods": [
+                        {"name": "Read", "version": 1, "http_method": "GET", "rust_method": "read", "path": "IPrimary/Read/v1/"},
+                        {"name": "Write", "version": 1, "http_method": "POST", "rust_method": "write", "path": "IPrimary/Write/v1/"},
+                    ],
+                },
+                {
+                    "interface": "ISandbox", "binding_status": "bound_contract_tests_only", "rust_module": "primary",
+                    "methods": [
+                        {"name": "Read", "version": 1, "http_method": "GET", "rust_method": "read", "path": "ISandbox/Read/v1/", "inherited_from": "IPrimary"},
+                    ],
+                },
+                {
+                    "interface": "IPlanned", "binding_status": "planned",
+                    "methods": [{"name": "Poll", "version": 1, "http_method": "GET", "path": "IPlanned/Poll/v1/"}],
+                },
+            ],
+        })
+    }
+
+    fn fixture_source() -> String {
+        "impl Primary {\n    pub async fn read(&self) {}\n    pub async fn write(&self) {}\n}\nconst READ: &str = \"IPrimary/Read/v1/\";\nconst WRITE: &str = \"IPrimary/Write/v1/\";\nconst SANDBOX: &str = \"ISandbox/Read/v1/\";\n".to_owned()
+    }
+
+    #[test]
+    fn coverage_separates_explicit_signatures_inherited_routes_and_remaining() -> Result<()> {
+        let inventory = coverage_fixture();
+        let coverage = binding_coverage(&inventory)?;
+        assert_eq!(coverage.total_interfaces, 3);
+        assert_eq!(coverage.total_methods, 4);
+        assert_eq!(coverage.total_explicit_methods, 3);
+        assert_eq!(coverage.total_inherited_methods, 1);
+        assert_eq!(coverage.bound_interfaces, 2);
+        assert_eq!(coverage.bound_methods, 3);
+        assert_eq!(coverage.bound_explicit_methods, 2);
+        assert_eq!(coverage.bound_inherited_methods, 1);
+        assert_eq!(coverage.remaining, ["GET IPlanned/Poll/v1/"]);
+        let report = coverage.json(&inventory);
+        assert_eq!(
+            report["_metadata"]["copyright"],
+            "Copyright 2026 steam-api-web contributors."
+        );
+        assert_eq!(report["_metadata"]["license"], "Apache-2.0");
+        assert_eq!(
+            report["_metadata"]["license_url"],
+            "https://www.apache.org/licenses/LICENSE-2.0"
+        );
+        assert_eq!(report["_metadata"]["SPDX-License-Identifier"], "Apache-2.0");
+        assert!(serde_json::to_string_pretty(&report)?.starts_with("{\n  \"_metadata\": {"));
+        assert_eq!(report["scope"], "protocol_bindings");
+        assert_eq!(report["method_routes"]["total"], 4);
+        assert_eq!(report["remaining"][0], "GET IPlanned/Poll/v1/");
+        Ok(())
+    }
+
+    #[test]
+    fn coverage_cannot_inflate_totals_or_omit_method_signatures() {
+        for field in [
+            "explicit_signatures",
+            "inherited_sandbox_signatures",
+            "bound_interfaces",
+            "bound_methods",
+            "bound_explicit_methods",
+            "bound_inherited_methods",
+        ] {
+            let mut inventory = coverage_fixture();
+            inventory["_metadata"][field] = serde_json::json!(99);
+            assert!(binding_coverage(&inventory).is_err(), "{field}");
+        }
+        let mut inventory = coverage_fixture();
         inventory["interfaces"][0]["methods"] = Value::Null;
         assert!(binding_coverage(&inventory).is_err());
+    }
+
+    #[test]
+    fn coverage_rejects_missing_mappings_duplicate_signatures_and_unknown_status() {
+        let mut inventory = coverage_fixture();
+        inventory["interfaces"][0]["methods"][0]["rust_method"] = Value::Null;
+        assert!(binding_coverage(&inventory).is_err());
+        let mut inventory = coverage_fixture();
+        inventory["interfaces"][1]["interface"] = serde_json::json!("IPrimary");
+        assert!(binding_coverage(&inventory).is_err());
+        let mut inventory = coverage_fixture();
+        inventory["interfaces"][0]["methods"][1] = inventory["interfaces"][0]["methods"][0].clone();
+        assert!(binding_coverage(&inventory).is_err());
+        let mut inventory = coverage_fixture();
+        inventory["interfaces"][0]["binding_status"] = serde_json::json!("unknown");
+        assert!(binding_coverage(&inventory).is_err());
+    }
+
+    #[test]
+    fn inherited_routes_require_the_same_explicit_signature_and_rust_mapping() {
+        let mut inventory = coverage_fixture();
+        inventory["interfaces"][1]["methods"][0]["version"] = serde_json::json!(2);
+        inventory["interfaces"][1]["methods"][0]["path"] = serde_json::json!("ISandbox/Read/v2/");
+        assert!(binding_coverage(&inventory).is_err());
+        let mut inventory = coverage_fixture();
+        inventory["interfaces"][1]["methods"][0]["rust_method"] = serde_json::json!("write");
+        assert!(binding_coverage(&inventory).is_err());
+        let mut inventory = coverage_fixture();
+        inventory["interfaces"][1]["methods"][0]["inherited_from"] = serde_json::json!("ISandbox");
+        assert!(binding_coverage(&inventory).is_err());
+    }
+
+    #[test]
+    fn source_checks_require_public_exports_async_methods_and_exact_paths() -> Result<()> {
+        let inventory = coverage_fixture();
+        check_binding_sources(&inventory, "pub mod primary;", |_| Ok(fixture_source()))?;
+        assert!(
+            check_binding_sources(&inventory, "mod primary;", |_| Ok(fixture_source())).is_err()
+        );
+        assert!(
+            check_binding_sources(&inventory, "pub mod primary;", |_| {
+                Ok(fixture_source().replace("pub async fn read(", "pub async fn read_extra("))
+            })
+            .is_err()
+        );
+        assert!(
+            check_binding_sources(&inventory, "pub mod primary;", |_| {
+                Ok(fixture_source().replace("ISandbox/Read/v1/", "IPrimary/Read/v1/"))
+            })
+            .is_err()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn verbatim_version_spelling_is_preserved_without_inflating_signatures() -> Result<()> {
+        let mut inventory = coverage_fixture();
+        inventory["interfaces"][0]["methods"][0]["path"] = serde_json::json!("IPrimary/Read/v001/");
+        assert_eq!(binding_coverage(&inventory)?.bound_methods, 3);
+        assert!(
+            check_binding_sources(&inventory, "pub mod primary;", |_| Ok(fixture_source()))
+                .is_err()
+        );
+        check_binding_sources(&inventory, "pub mod primary;", |_| {
+            Ok(fixture_source().replace("IPrimary/Read/v1/", "IPrimary/Read/v001/"))
+        })?;
+        inventory["interfaces"][0]["methods"][0]["path"] = serde_json::json!("IPrimary/Read/v2/");
+        assert!(binding_coverage(&inventory).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn inherited_routes_reuse_one_source_read_for_the_shared_module() -> Result<()> {
+        let mut reads = 0;
+        check_binding_sources(&coverage_fixture(), "pub mod primary;", |_| {
+            reads += 1;
+            Ok(fixture_source())
+        })?;
+        assert_eq!(reads, 1);
         Ok(())
     }
 

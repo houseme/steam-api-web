@@ -25,10 +25,11 @@ fn run() -> Result<()> {
     let mut args = std::env::args().skip(1);
     let command = args
         .next()
-        .ok_or("expected check-repository, check-dependencies, or release")?;
+        .ok_or("expected check-repository, coverage, check-dependencies, or release")?;
     let rest: Vec<_> = args.collect();
     match command.as_str() {
         "check-repository" if rest.is_empty() => repository::check(),
+        "coverage" => repository::coverage(&rest),
         "check-dependencies" => dependencies::check(&rest),
         "release" => release::run(&rest),
         _ => Err(format!("unknown command or arguments: {command}").into()),
