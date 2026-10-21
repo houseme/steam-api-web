@@ -37,10 +37,7 @@ use crate::{
     web_api_util::WebApiUtil,
     workshop::WorkshopService,
 };
-use reqwest::{
-    Method,
-    header::{CONTENT_TYPE, HeaderMap, HeaderValue, RETRY_AFTER},
-};
+use reqwest::header::{HeaderMap, HeaderValue, RETRY_AFTER};
 use rustls_platform_verifier::BuilderVerifierExt;
 use serde::de::DeserializeOwned;
 use std::{
@@ -596,51 +593,28 @@ impl SteamClient {
     }
     async fn execute(&self, endpoint: Endpoint, encoded: String) -> Result<Response> {
         let mut url = self.endpoint_url(&endpoint)?;
-        if endpoint.operation != Operation::Post {
-            url.set_query(Some(&encoded));
-        }
         let limit = if endpoint.operation == Operation::Read {
             self.inner.retry.max_retries
         } else {
             0
         };
-        let mut body = (endpoint.operation == Operation::Post).then_some(encoded);
-        for attempt in 0..=limit {
-            let permit = self
-                .inner
-                .semaphore
-                .acquire()
-                .await
-                .map_err(|_| Error::Configuration("client closed"))?;
-            self.pace().await;
-            let mut request = self.inner.http.request(
-                if endpoint.operation == Operation::Post {
-                    Method::POST
-                } else {
-                    Method::GET
-                },
-                url.clone(),
-            );
-            if endpoint.operation == Operation::Post {
-                request = request
-                    .header(CONTENT_TYPE, "application/x-www-form-urlencoded")
-                    .body(
-                        body.take()
-                            .ok_or(Error::Configuration("POST cannot be replayed"))?,
-                    );
-            }
-            self.inner.metrics.attempts.fetch_add(1, Ordering::Relaxed);
-            if attempt > 0 {
-                self.inner.metrics.retries.fetch_add(1, Ordering::Relaxed);
-            }
-            let result = self.attempt(endpoint, request).await;
-            drop(permit);
+        if limit == 0 {
+            let request = endpoint.request(&self.inner.http, url, encoded);
+            return self.attempt(endpoint, request, false).await;
+        }
+        // Only bodyless reads reach the retry loop. Encode their query once;
+        // keep its URL template through retries and move it on the last send.
+        url.set_query(Some(&encoded));
+        drop(encoded);
+        for attempt in 0..limit {
+            let request = self.inner.http.get(url.clone());
+            let result = self.attempt(endpoint, request, attempt > 0).await;
             let retryable = match &result {
                 Err(Error::Http { status, .. }) => retryable_status(*status),
                 Err(Error::Transport { .. }) => true,
                 _ => false,
             };
-            if !retryable || attempt == limit {
+            if !retryable {
                 return result;
             }
             let delay = jitter(
@@ -652,10 +626,10 @@ impl SteamClient {
             )?;
             tokio::time::sleep(delay).await;
         }
-        Err(Error::Configuration("invalid retry state"))
+        self.attempt(endpoint, self.inner.http.get(url), true).await
     }
-    /// Resolve an endpoint's URL from the per-client cache, parsing it only on
-    /// first use. Poisoning cannot occur because the guard never panics.
+    /// Resolve a query-free URL from the bounded per-client cache. Only the
+    /// owned clone leaves this short critical section and reaches reqwest.
     fn endpoint_url(&self, endpoint: &Endpoint) -> Result<Url> {
         let mut urls = self
             .inner
@@ -696,7 +670,19 @@ impl SteamClient {
         &self,
         endpoint: Endpoint,
         request: reqwest::RequestBuilder,
+        retry: bool,
     ) -> Result<Response> {
+        let _permit = self
+            .inner
+            .semaphore
+            .acquire()
+            .await
+            .map_err(|_| Error::Configuration("client closed"))?;
+        self.pace().await;
+        self.inner.metrics.attempts.fetch_add(1, Ordering::Relaxed);
+        if retry {
+            self.inner.metrics.retries.fetch_add(1, Ordering::Relaxed);
+        }
         let transport = |error: reqwest::Error| Error::Transport {
             endpoint: endpoint.path,
             timeout: error.is_timeout(),
@@ -779,6 +765,48 @@ fn jitter(cap: Duration) -> Result<Duration> {
 mod tests {
     #![allow(clippy::unwrap_used)]
     use super::*;
+    #[test]
+    fn single_send_preparation_moves_post_storage_without_mutating_cached_urls() {
+        let client = SteamClient::builder()
+            .base_url("http://localhost/gateway/")
+            .build()
+            .unwrap();
+        let post = Endpoint::post("test/Write/v1/", Access::Anonymous);
+        let form = "appid=480&private=not-logged".repeat(100);
+        let original = form.as_ptr();
+        let request = post
+            .request(
+                &client.inner.http,
+                client.endpoint_url(&post).unwrap(),
+                form,
+            )
+            .build()
+            .unwrap();
+        assert_eq!(
+            request.body().unwrap().as_bytes().unwrap().as_ptr(),
+            original
+        );
+        assert_eq!(
+            request.url().as_str(),
+            "http://localhost/gateway/test/Write/v1/"
+        );
+
+        let read = Endpoint::get("test/Read/v1/", Access::Anonymous);
+        for expected in ["appid=480&cursor=first", "appid=480&cursor=second"] {
+            let request = read
+                .request(
+                    &client.inner.http,
+                    client.endpoint_url(&read).unwrap(),
+                    expected.to_owned(),
+                )
+                .build()
+                .unwrap();
+            assert_eq!(request.url().query(), Some(expected));
+            assert!(request.body().is_none());
+        }
+        assert_eq!(client.endpoint_url(&read).unwrap().query(), None);
+    }
+
     #[test]
     fn retry_after_accepts_seconds_dates_and_past_dates() {
         assert_eq!(

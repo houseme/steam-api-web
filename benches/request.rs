@@ -7,12 +7,14 @@
 #![allow(clippy::unwrap_used)]
 
 use serde::Serialize;
-use std::{hint::black_box, time::Instant};
+use std::{fmt::Debug, hint::black_box, time::Instant};
 use steam_api_web::{Error, Result, SteamId};
 
 #[allow(dead_code)]
 #[path = "support/request_v030.rs"]
 mod baseline;
+#[path = "support/preparation_v040.rs"]
+mod preparation_baseline;
 #[allow(dead_code, unused_imports)]
 #[path = "../src/request.rs"]
 mod request;
@@ -113,11 +115,11 @@ fn median(values: &mut [f64]) -> f64 {
     values.sort_by(f64::total_cmp);
     (values[(values.len() - 1) / 2] + values[values.len() / 2]) / 2.
 }
-fn compare(
+fn compare<T: PartialEq + Debug>(
     name: &str,
     iterations: usize,
-    mut old: impl FnMut() -> String,
-    mut new: impl FnMut() -> String,
+    mut old: impl FnMut() -> T,
+    mut new: impl FnMut() -> T,
 ) {
     assert_eq!(old(), new(), "wire mismatch: {name}");
     for _ in 0..100 {
@@ -156,7 +158,88 @@ fn compare(
     );
 }
 
+#[derive(Debug)]
+struct WireRequest(reqwest::Request);
+
+impl PartialEq for WireRequest {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.method() == other.0.method()
+            && self.0.url() == other.0.url()
+            && self.0.headers() == other.0.headers()
+            && self.0.body().and_then(reqwest::Body::as_bytes)
+                == other.0.body().and_then(reqwest::Body::as_bytes)
+    }
+}
+
+fn preparation() {
+    // Requests are only built, never sent. No platform roots or global crypto
+    // provider are needed for the explicit AWS-LC configuration in this probe.
+    let tls = rustls::ClientConfig::builder_with_provider(std::sync::Arc::new(
+        rustls::crypto::aws_lc_rs::default_provider(),
+    ))
+    .with_safe_default_protocol_versions()
+    .unwrap()
+    .with_root_certificates(rustls::RootCertStore::empty())
+    .with_no_client_auth();
+    let http = reqwest::Client::builder()
+        .tls_backend_preconfigured(tls)
+        .build()
+        .unwrap();
+    println!(
+        "Request preparation reference ee0e71b; includes equal input/URL clones, request construction and output drop; no network or cache lookup"
+    );
+    for (name, post, form) in [
+        (
+            "single-send GET preparation",
+            false,
+            "appid=480&steamid=18446744073709551615&format=json".to_owned(),
+        ),
+        (
+            "4 KiB single-send GET preparation",
+            false,
+            format!("access_token={}&format=json", "token_".repeat(683)),
+        ),
+        (
+            "POST request preparation",
+            true,
+            "appid=480&orderid=18446744073709551615&format=json".to_owned(),
+        ),
+    ] {
+        let endpoint = if post {
+            request::Endpoint::post("ISteamMicroTxn/FinalizeTxn/v2/", request::Access::Publisher)
+        } else {
+            request::Endpoint::get_once("ISteamMicroTxn/QueryTxn/v3/", request::Access::Publisher)
+        };
+        let url =
+            url::Url::parse(&format!("https://partner.steam-api.com/{}", endpoint.path)).unwrap();
+        compare(
+            name,
+            10_000,
+            || {
+                WireRequest(preparation_baseline::prepare(
+                    &http,
+                    endpoint.operation,
+                    url.clone(),
+                    form.clone(),
+                ))
+            },
+            || {
+                WireRequest(
+                    endpoint
+                        .request(&http, url.clone(), form.clone())
+                        .build()
+                        .unwrap(),
+                )
+            },
+        );
+    }
+}
+
 fn main() {
+    if std::env::args().any(|arg| arg == "--preparation-only") {
+        preparation();
+        return;
+    }
     let token = "oauth_ascii_token_0123456789".repeat(160);
     let cloud = CloudRequest {
         appid: 480,
@@ -230,4 +313,5 @@ fn main() {
         || definition_form!(baseline::Params, &definitions),
         || definition_form!(request::Params, &definitions),
     );
+    preparation();
 }
