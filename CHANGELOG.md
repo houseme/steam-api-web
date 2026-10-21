@@ -18,7 +18,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
-## [0.2.0] - Unreleased
+## [0.2.0] - 2026-10-21
 
 ### Added
 
@@ -36,7 +36,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 ### Validation boundaries
 
 - New methods have local protocol tests; no live Steam Publisher administrative writes, credentialed integration or production load evidence was obtained.
-- Version 0.2.0 is unreleased. The historical 0.1.0 tag and published archive are unchanged.
+- Tag creation and registry publication are separate steps; the registry and release workflow determine publication status. The historical 0.1.0 tag and published archive are unchanged.
 
 ## [0.1.0] - 2026-10-21
 

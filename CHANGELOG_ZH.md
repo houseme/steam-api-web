@@ -18,7 +18,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - 按完整 Web API 与原生 SDK 互操作路线图扩展覆盖范围。
 - 使用有权限的凭据验证 Publisher 接口、删除游标、写入结果和所有权 v5。
 
-## [0.2.0] - Unreleased
+## [0.2.0] - 2026-10-21
 
 ### 新增
 
@@ -36,7 +36,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 ### 验证边界
 
 - 新接口通过本地协议测试；未执行 Steam Publisher 管理写入，未获得实际凭据验证或生产负载证据。
-- 0.2.0 尚未发布；0.1.0 历史标签和已发布归档保持不变。
+- 创建标签和 registry 发布是独立步骤，实际发布状态以 registry 及发布工作流为准；0.1.0 历史标签和已发布归档保持不变。
 
 ## [0.1.0] - 2026-10-21
 

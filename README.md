@@ -15,20 +15,19 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 English | [简体中文](README_ZH.md)
 
-An independent asynchronous Rust client. The **0.2.0 development version** covers **57 methods across 12 P0 +
+An independent asynchronous Rust client. Version **0.2.0** covers **57 methods across 12 P0 +
 P1 interfaces**: authentication, users, stats, apps, players, store, reviews, news, servers, and leaderboards.
 Built with Tokio, reqwest, Rustls, and **aws-lc-rs**, without the Steam client or native SDK.
 
 ## Usage
 
-The published 0.1.0 release contains the 18 P0 methods. Version 0.2.0 is unreleased: use a path dependency
-from a GitHub checkout for P1. The manifest below installs the published version; replace the crate dependency
-with `{ path = "../steam-api-web" }` for local development. Registry and documentation badges reflect
-published versions.
+The manifest below targets 0.2.0. Source tags, crates.io publication and docs.rs builds are separate steps.
+If this version is not yet available in the registry, use `{ path = "../steam-api-web" }` from a GitHub
+checkout. Registry and documentation badges reflect published versions.
 
 ```toml
 [dependencies]
-steam-api-web = "0.1.0"
+steam-api-web = "0.2.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -267,7 +266,7 @@ checks cover bilingual links, licensing, reference inventory, and the AWS-LC dep
 The [transport review and codec measurements](https://github.com/houseme/steam-api-web/blob/main/docs/performance.md)
 record the 0.2 refactor and its reproducible offline benchmarks.
 
-The 39 P1 request bindings and local contract tests are implemented in the 0.2.0 development version. Published response schemas have types; undocumented results explicitly retain raw JSON. Credentialed integration and production validation remain separate.
+Version 0.2.0 implements the 39 P1 request bindings and local contract tests. Published response schemas have types; undocumented results explicitly retain raw JSON. Credentialed integration and production validation remain separate.
 
 The [complete roadmap](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap.md) inventories all **33 documented Web API interfaces**, their documented method
 signatures, and the `steamworks-rs` source modules. Planned versions are sequencing proposals, not release dates or

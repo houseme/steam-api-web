@@ -84,7 +84,7 @@ CI targets Linux/macOS/Windows while retaining the existing audit and SARIF work
 
 ## 0.2 P1 extension and repository boundary
 
-The development version adds nine P1 interfaces and 39 methods for discovery, apps, players, store, reviews, news, game servers, server stats and leaderboards: 57 methods across 12 interfaces with P0. Service requests use input_json. Administrative POSTs never automatically replay. Server login-token inputs and response Debug output are redacted, and leaderboard details preserve raw bytes with a 256-byte bound.
+Version 0.2.0 adds nine P1 interfaces and 39 methods for discovery, apps, players, store, reviews, news, game servers, server stats and leaderboards: 57 methods across 12 interfaces with P0. Service requests use input_json. Administrative POSTs never automatically replay. Server login-token inputs and response Debug output are redacted, and leaderboard details preserve raw bytes with a 256-byte bound.
 
 SetAppBuildLive preserves HTTP status to distinguish accepted requests from pending mobile confirmation on 201. Only explicitly allowed 201 responses may omit a body; empty 200 remains Decode. Shared error checks recognize result/eresult and reject fractional result codes. Reviews and Partner app lists model officially published fields; unspecified schemas retain OpaqueResponse rather than inventing empty collections or success.
 

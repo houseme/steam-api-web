@@ -41,7 +41,7 @@
       "commit_sha": "d8114185613be4dbfe4897c8484d0b2670fd3cd7",
       "tree_sha": "4c43e2a86462b070f9c92758123efac23efb6318"
     },
-    "development_version": "0.2.0",
+    "binding_version": "0.2.0",
     "bound_interfaces": 12,
     "bound_methods": 57,
     "binding_validation": "Local protocol contracts; live Publisher operations remain unverified."

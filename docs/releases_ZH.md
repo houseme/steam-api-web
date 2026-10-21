@@ -80,4 +80,4 @@ cargo xtask release verify-archive --archive target/package/steam-api-web-0.2.0.
 
 `verify-package` 检查实际文件清单和规范化 manifest，不允许残留指向未打包测试/工具的 target；Cargo 自身验证归档可独立构建。Cargo 提示忽略未打包集成测试属于预期，完整测试仍在 GitHub checkout 的 workspace CI 中运行。README 的仓库文档链接使用 GitHub URL，避免下载 crate 后出现缺失的本地文档链接。
 
-旧版 0.1.0 标签和发布包保持不变。重试旧版流程时，应选择对应标签中的 workflow 定义；0.2 的 Rust 工具不会被追加入已发布的旧标签。当前 0.2.0 仍为 Unreleased，不会因开发提交而自动发布；正式发布仍由用户决定推送版本标签。
+旧版 0.1.0 标签和发布包保持不变。重试旧版流程时，应选择对应标签中的 workflow 定义；0.2 的 Rust 工具不会被追加入已发布的旧标签。创建本地版本标签不会发布。推送标签会启动 Release 工作流，只有 registry 校验和验证及 GitHub release job 成功后才能确认发布完成。

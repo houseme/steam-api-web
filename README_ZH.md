@@ -15,15 +15,15 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](README.md) | 简体中文
 
-独立异步 Rust Steam Web API crate。**0.2.0 开发版**覆盖 P0 + P1 共 **12 个接口、57 个方法**，包括用户认证、统计、应用、玩家、商店、评论、新闻、服务器与排行榜。使用 Tokio、reqwest、Rustls 和 **aws-lc-rs**，无需 Steam 客户端或原生 SDK。
+独立异步 Rust Steam Web API crate。**0.2.0** 覆盖 P0 + P1 共 **12 个接口、57 个方法**，包括用户认证、统计、应用、玩家、商店、评论、新闻、服务器与排行榜。使用 Tokio、reqwest、Rustls 和 **aws-lc-rs**，无需 Steam 客户端或原生 SDK。
 
 ## 使用
 
-当前已发布的 0.1.0 提供 P0 的 18 个方法。0.2.0 尚未发布，使用 P1 功能请在 GitHub checkout 中使用路径依赖。下面的配置安装已发布版本；本地开发时将 crate 依赖改为 `{ path = "../steam-api-web" }`。crates.io 和 docs.rs 徽章以实际发布版本为准。
+下面的配置使用 0.2.0。源码标签、crates.io 发布和 docs.rs 构建是独立步骤；该版本尚未在 registry 可用时，可从 GitHub checkout 使用 `{ path = "../steam-api-web" }` 路径依赖。crates.io 和 docs.rs 徽章以实际发布版本为准。
 
 ```toml
 [dependencies]
-steam-api-web = "0.1.0"
+steam-api-web = "0.2.0"
 tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
 ```
 
@@ -239,7 +239,7 @@ key，需要允许监听本地端口。离线测试通过不代表 Publisher 认
 
 [传输层 Review 与编解码测量](https://github.com/houseme/steam-api-web/blob/main/docs/performance_ZH.md)记录 0.2 重构依据与可复跑的离线基准。
 
-P1 的 39 个请求封装及本地契约测试已加入 0.2.0 开发版；公开 schema 有对应类型，未公开响应显式保留原始 JSON。凭据环境和生产验证仍需单独完成。
+0.2.0 已实现 P1 的 39 个请求封装及本地契约测试；公开 schema 有对应类型，未公开响应显式保留原始 JSON。凭据环境和生产验证仍需单独完成。
 
 [完整路线图](https://github.com/houseme/steam-api-web/blob/main/docs/roadmap_ZH.md)列出全部 **33 个文档 Web API 接口**、已公开方法签名和 steamworks-rs
 源码模块。以下版本仅为推进顺序，不代表发布日期或功能已完成。

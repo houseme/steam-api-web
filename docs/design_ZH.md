@@ -80,7 +80,7 @@ Publisher 凭据默认选择 Partner。该域名的所有请求都要 Publisher 
 
 ## 0.2 P1 扩展与仓库边界
 
-当前开发版新增九个 P1 接口、39 个方法：API 发现、应用、玩家、商店、评论、新闻、游戏服务器、服务器统计及排行榜。与 P0 合计 12 个接口、57 个方法。Service 方法使用 input_json；管理 POST 禁止自动重放；服务器登录 token 的输入和响应 Debug 脱敏；排行榜 details 保留原始字节且限制为 256 字节。
+0.2.0 新增九个 P1 接口、39 个方法：API 发现、应用、玩家、商店、评论、新闻、游戏服务器、服务器统计及排行榜。与 P0 合计 12 个接口、57 个方法。Service 方法使用 input_json；管理 POST 禁止自动重放；服务器登录 token 的输入和响应 Debug 脱敏；排行榜 details 保留原始字节且限制为 256 字节。
 
 SetAppBuildLive 通过保留 HTTP 状态区分请求接受与 201 等待手机确认，只有明确允许的 201 可以没有响应体；空 200 仍报 Decode。共享错误检查识别 result/eresult，并拒绝小数结果码。评论及 Partner 应用列表按官方公开字段建模，未公开响应保留 OpaqueResponse，不把缺失结构解释成空列表或成功。
 
