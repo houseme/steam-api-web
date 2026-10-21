@@ -3,7 +3,12 @@
 // Licensed under the Apache License, Version 2.0.
 // See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
-use crate::{Error, Result, user::User, user_auth::UserAuth, user_stats::UserStats};
+use crate::{
+    Error, Result, apps::Apps, game_server_stats::GameServerStats, game_servers::GameServers,
+    leaderboards::Leaderboards, news::News, player::PlayerService, reviews::UserReviewsService,
+    store::StoreService, user::User, user_auth::UserAuth, user_stats::UserStats,
+    web_api_util::WebApiUtil,
+};
 use reqwest::{
     Method,
     header::{CONTENT_TYPE, HeaderMap, HeaderValue, RETRY_AFTER},
@@ -376,6 +381,7 @@ pub(crate) struct Endpoint {
     pub access: Access,
     pub replay_safe: bool,
     pub post: bool,
+    allow_empty_created: bool,
 }
 impl Endpoint {
     pub const fn get(path: &'static str, access: Access) -> Self {
@@ -384,6 +390,7 @@ impl Endpoint {
             access,
             replay_safe: true,
             post: false,
+            allow_empty_created: false,
         }
     }
     pub const fn auth(path: &'static str, access: Access, post: bool) -> Self {
@@ -392,7 +399,13 @@ impl Endpoint {
             access,
             replay_safe: false,
             post,
+            allow_empty_created: false,
         }
+    }
+    /// Only HTTP 201 may omit its body, representing a pending confirmation.
+    pub const fn allow_empty_response(mut self) -> Self {
+        self.allow_empty_created = true;
+        self
     }
 }
 pub(crate) type Params = Vec<(String, Vec<u8>)>;
@@ -417,6 +430,42 @@ impl SteamClient {
     pub fn user_stats(&self) -> UserStats<'_> {
         UserStats(self)
     }
+    /// Steam application and build administration.
+    pub fn apps(&self) -> Apps<'_> {
+        Apps(self)
+    }
+    /// Public API discovery and server time.
+    pub fn web_api_util(&self) -> WebApiUtil<'_> {
+        WebApiUtil(self)
+    }
+    /// Player library, playtime, levels and badges.
+    pub fn player(&self) -> PlayerService<'_> {
+        PlayerService(self)
+    }
+    /// Paginated Steam Store catalog.
+    pub fn store(&self) -> StoreService<'_> {
+        StoreService(self)
+    }
+    /// User review queries and summary data.
+    pub fn reviews(&self) -> UserReviewsService<'_> {
+        UserReviewsService(self)
+    }
+    /// Public and publisher-authenticated application news.
+    pub fn news(&self) -> News<'_> {
+        News(self)
+    }
+    /// Persistent game server account administration.
+    pub fn game_servers(&self) -> GameServers<'_> {
+        GameServers(self)
+    }
+    /// Game server player statistics.
+    pub fn game_server_stats(&self) -> GameServerStats<'_> {
+        GameServerStats(self)
+    }
+    /// Publisher leaderboard administration.
+    pub fn leaderboards(&self) -> Leaderboards<'_> {
+        Leaderboards(self)
+    }
     /// Inspect counters without logging sensitive requests or responses.
     pub fn metrics(&self) -> ClientMetrics {
         let m = &self.inner.metrics;
@@ -430,9 +479,19 @@ impl SteamClient {
     pub(crate) async fn call<T: DeserializeOwned>(
         &self,
         endpoint: Endpoint,
-        mut params: Params,
+        params: Params,
         envelope: &[&str],
     ) -> Result<T> {
+        self.call_with_status(endpoint, params, envelope)
+            .await
+            .map(|(_, response)| response)
+    }
+    pub(crate) async fn call_with_status<T: DeserializeOwned>(
+        &self,
+        endpoint: Endpoint,
+        mut params: Params,
+        envelope: &[&str],
+    ) -> Result<(u16, T)> {
         match (endpoint.access, self.inner.kind) {
             (Access::Publisher, Some(KeyKind::Publisher))
             | (Access::Anonymous, _)
@@ -443,7 +502,7 @@ impl SteamClient {
         params.push(param("format", "json"));
         let encoded = encode_form(&params);
         let result = tokio::time::timeout(self.inner.operation_timeout, async {
-            let value = self.execute(endpoint, &encoded).await?;
+            let (status, value) = self.execute(endpoint, &encoded).await?;
             let mut payload = &value;
             check_api(endpoint.path, payload)?;
             for key in envelope {
@@ -455,7 +514,9 @@ impl SteamClient {
                 check_api(endpoint.path, payload)?;
             }
             // serde's untrusted error text is never retained.
-            T::deserialize(payload).map_err(|error| Error::decode(endpoint.path, error))
+            T::deserialize(payload)
+                .map(|response| (status, response))
+                .map_err(|error| Error::decode(endpoint.path, error))
         })
         .await
         .unwrap_or(Err(Error::Deadline {
@@ -468,7 +529,7 @@ impl SteamClient {
         }
         result
     }
-    async fn execute(&self, endpoint: Endpoint, encoded: &str) -> Result<Value> {
+    async fn execute(&self, endpoint: Endpoint, encoded: &str) -> Result<(u16, Value)> {
         let mut url = self
             .inner
             .base_url
@@ -547,7 +608,11 @@ impl SteamClient {
             }
         }
     }
-    async fn attempt(&self, endpoint: Endpoint, request: reqwest::RequestBuilder) -> Result<Value> {
+    async fn attempt(
+        &self,
+        endpoint: Endpoint,
+        request: reqwest::RequestBuilder,
+    ) -> Result<(u16, Value)> {
         let transport = |error: reqwest::Error| Error::Transport {
             endpoint: endpoint.path,
             timeout: error.is_timeout(),
@@ -594,6 +659,9 @@ impl SteamClient {
             }
             bytes.extend_from_slice(&chunk);
         }
+        if bytes.is_empty() && endpoint.allow_empty_created && status.as_u16() == 201 {
+            return Ok((201, Value::Null));
+        }
         let value: Value =
             serde_json::from_slice(&bytes).map_err(|error| Error::decode(endpoint.path, error))?;
         if !value.is_object() {
@@ -603,7 +671,7 @@ impl SteamClient {
                 column: 0,
             });
         }
-        Ok(value)
+        Ok((status.as_u16(), value))
     }
 }
 
@@ -639,21 +707,30 @@ fn check_api(endpoint: &'static str, value: &Value) -> Result<()> {
             }
         }
     }
-    if let Some(result) = value.get("result") {
-        if as_i64(result).is_some_and(|code| code != 1)
-            || result.as_str().is_some_and(|s| s != "OK" && s != "1")
-        {
-            return Err(Error::Api {
-                endpoint,
-                code: as_i64(result),
-            });
-        }
-        if !result.is_number() && !result.is_string() {
-            return Err(Error::Decode {
-                endpoint,
-                line: 0,
-                column: 0,
-            });
+    for key in ["result", "eresult"] {
+        if let Some(result) = value.get(key) {
+            match (as_i64(result), result.as_str()) {
+                (Some(1), _) | (_, Some("OK")) => (),
+                (Some(code), _) => {
+                    return Err(Error::Api {
+                        endpoint,
+                        code: Some(code),
+                    });
+                }
+                (_, Some(_)) => {
+                    return Err(Error::Api {
+                        endpoint,
+                        code: None,
+                    });
+                }
+                _ => {
+                    return Err(Error::Decode {
+                        endpoint,
+                        line: 0,
+                        column: 0,
+                    });
+                }
+            }
         }
     }
     // Some methods with undocumented response schemas return opaque JSON.

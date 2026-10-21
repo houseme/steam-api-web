@@ -21,12 +21,21 @@
 //! # }
 //! ```
 
+pub mod apps;
 mod client;
 mod error;
+pub mod game_server_stats;
+pub mod game_servers;
+pub mod leaderboards;
+pub mod news;
+pub mod player;
+pub mod reviews;
+pub mod store;
 pub mod types;
 pub mod user;
 pub mod user_auth;
 pub mod user_stats;
+pub mod web_api_util;
 
 pub use client::{ApiKey, ClientBuilder, ClientMetrics, Host, RetryPolicy, SteamClient};
 pub use error::{Error, Result};

@@ -625,6 +625,8 @@ async fn nested_business_errors_and_invalid_success_markers_fail_closed() {
         json!({"response":{"error":{"errorcode":5,"errordesc":"secret"}}}),
         json!({"response":{"success":false}}),
         json!({"response":{"success":"secret","result":1,"player_count":12}}),
+        json!({"response":{"eresult":5,"result":1,"player_count":12}}),
+        json!({"response":{"result":1.5,"player_count":12}}),
     ] {
         let server = MockServer::start().await;
         Mock::given(method("GET"))

@@ -5,9 +5,9 @@
 
 [package]
 name = "steam-api-web"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
-description = "Resilient async Steam Web API client for user authentication, users, and statistics"
+description = "Resilient async Steam Web API client for users, apps, players, servers, and leaderboards"
 license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/houseme/steam-api-web"
