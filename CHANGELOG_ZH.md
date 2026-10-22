@@ -31,6 +31,8 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ### 调整
 
+- 全部直接依赖版本与公共配置集中到根 workspace manifest，保留成员专用 feature 及发布包的独立构建能力。
+- 将注册表已撤回的 Tokio 1.54.0 升级为 1.54.1，同步锁文件与依赖审计记录。
 - 修复下游 arbitrary_precision 特性统一时，Value→类型解码误拒绝合法 128 位统计值的问题；范围与精度由 Number 自身处理。
 - 统计值直接解析数字和借用文本，保留浮点、负零与下游 arbitrary_precision 兼容；增加完整统计响应 CPU 基准和 Linux 特性统一检查。
 - 将报表及 ID 的有符号/无符号精确整数解码统一为检查转换、借用文本的 Visitor，删除 untagged 分支重试与重复可选包装；可复跑的标量测量见仓库中双语 0.5 Review。

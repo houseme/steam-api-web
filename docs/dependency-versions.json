@@ -76,9 +76,9 @@
     "status": "current"
   },
   "tokio": {
-    "latest_including_prerelease": "1.54.0",
+    "latest_including_prerelease": "1.54.1",
     "latest_rust_version": "1.85",
-    "manifest_minimum": "1.54.0",
+    "manifest_minimum": "1.54.1",
     "source": "https://crates.io/api/v1/crates/tokio",
     "status": "current"
   },

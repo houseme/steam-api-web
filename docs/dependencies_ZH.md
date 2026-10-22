@@ -11,6 +11,8 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 核对日期：2026-10-22。来源为各 crate 的 crates.io API，排除 yanked，按语义版本排序，包含 rc、beta、alpha 和 dev 预发布。可复核快照见 [dependency-versions.json](dependency-versions.json)。
 
+全部直接依赖的版本与公共配置统一定义在根目录 `Cargo.toml` 的 `[workspace.dependencies]` 中，运行库和 `xtask` 通过 `workspace = true` 继承。成员专用 feature 按需启用，例如 `xtask` 的 blocking HTTP 客户端及 Tokio 的测试运行时。Cargo 会将继承配置展开到发布 manifest，确保 crate 脱离仓库工作区后仍可独立编译。
+
 | 直接依赖 | 使用版本 | 用途 |
 | --- | --- | --- |
 | aws-lc-rs | 1.18.2 | 密码后端与随机抖动 |
@@ -19,7 +21,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | rustls-platform-verifier | 0.7.1 | 平台证书验证 |
 | serde | 1.0.229 | 类型化响应 |
 | serde_json | 1.0.154 | JSON 及精确整数 |
-| tokio | 1.54.0 | async、并发、节流与超时 |
+| tokio | 1.54.1 | async、并发、节流与超时 |
 | thiserror | 2.0.21 | 可匹配错误类型 |
 | url | 2.5.8 | URL 与 base URL 校验 |
 | httpdate | 1.0.3 | Retry-After 日期 |
