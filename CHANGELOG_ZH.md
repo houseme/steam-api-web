@@ -18,7 +18,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - 按完整 Web API 与原生 SDK 互操作路线图扩展覆盖范围。
 - 使用有权限的凭据验证 Publisher 接口、删除游标、写入结果和所有权 v5。
 
-## [0.5.0] - Unreleased
+## [0.5.0] - 2026-10-22
 
 ### 新增
 
@@ -33,6 +33,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ### 调整
 
+- 重构中英文 README，按业务能力、凭据选择、可靠性控制与文档入口组织内容，区分 registry 安装与 GitHub 开发依赖。
 - HTTP 单块正文直接复用，仅多块时合并；保留逻辑长度限制、响应校验及取消行为。
 - CSV 标量与旧式资产键统一写入最终表单，消除剩余 collect/join 和格式化键分配；增加有界所有权回归及带漂移门槛的 CPU 基准。
 - 全部直接依赖版本与公共配置集中到根 workspace manifest，保留成员专用 feature 及发布包的独立构建能力。
@@ -46,7 +47,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 ### 验证边界
 
 - 未读取真实财务账户数据或使用 Site 凭据，未操作真实广播；Financial 权限、Site 外层响应/数组省略约定及生产可用性仍待凭据集成。
-- 0.5.0 尚未发布，既有标签和 registry 发布状态与本次开发分别处理。
+- 发布完成以 Release 工作流通过 registry 校验和验证并创建 GitHub release 为准；版本条目或标签本身不代表发布完成。
 
 ## [0.4.0] - 2026-10-22
 

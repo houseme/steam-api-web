@@ -94,7 +94,7 @@ Sandbox 继承签名与生产原签名匹配。静态源码映射不是 AST 分�
 
 Cargo 显式 include 白名单仅保留源码、示例、中英文 README/CHANGELOG、许可证及
 Cargo 元数据；测试、基准、xtask、workflow、这些文档及参考 JSON 留在 GitHub。
-仓库保持零 Python，沿用每客户端 AWS-LC 后端，没有新增运行库依赖。0.5.0 尚未发布，
-创建标签与发布是独立操作。
+仓库保持零 Python，沿用每客户端 AWS-LC 后端，没有新增运行库依赖。发布状态以
+registry 校验和验证及 Release 工作流为准；创建标签本身不代表发布完成。
 
 [0.5 分支 Review](review-0.5_ZH.md)记录共享整数解码重构、回归边界与标量基准。

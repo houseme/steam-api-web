@@ -11,7 +11,7 @@ English | [简体中文](roadmap_ZH.md)
 
 Reviewed on 2026-10-22 against every interface in the [official Web API index](https://partner.steamgames.com/doc/webapi): **33 interfaces**, **157 explicit HTTP signatures**, and **10 Sandbox signatures inherited from ISteamMicroTxn**. This snapshots the partner-reference surface; source/fixture coverage and operational acceptance are reported separately.
 
-The shared machine inventory is [api-inventory.json](api-inventory.json). The 0.5.0 development version binds all P0–P4 routes in this snapshot: 167 routes across 33 interfaces, comprising 157 explicit signatures and ten inherited Sandbox routes, with local contract tests. Missing or undocumented protocols and live permissions remain separate concerns.
+The shared machine inventory is [api-inventory.json](api-inventory.json). Version 0.5.0 binds all P0–P4 routes in this snapshot: 167 routes across 33 interfaces, comprising 157 explicit signatures and ten inherited Sandbox routes, with local contract tests. Missing or undocumented protocols and live permissions remain separate concerns.
 
 ## Delivery phases
 
@@ -33,7 +33,7 @@ Versions describe sequencing, not release dates. P0–P4 protocol bindings are i
 
 ## Completeness and remaining acceptance
 
-The [API audit](api-audit.md) checks 732 formal parameter rows, all routes and fixture references, distinguishing 29 typed results, two empty acknowledgements and 136 opaque results. The 53 discovery-only observations, P0–P4 credentialed/business acceptance and P5 implementation remain incomplete; 167/167 bindings do not mean every Steam feature is complete.
+The [API audit](api-audit.md) checks 735 formal parameter rows, all routes and fixture references, distinguishing 29 typed results, two empty acknowledgements and 136 opaque results. The 53 discovery-only observations, P0–P4 credentialed/business acceptance and P5 implementation remain incomplete; 167/167 bindings do not mean every Steam feature is complete.
 
 ## Complete Web API interface matrix
 
