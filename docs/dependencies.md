@@ -11,6 +11,8 @@ English | [简体中文](dependencies_ZH.md)
 
 Checked on 2026-10-22 using each crate's crates.io API, excluding yanked versions and sorting semantic versions including rc, beta, alpha, and dev previews. The shared, language-neutral [dependency-versions.json](dependency-versions.json) records the evidence.
 
+All direct dependency versions and shared options are defined once in the root `Cargo.toml` under `[workspace.dependencies]`. The library and `xtask` inherit them through `workspace = true`; member-specific features, such as `xtask`'s blocking HTTP client and Tokio's test runtime, are enabled only where needed. Cargo resolves inherited settings into the published manifest so the crate builds independently of the repository workspace.
+
 | Direct dependency | Selected version | Purpose |
 | --- | --- | --- |
 | aws-lc-rs | 1.18.2 | Crypto backend and randomized jitter |
@@ -19,7 +21,7 @@ Checked on 2026-10-22 using each crate's crates.io API, excluding yanked version
 | rustls-platform-verifier | 0.7.1 | Platform certificate verification |
 | serde | 1.0.229 | Typed response decoding |
 | serde_json | 1.0.154 | JSON and precise integers |
-| tokio | 1.54.0 | Async execution, concurrency, pacing, and timeouts |
+| tokio | 1.54.1 | Async execution, concurrency, pacing, and timeouts |
 | thiserror | 2.0.21 | Matchable error variants |
 | url | 2.5.8 | URL and base URL validation |
 | httpdate | 1.0.3 | Retry-After dates |
