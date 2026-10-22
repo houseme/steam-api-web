@@ -101,16 +101,28 @@ impl fmt::Debug for ApiKey {
 }
 impl ApiKey {
     /// Create a user key. Empty or invalid HTTP header values are rejected.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::Error::Configuration`] when the key is empty or is not a valid HTTP header value.
     pub fn user(value: impl Into<String>) -> Result<Self> {
         Self::new(KeyKind::User, value.into())
     }
     /// Create a publisher key, which also authorizes user-key methods.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::Error::Configuration`] when the key is empty or is not a valid HTTP header value.
     pub fn publisher(value: impl Into<String>) -> Result<Self> {
         Self::new(KeyKind::Publisher, value.into())
     }
     /// Create a dedicated Financial API Group key. This key can read all financial
     /// data for its partner account and only authorizes financial endpoints here.
     /// Declaring the kind does not establish remote account permissions.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::Error::Configuration`] when the key is empty or is not a valid HTTP header value.
     pub fn financial(value: impl Into<String>) -> Result<Self> {
         Self::new(KeyKind::Financial, value.into())
     }
@@ -238,6 +250,10 @@ impl ClientBuilder {
         self
     }
     /// Build a client. Reuse it to retain the connection pool and shared limits.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid resource limits, timeouts, retry policy, base URL or key/host combination, or if the TLS verifier or HTTP client cannot be initialized.
     pub fn build(self) -> Result<SteamClient> {
         const MAX_DURATION: Duration = Duration::from_secs(86400);
         for timeout in [

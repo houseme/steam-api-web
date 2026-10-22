@@ -55,6 +55,32 @@ impl StoreService<'_> {
     /// Pass the last returned app ID as `last_appid` for the next request. The
     /// reference documents item metadata but no complete response envelope or
     /// termination flag, so the original JSON is preserved without inference.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetAppList](https://partner.steamgames.com/doc/webapi/IStoreService#GetAppList): `GET IStoreService/GetAppList/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/store_catalog.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::store::AppListOptions;
+    ///
+    /// async fn example(client: &SteamClient, options: AppListOptions<'_>) -> steam_api_web::Result<()> {
+    ///     let response = client.store().get_app_list(options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_app_list(&self, options: AppListOptions<'_>) -> Result<OpaqueResponse> {
         if options
             .max_results

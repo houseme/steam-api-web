@@ -19,6 +19,43 @@ pub struct PublishedItemVoting<'a>(pub(crate) &'a SteamClient);
 impl PublishedItemVoting<'_> {
     /// Retrieve item voting details for one application. The documented POST is
     /// sent at most once, and the unspecified response remains opaque.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ItemVoteSummary](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemVoting#ItemVoteSummary): `POST ISteamPublishedItemVoting/ItemVoteSummary/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/published_item_votes.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: SteamId,
+    ///     appid: u32,
+    ///     publishedfileids: &[u64],
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_item_voting()
+    ///         .item_vote_summary(
+    ///             steamid,
+    ///             appid,
+    ///             publishedfileids,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn item_vote_summary(
         &self,
         steamid: SteamId,
@@ -39,6 +76,41 @@ impl PublishedItemVoting<'_> {
 
     /// Retrieve the user's votes for the selected items. This endpoint has no
     /// appid parameter; its documented POST is never automatically replayed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [UserVoteSummary](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemVoting#UserVoteSummary): `POST ISteamPublishedItemVoting/UserVoteSummary/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/published_item_votes.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: SteamId,
+    ///     publishedfileids: &[u64],
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_item_voting()
+    ///         .user_vote_summary(
+    ///             steamid,
+    ///             publishedfileids,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn user_vote_summary(
         &self,
         steamid: SteamId,

@@ -20,6 +20,24 @@
 //! # Ok(())
 //! # }
 //! ```
+//!
+//! # Error handling
+//!
+//! Request methods return [`Error::InvalidParameter`] for invalid local input
+//! and [`Error::MissingApiKey`] for an absent or incompatible key. Requests may
+//! also fail with [`Error::Transport`], [`Error::Http`], [`Error::Deadline`],
+//! [`Error::Api`], [`Error::Decode`], or [`Error::ResponseTooLarge`]. Retry jitter
+//! can return [`Error::Random`] if the operating system's random source fails.
+//! Public errors omit credentials, URLs, response bodies, and upstream text.
+//!
+//! Only replay-safe GET reads use the configured retry policy. Authentication,
+//! POSTs, and documented GET mutations are sent once. A timeout after a write
+//! does not prove that Steam rejected it; reconcile its outcome before retrying.
+//! Opaque responses preserve business fields without inventing a success state.
+//! See each request type's field documentation for parameter units and limits.
+//!
+//! Interface accessors borrow this client and reuse its existing connection
+//! pool and shared limits; selecting an accessor performs no network operation.
 
 pub mod apps;
 pub mod broadcast;

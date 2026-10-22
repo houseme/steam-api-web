@@ -192,6 +192,31 @@ pub struct StatUpdate<'a> {
 
 impl UserStats<'_> {
     /// Get global achievement percentages (v2). Anonymous on the public host.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetGlobalAchievementPercentagesForApp](https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetGlobalAchievementPercentagesForApp): `GET ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_game_stats.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, gameid: u64) -> steam_api_web::Result<()> {
+    ///     let response = client.user_stats().get_global_achievement_percentages_for_app(gameid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_global_achievement_percentages_for_app(
         &self,
         gameid: u64,
@@ -209,6 +234,37 @@ impl UserStats<'_> {
             .await
     }
     /// Get global stats with indexed `name[i]` parameters and optional date range.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetGlobalStatsForGame](https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetGlobalStatsForGame): `GET ISteamUserStats/GetGlobalStatsForGame/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_game_stats.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::user_stats::GlobalStatsRange;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     names: &[&str],
+    ///     range: GlobalStatsRange,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user_stats().get_global_stats_for_game(appid, names, range).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_global_stats_for_game(
         &self,
         appid: u32,
@@ -246,6 +302,31 @@ impl UserStats<'_> {
             .await
     }
     /// Count online players. Anonymous on the public host.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetNumberOfCurrentPlayers](https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetNumberOfCurrentPlayers): `GET ISteamUserStats/GetNumberOfCurrentPlayers/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_game_stats.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.user_stats().get_number_of_current_players(appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_number_of_current_players(&self, appid: u32) -> Result<CurrentPlayers> {
         nonzero(appid.into(), "appid must not be zero")?;
         self.0
@@ -260,6 +341,36 @@ impl UserStats<'_> {
             .await
     }
     /// Read user achievements, optionally localized with Steam language names.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetPlayerAchievements](https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetPlayerAchievements): `GET ISteamUserStats/GetPlayerAchievements/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_game_stats.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     appid: u32,
+    ///     language: Option<&str>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user_stats().get_player_achievements(steamid, appid, language).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_player_achievements(
         &self,
         steamid: impl Into<SteamId>,
@@ -279,6 +390,35 @@ impl UserStats<'_> {
             .await
     }
     /// Read game stats and achievement definitions (v2).
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetSchemaForGame](https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetSchemaForGame): `GET ISteamUserStats/GetSchemaForGame/v2/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_game_stats.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     language: Option<&str>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user_stats().get_schema_for_game(appid, language).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_schema_for_game(
         &self,
         appid: u32,
@@ -296,6 +436,35 @@ impl UserStats<'_> {
             .await
     }
     /// Read per-user stats and achievement states (v2).
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetUserStatsForGame](https://partner.steamgames.com/doc/webapi/ISteamUserStats#GetUserStatsForGame): `GET ISteamUserStats/GetUserStatsForGame/v2/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_game_stats.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     appid: u32,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user_stats().get_user_stats_for_game(steamid, appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_user_stats_for_game(
         &self,
         steamid: impl Into<SteamId>,
@@ -315,6 +484,37 @@ impl UserStats<'_> {
     /// transport failure or HTTP error: the server may have already applied it.
     /// Names must be nonempty and unique. Check Steam's write result explicitly;
     /// the official reference does not specify its success response schema.
+    ///
+    /// # HTTP contract
+    ///
+    /// [SetUserStatsForGame](https://partner.steamgames.com/doc/webapi/ISteamUserStats#SetUserStatsForGame): `POST ISteamUserStats/SetUserStatsForGame/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_game_stats.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    /// use steam_api_web::user_stats::StatUpdate;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     appid: u32,
+    ///     updates: &[StatUpdate<'_>],
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user_stats().set_user_stats_for_game(steamid, appid, updates).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn set_user_stats_for_game(
         &self,
         steamid: impl Into<SteamId>,

@@ -70,6 +70,42 @@ pub struct ProcessApprovalRequest {
 impl PublishedFileModerationService<'_> {
     /// Read pending requests, including requests already claimed by moderators.
     /// Items are ordered from oldest to newest by Steam.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetAllApprovalRequests](https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService#GetAllApprovalRequests): `GET IPublishedFileModerationService/GetAllApprovalRequests/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_approvals.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::published_file_moderation::ApprovalRequestsOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     options: ApprovalRequestsOptions,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_file_moderation()
+    ///         .get_all_approval_requests(
+    ///             appid,
+    ///             options,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_all_approval_requests(
         &self,
         appid: u32,
@@ -102,6 +138,35 @@ impl PublishedFileModerationService<'_> {
     /// Apply a decision using revision 2, the only revision permitted by Valve.
     /// A stale change number fails remotely and requires reviewing the new content.
     /// The mutation is never automatically replayed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ProcessApprovalRequest](https://partner.steamgames.com/doc/webapi/IPublishedFileModerationService#ProcessApprovalRequest): `POST IPublishedFileModerationService/ProcessApprovalRequest/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_approvals.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::published_file_moderation::ProcessApprovalRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: ProcessApprovalRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.published_file_moderation().process_approval_request(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn process_approval_request(
         &self,
         request: ProcessApprovalRequest,

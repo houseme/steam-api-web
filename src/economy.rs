@@ -74,6 +74,36 @@ pub struct StartAssetTransactionRequest<'a> {
 impl Economy<'_> {
     /// Check trade eligibility (publisher GET v1). The original result is opaque;
     /// transport success does not establish that the users may trade.
+    ///
+    /// # HTTP contract
+    ///
+    /// [CanTrade](https://partner.steamgames.com/doc/webapi/ISteamEconomy#CanTrade): `GET ISteamEconomy/CanTrade/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/asset_prices.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     steamid: SteamId,
+    ///     targetid: SteamId,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.economy().can_trade(appid, steamid, targetid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn can_trade(
         &self,
         appid: u32,
@@ -95,6 +125,45 @@ impl Economy<'_> {
 
     /// Finalize the exact opaque transaction ID supplied by Steam (publisher
     /// POST v1). Never automatically replayed; no purchase success is inferred.
+    ///
+    /// # HTTP contract
+    ///
+    /// [FinalizeAssetTransaction](https://partner.steamgames.com/doc/webapi/ISteamEconomy#FinalizeAssetTransaction): `POST ISteamEconomy/FinalizeAssetTransaction/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/asset_prices.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     steamid: SteamId,
+    ///     txnid: &str,
+    ///     language: &str,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .economy()
+    ///         .finalize_asset_transaction(
+    ///             appid,
+    ///             steamid,
+    ///             txnid,
+    ///             language,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn finalize_asset_transaction(
         &self,
         appid: u32,
@@ -122,6 +191,37 @@ impl Economy<'_> {
 
     /// Read one or more asset classes using a user or publisher key (GET v1).
     /// The wire format is `class_count`, `classid0`, and optional `instanceid0`.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetAssetClassInfo](https://partner.steamgames.com/doc/webapi/ISteamEconomy#GetAssetClassInfo): `GET ISteamEconomy/GetAssetClassInfo/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/asset_prices.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::economy::AssetClass;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     classes: &[AssetClass],
+    ///     language: Option<&str>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.economy().get_asset_class_info(appid, classes, language).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_asset_class_info(
         &self,
         appid: u32,
@@ -156,6 +256,36 @@ impl Economy<'_> {
 
     /// Read purchasable asset prices and categories (user-key GET v1).
     /// Original numeric and textual price representations remain in the JSON.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetAssetPrices](https://partner.steamgames.com/doc/webapi/ISteamEconomy#GetAssetPrices): `GET ISteamEconomy/GetAssetPrices/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/asset_prices.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::economy::AssetPriceOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     options: AssetPriceOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.economy().get_asset_prices(appid, options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_asset_prices(
         &self,
         appid: u32,
@@ -181,6 +311,43 @@ impl Economy<'_> {
     }
 
     /// Read exported assets for a user's app context (publisher GET v1).
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetExportedAssetsForUser](https://partner.steamgames.com/doc/webapi/ISteamEconomy#GetExportedAssetsForUser): `GET ISteamEconomy/GetExportedAssetsForUser/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/asset_prices.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     steamid: SteamId,
+    ///     contextid: u64,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .economy()
+    ///         .get_exported_assets_for_user(
+    ///             appid,
+    ///             steamid,
+    ///             contextid,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_exported_assets_for_user(
         &self,
         appid: u32,
@@ -205,6 +372,31 @@ impl Economy<'_> {
 
     /// Read a game's market prices with a publisher key (GET v1).
     /// No floating-point price conversion is performed by this method.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetMarketPrices](https://partner.steamgames.com/doc/webapi/ISteamEconomy#GetMarketPrices): `GET ISteamEconomy/GetMarketPrices/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/asset_prices.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.economy().get_market_prices(appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_market_prices(&self, appid: u32) -> Result<OpaqueResponse> {
         nonzero(appid.into(), "appid must not be zero")?;
         self.0
@@ -218,6 +410,35 @@ impl Economy<'_> {
     /// Initiate an asset purchase (publisher POST v1), sent exactly once.
     /// Authorization and finalization remain separate application decisions.
     /// Valve documents no caller-provided idempotency key for this endpoint.
+    ///
+    /// # HTTP contract
+    ///
+    /// [StartAssetTransaction](https://partner.steamgames.com/doc/webapi/ISteamEconomy#StartAssetTransaction): `POST ISteamEconomy/StartAssetTransaction/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/asset_prices.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::economy::StartAssetTransactionRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: StartAssetTransactionRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.economy().start_asset_transaction(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn start_asset_transaction(
         &self,
         request: StartAssetTransactionRequest<'_>,
@@ -270,6 +491,36 @@ impl Economy<'_> {
 
     /// Initiate a trade through Valve's GET mutation (publisher v1).
     /// Never automatically replayed, including after HTTP 429 or 503.
+    ///
+    /// # HTTP contract
+    ///
+    /// [StartTrade](https://partner.steamgames.com/doc/webapi/ISteamEconomy#StartTrade): `GET ISteamEconomy/StartTrade/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/asset_prices.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     partya: SteamId,
+    ///     partyb: SteamId,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.economy().start_trade(appid, partya, partyb).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn start_trade(
         &self,
         appid: u32,

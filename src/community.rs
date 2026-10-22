@@ -50,6 +50,35 @@ impl fmt::Debug for ReportAbuseRequest<'_> {
 impl Community<'_> {
     /// Submit one abuse report with publisher credentials. No automatic replay,
     /// adjudication, or subsequent moderation action is performed by this call.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ReportAbuse](https://partner.steamgames.com/doc/webapi/ISteamCommunity#ReportAbuse): `POST ISteamCommunity/ReportAbuse/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/community_report.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::community::ReportAbuseRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &ReportAbuseRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.community().report_abuse(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn report_abuse(&self, request: &ReportAbuseRequest<'_>) -> Result<OpaqueResponse> {
         nonzero(request.steamid_actor.raw(), "steamidActor must not be zero")?;
         nonzero(

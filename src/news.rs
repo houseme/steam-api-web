@@ -32,6 +32,36 @@ pub struct NewsOptions<'a> {
 impl News<'_> {
     /// Read public application news through v2. The reference omits the response
     /// schema, so this method preserves the entire original JSON document.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetNewsForApp](https://partner.steamgames.com/doc/webapi/ISteamNews#GetNewsForApp): `GET ISteamNews/GetNewsForApp/v2/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/app_news.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::news::NewsOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     options: NewsOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.news().get_news_for_app(appid, options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_news_for_app(
         &self,
         appid: u32,
@@ -47,6 +77,36 @@ impl News<'_> {
 
     /// Read news including unreleased apps. Requires a publisher key owning the
     /// app and must be called from a secure server. The full JSON is retained.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetNewsForAppAuthed](https://partner.steamgames.com/doc/webapi/ISteamNews#GetNewsForAppAuthed): `GET ISteamNews/GetNewsForAppAuthed/v2/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/app_news.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::news::NewsOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     options: NewsOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.news().get_news_for_app_authed(appid, options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_news_for_app_authed(
         &self,
         appid: u32,

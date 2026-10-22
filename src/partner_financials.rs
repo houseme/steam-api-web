@@ -272,6 +272,32 @@ impl PartnerFinancialsService<'_> {
     /// Read one account-wide change set. Previously seen dates must be queried
     /// from their beginning again because rows can be added, removed or changed.
     /// Persist result_highwatermark only after all returned dates are processed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetChangedDatesForPartner](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService#GetChangedDatesForPartner): `GET IPartnerFinancialsService/GetChangedDatesForPartner/v001/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/financial_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::partner_financials::ChangedDatesRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: ChangedDatesRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.partner_financials().get_changed_dates_for_partner(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_changed_dates_for_partner(
         &self,
         request: ChangedDatesRequest,
@@ -291,6 +317,35 @@ impl PartnerFinancialsService<'_> {
     /// Read one page for a Pacific Time date. Continue only when max_id differs
     /// from highwatermark_id; even a short or empty page is not a stop condition.
     /// Decimal USD amounts remain strings and local-currency cents remain uint64.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetDetailedSales](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService#GetDetailedSales): `GET IPartnerFinancialsService/GetDetailedSales/v001/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/financial_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::partner_financials::DetailedSalesRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: DetailedSalesRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.partner_financials().get_detailed_sales(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_detailed_sales(
         &self,
         request: DetailedSalesRequest<'_>,
@@ -311,6 +366,35 @@ impl PartnerFinancialsService<'_> {
     /// Read one GMT-bounded wishlist date. Steam can return only app_min_date
     /// outside the available range. This method never enumerates account apps;
     /// that operation uses a separate normal publisher key and client.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetAppWishlistReporting](https://partner.steamgames.com/doc/webapi/IPartnerFinancialsService#GetAppWishlistReporting): `GET IPartnerFinancialsService/GetAppWishlistReporting/v001/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/financial_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::partner_financials::AppWishlistRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: AppWishlistRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.partner_financials().get_app_wishlist_reporting(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_app_wishlist_reporting(
         &self,
         request: AppWishlistRequest<'_>,

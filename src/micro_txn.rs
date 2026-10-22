@@ -280,6 +280,36 @@ impl<'a> MicroTxn<'a> {
     }
 
     /// Extend a Steam-managed agreement using optional optimistic concurrency.
+    ///
+    /// # HTTP contract
+    ///
+    /// [AdjustAgreement](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#AdjustAgreement): `POST ISteamMicroTxn/AdjustAgreement/v1/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::AdjustAgreementRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: AdjustAgreementRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().adjust_agreement(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn adjust_agreement(
         &self,
         request: AdjustAgreementRequest<'_>,
@@ -311,6 +341,33 @@ impl<'a> MicroTxn<'a> {
     }
 
     /// Cancel an agreement, without replaying a timeout or transient failure.
+    ///
+    /// # HTTP contract
+    ///
+    /// [CancelAgreement](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#CancelAgreement): `POST ISteamMicroTxn/CancelAgreement/v1/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::AgreementRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: AgreementRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().cancel_agreement(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn cancel_agreement(&self, request: AgreementRequest) -> Result<OpaqueResponse> {
         validate_agreement(request)?;
         self.send(MicroMethod::CancelAgreement, agreement_params(request))
@@ -319,6 +376,33 @@ impl<'a> MicroTxn<'a> {
 
     /// Capture an already authorized order, sent once. Reconcile ambiguous results
     /// through QueryTxn or GetReport before deciding entitlement changes.
+    ///
+    /// # HTTP contract
+    ///
+    /// [FinalizeTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#FinalizeTxn): `POST ISteamMicroTxn/FinalizeTxn/v2/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::OrderRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: OrderRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().finalize_txn(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn finalize_txn(&self, request: OrderRequest) -> Result<OpaqueResponse> {
         validate_order(request)?;
         self.send(MicroMethod::FinalizeTxn, order_params(request))
@@ -327,6 +411,36 @@ impl<'a> MicroTxn<'a> {
 
     /// Read one v5 reconciliation batch. Preserve unknown statuses, full IDs,
     /// individual item outcomes, and timestamps in the original redacted JSON.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetReport](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#GetReport): `GET ISteamMicroTxn/GetReport/v5/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::MicroTxnReportRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: MicroTxnReportRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().get_report(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_report(&self, request: MicroTxnReportRequest<'_>) -> Result<OpaqueResponse> {
         nonzero(request.appid.into(), "appid must not be zero")?;
         if !valid_utc_time(request.time) {
@@ -354,6 +468,33 @@ impl<'a> MicroTxn<'a> {
 
     /// Read current agreement status. Use GetReport for successful renewal charges;
     /// a canceled agreement may still have previously paid entitlement remaining.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetUserAgreementInfo](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#GetUserAgreementInfo): `GET ISteamMicroTxn/GetUserAgreementInfo/v2/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::MicroTxnUserRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: MicroTxnUserRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().get_user_agreement_info(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_user_agreement_info(
         &self,
         request: MicroTxnUserRequest,
@@ -364,6 +505,36 @@ impl<'a> MicroTxn<'a> {
     }
 
     /// Read wallet currency, country, state, and purchasing status (v2).
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetUserInfo](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#GetUserInfo): `GET ISteamMicroTxn/GetUserInfo/v2/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::PurchasingUserRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: PurchasingUserRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().get_user_info(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_user_info(
         &self,
         request: PurchasingUserRequest<'_>,
@@ -379,6 +550,33 @@ impl<'a> MicroTxn<'a> {
 
     /// Create a v3 cart awaiting approval. This method does not finalize the order
     /// or follow the returned authorization URL. All writes are single-send.
+    ///
+    /// # HTTP contract
+    ///
+    /// [InitTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#InitTxn): `POST ISteamMicroTxn/InitTxn/v3/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::InitTxnRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: InitTxnRequest<'_>) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().init_txn(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn init_txn(&self, request: InitTxnRequest<'_>) -> Result<OpaqueResponse> {
         validate_order(OrderRequest {
             appid: request.appid,
@@ -440,6 +638,36 @@ impl<'a> MicroTxn<'a> {
 
     /// Initiate a game-managed billing cycle once. An accepted request can still
     /// fail to charge; reconcile the actual cycle through GetReport.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ProcessAgreement](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#ProcessAgreement): `POST ISteamMicroTxn/ProcessAgreement/v1/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::ProcessAgreementRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: ProcessAgreementRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().process_agreement(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn process_agreement(
         &self,
         request: ProcessAgreementRequest<'_>,
@@ -457,6 +685,33 @@ impl<'a> MicroTxn<'a> {
     }
 
     /// Query an order or Steam transaction without narrowing its identifiers.
+    ///
+    /// # HTTP contract
+    ///
+    /// [QueryTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#QueryTxn): `GET ISteamMicroTxn/QueryTxn/v3/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::QueryTxnRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: QueryTxnRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().query_txn(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn query_txn(&self, request: QueryTxnRequest) -> Result<OpaqueResponse> {
         nonzero(request.appid.into(), "appid must not be zero")?;
         if request.orderid.is_none() && request.transid.is_none() {
@@ -482,6 +737,33 @@ impl<'a> MicroTxn<'a> {
 
     /// Request a full refund for an order, once. Partial-order refunds are not
     /// supported by this API. Inspect reconciliation reports for later reversals.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RefundTxn](https://partner.steamgames.com/doc/webapi/ISteamMicroTxn#RefundTxn): `POST ISteamMicroTxn/RefundTxn/v2/`.
+    /// The selected MicroTxn environment determines the production or Sandbox prefix.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/query_sandbox_transaction.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::micro_txn::OrderRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: OrderRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.micro_txn_sandbox().refund_txn(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn refund_txn(&self, request: OrderRequest) -> Result<OpaqueResponse> {
         validate_order(request)?;
         self.send(MicroMethod::RefundTxn, order_params(request))

@@ -207,6 +207,35 @@ struct Groups {
 
 impl User<'_> {
     /// Check whether a user has an active license (v4).
+    ///
+    /// # HTTP contract
+    ///
+    /// [CheckAppOwnership](https://partner.steamgames.com/doc/webapi/ISteamUser#CheckAppOwnership): `GET ISteamUser/CheckAppOwnership/v4/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     appid: u32,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user().check_app_ownership(steamid, appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn check_app_ownership(
         &self,
         steamid: impl Into<SteamId>,
@@ -223,6 +252,35 @@ impl User<'_> {
             .await
     }
     /// Get prices for 1..=100 nonzero app IDs in the user's purchasing region.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetAppPriceInfo](https://partner.steamgames.com/doc/webapi/ISteamUser#GetAppPriceInfo): `GET ISteamUser/GetAppPriceInfo/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     appids: &[u32],
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_app_price_info(steamid, appids).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_app_price_info(
         &self,
         steamid: impl Into<SteamId>,
@@ -248,6 +306,31 @@ impl User<'_> {
     /// Steam's returned cursor only after handling the page successfully.
     /// The official reference omits its response schema, so retain the full JSON
     /// rather than inventing a typed pagination envelope or termination rule.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetDeletedSteamIDs](https://partner.steamgames.com/doc/webapi/ISteamUser#GetDeletedSteamIDs): `GET ISteamUser/GetDeletedSteamIDs/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, rowversion: u64) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_deleted_steam_ids(rowversion).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_deleted_steam_ids(&self, rowversion: u64) -> Result<OpaqueResponse> {
         self.0
             .call_opaque(
@@ -257,6 +340,35 @@ impl User<'_> {
             .await
     }
     /// Read friends. A private friend list produces Error::Http with status 401.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetFriendList](https://partner.steamgames.com/doc/webapi/ISteamUser#GetFriendList): `GET ISteamUser/GetFriendList/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     relationship: Option<&str>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_friend_list(steamid, relationship).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_friend_list(
         &self,
         steamid: impl Into<SteamId>,
@@ -278,6 +390,31 @@ impl User<'_> {
             .await
     }
     /// Read ban summaries. This client bounds each batch to 100 IDs.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetPlayerBans](https://partner.steamgames.com/doc/webapi/ISteamUser#GetPlayerBans): `GET ISteamUser/GetPlayerBans/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamids: &[SteamId]) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_player_bans(steamids).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_player_bans(&self, steamids: &[SteamId]) -> Result<Vec<PlayerBans>> {
         validate_steamids(steamids)?;
         let response: Players<PlayerBans> = self
@@ -291,6 +428,31 @@ impl User<'_> {
         Ok(response.players)
     }
     /// Read public profile summaries, for 1..=100 IDs. Steam may omit unknown IDs.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetPlayerSummaries](https://partner.steamgames.com/doc/webapi/ISteamUser#GetPlayerSummaries): `GET ISteamUser/GetPlayerSummaries/v2/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamids: &[SteamId]) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_player_summaries(steamids).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_player_summaries(&self, steamids: &[SteamId]) -> Result<Vec<PlayerSummary>> {
         validate_steamids(steamids)?;
         let response: Players<PlayerSummary> = self
@@ -306,6 +468,27 @@ impl User<'_> {
     /// Split a larger profile request into sequential batches of at most 100.
     /// Returns no partial result on failure. Each batch has its own operation
     /// deadline; use an outer timeout for a deadline across the full batch set.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamids: &[SteamId]) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_player_summaries_batched(steamids).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_player_summaries_batched(
         &self,
         steamids: &[SteamId],
@@ -320,6 +503,31 @@ impl User<'_> {
         Ok(players)
     }
     /// Read all publisher licenses using v4, the URL printed in the reference.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetPublisherAppOwnership](https://partner.steamgames.com/doc/webapi/ISteamUser#GetPublisherAppOwnership): `GET ISteamUser/GetPublisherAppOwnership/v4/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamid: impl Into<SteamId>) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_publisher_app_ownership(steamid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_publisher_app_ownership(
         &self,
         steamid: impl Into<SteamId>,
@@ -330,6 +538,32 @@ impl User<'_> {
     /// Explicit version selection for the reference's v4/v5 inconsistency.
     /// v5 adds expiry according to its change history; it requires live publisher
     /// validation before relying on that additional field.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    /// use steam_api_web::user::PublisherOwnershipVersion;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     version: PublisherOwnershipVersion,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_publisher_app_ownership_version(steamid, version).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_publisher_app_ownership_version(
         &self,
         steamid: impl Into<SteamId>,
@@ -350,6 +584,31 @@ impl User<'_> {
             .await
     }
     /// Read the user's group memberships.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetUserGroupList](https://partner.steamgames.com/doc/webapi/ISteamUser#GetUserGroupList): `GET ISteamUser/GetUserGroupList/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamid: impl Into<SteamId>) -> steam_api_web::Result<()> {
+    ///     let response = client.user().get_user_group_list(steamid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_user_group_list(&self, steamid: impl Into<SteamId>) -> Result<Vec<UserGroup>> {
         let steamid = steamid.into();
         nonzero(steamid.0, "steamid must not be zero")?;
@@ -365,6 +624,36 @@ impl User<'_> {
     }
     /// Resolve a vanity name. A legitimate no-match result (Steam success=42)
     /// is returned as None. Transport, authorization and malformed responses fail.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ResolveVanityURL](https://partner.steamgames.com/doc/webapi/ISteamUser#ResolveVanityURL): `GET ISteamUser/ResolveVanityURL/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/user_profiles.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::user::VanityUrlType;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     vanity: &str,
+    ///     kind: VanityUrlType,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user().resolve_vanity_url(vanity, kind).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn resolve_vanity_url(
         &self,
         vanity: &str,

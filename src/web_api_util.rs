@@ -20,6 +20,31 @@ pub struct WebApiUtil<'a>(pub(crate) &'a SteamClient);
 
 impl WebApiUtil<'_> {
     /// Read server metadata without requiring an API key.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetServerInfo](https://partner.steamgames.com/doc/webapi/ISteamWebAPIUtil#GetServerInfo): `GET ISteamWebAPIUtil/GetServerInfo/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/api_discovery.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient) -> steam_api_web::Result<()> {
+    ///     let response = client.web_api_util().get_server_info().await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_server_info(&self) -> Result<OpaqueResponse> {
         self.0
             .call_opaque(
@@ -31,6 +56,31 @@ impl WebApiUtil<'_> {
 
     /// Discover supported API methods. A configured API key is sent by the client
     /// and may expose restricted methods; anonymous calls return public methods.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetSupportedAPIList](https://partner.steamgames.com/doc/webapi/ISteamWebAPIUtil#GetSupportedAPIList): `GET ISteamWebAPIUtil/GetSupportedAPIList/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/api_discovery.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient) -> steam_api_web::Result<()> {
+    ///     let response = client.web_api_util().get_supported_api_list().await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_supported_api_list(&self) -> Result<OpaqueResponse> {
         self.0
             .call_opaque(

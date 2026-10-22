@@ -89,6 +89,35 @@ pub struct UpdateItemDefsRequest<'a> {
 
 impl GameInventory<'_> {
     /// Read details for an original inventory-history command.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetHistoryCommandDetails](https://partner.steamgames.com/doc/webapi/IGameInventory#GetHistoryCommandDetails): `GET IGameInventory/GetHistoryCommandDetails/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_inventory::HistoryCommandDetailsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &HistoryCommandDetailsRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.game_inventory().get_history_command_details(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_history_command_details(
         &self,
         request: &HistoryCommandDetailsRequest<'_>,
@@ -112,6 +141,32 @@ impl GameInventory<'_> {
     }
 
     /// Read user history for the supplied interval without fabricating a cursor.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetUserHistory](https://partner.steamgames.com/doc/webapi/IGameInventory#GetUserHistory): `GET IGameInventory/GetUserHistory/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_inventory::UserHistoryRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: &UserHistoryRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.game_inventory().get_user_history(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_user_history(&self, request: &UserHistoryRequest) -> Result<OpaqueResponse> {
         validate_user_app(request.steamid, request.appid)?;
         if request.starttime > request.endtime {
@@ -129,6 +184,35 @@ impl GameInventory<'_> {
 
     /// Execute a support action once. No automatic retries or command parameters
     /// beyond those specified in the current reference are introduced.
+    ///
+    /// # HTTP contract
+    ///
+    /// [HistoryExecuteCommands](https://partner.steamgames.com/doc/webapi/IGameInventory#HistoryExecuteCommands): `POST IGameInventory/HistoryExecuteCommands/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_inventory::HistoryExecuteCommandsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &HistoryExecuteCommandsRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.game_inventory().history_execute_commands(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn history_execute_commands(
         &self,
         request: &HistoryExecuteCommandsRequest,
@@ -147,6 +231,32 @@ impl GameInventory<'_> {
     }
 
     /// Read one asset's history in the supplied context.
+    ///
+    /// # HTTP contract
+    ///
+    /// [SupportGetAssetHistory](https://partner.steamgames.com/doc/webapi/IGameInventory#SupportGetAssetHistory): `GET IGameInventory/SupportGetAssetHistory/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_inventory::AssetHistoryRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: &AssetHistoryRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.game_inventory().support_get_asset_history(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn support_get_asset_history(
         &self,
         request: &AssetHistoryRequest,
@@ -170,6 +280,35 @@ impl GameInventory<'_> {
     /// Update or create definitions without replay. The documented v0001 path is
     /// retained verbatim. Inspect failed IDs in the response before concluding
     /// that every definition changed. Cache flushing is a separate caller action.
+    ///
+    /// # HTTP contract
+    ///
+    /// [UpdateItemDefs](https://partner.steamgames.com/doc/webapi/IGameInventory#UpdateItemDefs): `POST IGameInventory/UpdateItemDefs/v0001`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_inventory::UpdateItemDefsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &UpdateItemDefsRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.game_inventory().update_item_defs(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn update_item_defs(
         &self,
         request: &UpdateItemDefsRequest<'_>,

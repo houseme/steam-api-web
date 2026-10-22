@@ -67,6 +67,35 @@ pub struct TradeOffersOptions<'a> {
 impl EconService<'_> {
     /// Read one trade-history page using the exact timestamp/trade-ID cursor.
     /// Callers inspect the opaque response for continuation and trade outcomes.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetTradeHistory](https://partner.steamgames.com/doc/webapi/IEconService#GetTradeHistory): `GET IEconService/GetTradeHistory/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/trade_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::econ::TradeHistoryOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     options: TradeHistoryOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.econ().get_trade_history(options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_trade_history(
         &self,
         options: TradeHistoryOptions<'_>,
@@ -85,6 +114,36 @@ impl EconService<'_> {
     }
 
     /// Flush a user's inventory cache (publisher POST v1), without replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [FlushInventoryCache](https://partner.steamgames.com/doc/webapi/IEconService#FlushInventoryCache): `POST IEconService/FlushInventoryCache/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/trade_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: SteamId,
+    ///     appid: u32,
+    ///     contextid: u64,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.econ().flush_inventory_cache(steamid, appid, contextid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn flush_inventory_cache(
         &self,
         steamid: SteamId,
@@ -113,12 +172,62 @@ impl EconService<'_> {
     }
 
     /// Invalidate the game's asset appearance cache (publisher POST v1).
+    ///
+    /// # HTTP contract
+    ///
+    /// [FlushAssetAppearanceCache](https://partner.steamgames.com/doc/webapi/IEconService#FlushAssetAppearanceCache): `POST IEconService/FlushAssetAppearanceCache/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/trade_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.econ().flush_asset_appearance_cache(appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn flush_asset_appearance_cache(&self, appid: u32) -> Result<OpaqueResponse> {
         self.flush_app("IEconService/FlushAssetAppearanceCache/v1/", appid)
             .await
     }
 
     /// Invalidate cached inventory contents (publisher POST v1), without replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [FlushContextCache](https://partner.steamgames.com/doc/webapi/IEconService#FlushContextCache): `POST IEconService/FlushContextCache/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/trade_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.econ().flush_context_cache(appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn flush_context_cache(&self, appid: u32) -> Result<OpaqueResponse> {
         self.flush_app("IEconService/FlushContextCache/v1/", appid)
             .await
@@ -126,6 +235,35 @@ impl EconService<'_> {
 
     /// Read sent and/or received offers (user-key GET v1).
     /// No undocumented pagination cursor is synthesized by this binding.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetTradeOffers](https://partner.steamgames.com/doc/webapi/IEconService#GetTradeOffers): `GET IEconService/GetTradeOffers/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/trade_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::econ::TradeOffersOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     options: TradeOffersOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.econ().get_trade_offers(options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_trade_offers(
         &self,
         options: TradeOffersOptions<'_>,
@@ -143,6 +281,35 @@ impl EconService<'_> {
     }
 
     /// Read one exact 64-bit trade offer ID (user-key GET v1).
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetTradeOffer](https://partner.steamgames.com/doc/webapi/IEconService#GetTradeOffer): `GET IEconService/GetTradeOffer/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/trade_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     tradeofferid: u64,
+    ///     language: &str,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.econ().get_trade_offer(tradeofferid, language).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_trade_offer(
         &self,
         tradeofferid: u64,
@@ -168,6 +335,31 @@ impl EconService<'_> {
 
     /// Read pending/new offer counts (user-key GET v1). Omit `time_last_visit`
     /// to use the previous trade-offer page visit, as described by Valve.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetTradeOffersSummary](https://partner.steamgames.com/doc/webapi/IEconService#GetTradeOffersSummary): `GET IEconService/GetTradeOffersSummary/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/trade_history.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, time_last_visit: Option<u32>) -> steam_api_web::Result<()> {
+    ///     let response = client.econ().get_trade_offers_summary(time_last_visit).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_trade_offers_summary(
         &self,
         time_last_visit: Option<u32>,

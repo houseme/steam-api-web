@@ -256,6 +256,36 @@ impl UserReviewsService<'_> {
     /// Read one review page through the current Web API service. An associated
     /// publisher key increases the rate limit, but anonymous requests work too.
     /// Anonymous results may be cached by Steam for ten minutes.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetAppReviews](https://partner.steamgames.com/doc/webapi/IUserReviewsService#GetAppReviews): `GET IUserReviewsService/GetAppReviews/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/app_reviews.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::reviews::AppReviewsOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     options: AppReviewsOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.reviews().get_app_reviews(appid, options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_app_reviews(
         &self,
         appid: u32,
