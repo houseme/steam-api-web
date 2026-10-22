@@ -92,6 +92,7 @@ and the complete [roadmap inventory](https://github.com/houseme/steam-api-web/bl
 | --- | --- |
 | Runnable examples for every interface and documentation checks | [Examples](https://github.com/houseme/steam-api-web/blob/main/docs/examples.md) |
 | Configuration, reliability, data handling, steamworks-rs interop | [Usage guide](https://github.com/houseme/steam-api-web/blob/main/docs/usage.md) |
+| Global request-path review and measured refactor | [Global review](https://github.com/houseme/steam-api-web/blob/main/docs/review-global.md) |
 | Design analysis and verification layers | [Design](https://github.com/houseme/steam-api-web/blob/main/docs/design.md) |
 | Cloud, inventory, economy and Workshop contracts | [P2 contracts](https://github.com/houseme/steam-api-web/blob/main/docs/p2.md) |
 | Billing, anti-cheat and session contracts | [P3 contracts](https://github.com/houseme/steam-api-web/blob/main/docs/p3.md) |

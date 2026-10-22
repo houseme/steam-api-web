@@ -235,7 +235,93 @@ fn preparation() {
     }
 }
 
+#[expect(
+    clippy::iter_cloned_collect,
+    reason = "Preserve the reviewed collect-and-join publisher filter baseline"
+)]
+fn lists() {
+    println!("List encoding reference 9d2cab1; exact wire equality and output drop; no network");
+    for count in [1, 100] {
+        let ids: Vec<_> = (0..count).map(|index| SteamId(u64::MAX - index)).collect();
+        compare(
+            &format!("{count} CSV Steam IDs"),
+            20_000,
+            || {
+                let joined = black_box(&ids)
+                    .iter()
+                    .map(ToString::to_string)
+                    .collect::<Vec<_>>()
+                    .join(",");
+                request::Params::new()
+                    .with("steamids", joined)
+                    .with("format", "json")
+                    .finish()
+            },
+            || {
+                request::Params::new()
+                    .with(
+                        "steamids",
+                        request::CommaSeparated(black_box(ids.as_slice())),
+                    )
+                    .with("format", "json")
+                    .finish()
+            },
+        );
+    }
+    let types = ["game", "application", "tool", "demo", "dlc", "music"];
+    compare(
+        "six CSV app types",
+        20_000,
+        || {
+            let joined = black_box(&types)
+                .iter()
+                .copied()
+                .collect::<Vec<_>>()
+                .join(",");
+            request::Params::new()
+                .with("type_filter", joined)
+                .with("format", "json")
+                .finish()
+        },
+        || {
+            request::Params::new()
+                .with("type_filter", request::CommaSeparated(black_box(&types)))
+                .with("format", "json")
+                .finish()
+        },
+    );
+    let assets: Vec<_> = (0..100).map(|index| format!("asset-{index}")).collect();
+    compare(
+        "100 legacy asset lines",
+        2_000,
+        || {
+            let mut params = request::Params::new()
+                .with("appid", 480)
+                .with("steamid", SteamId(u64::MAX));
+            for (index, asset) in black_box(&assets).iter().enumerate() {
+                params.push(&format!("assetid{index}"), asset);
+                params.push(&format!("assetquantity{index}"), 1_u32);
+            }
+            params.with("format", "json").finish()
+        },
+        || {
+            let mut params = request::Params::new()
+                .with("appid", 480)
+                .with("steamid", SteamId(u64::MAX));
+            for (index, asset) in black_box(&assets).iter().enumerate() {
+                params.push_suffixed("assetid", index, asset);
+                params.push_suffixed("assetquantity", index, 1_u32);
+            }
+            params.with("format", "json").finish()
+        },
+    );
+}
+
 fn main() {
+    if std::env::args().any(|arg| arg == "--lists-only") {
+        lists();
+        return;
+    }
     if std::env::args().any(|arg| arg == "--preparation-only") {
         preparation();
         return;

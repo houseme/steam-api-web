@@ -224,6 +224,21 @@ pub(crate) trait FormValue {
     fn encode(&self, output: &mut String);
 }
 
+/// Encode a CSV field into the final form, borrowing each wire scalar and
+/// escaping separators exactly as an ordinary comma-joined string would.
+pub(crate) struct CommaSeparated<'a, T>(pub &'a [T]);
+
+impl<T: FormValue> FormValue for CommaSeparated<'_, T> {
+    fn encode(&self, output: &mut String) {
+        for (index, value) in self.0.iter().enumerate() {
+            if index != 0 {
+                output.push_str("%2C");
+            }
+            value.encode(output);
+        }
+    }
+}
+
 impl FormValue for str {
     fn encode(&self, output: &mut String) {
         if let Some(index) = self.bytes().position(|byte| !unescaped(byte)) {
@@ -341,6 +356,29 @@ mod tests {
                 ("classid1", u64::MAX.to_string()),
             ])
         );
+    }
+
+    #[test]
+    fn comma_separated_scalars_match_the_standard_form_encoder() {
+        fn check<T: FormValue + std::fmt::Display>(values: &[T]) {
+            let joined = values
+                .iter()
+                .map(ToString::to_string)
+                .collect::<Vec<_>>()
+                .join(",");
+            let expected = url::form_urlencoded::Serializer::new(String::new())
+                .append_pair("values", &joined)
+                .finish();
+            let actual = Params::new()
+                .with("values", CommaSeparated(values))
+                .finish();
+            assert_eq!(actual, expected);
+        }
+        check::<u64>(&[]);
+        check(&[0_u64, u64::MAX]);
+        check(&[SteamId(1), SteamId(u64::MAX)]);
+        check(&[i128::MIN, i128::MAX]);
+        check(&["", "", "comma,value", "spaces + &=%/雪\0"]);
     }
 
     #[test]

@@ -7,6 +7,10 @@
 
 #![allow(clippy::unwrap_used)]
 
+#[allow(dead_code, unused_imports)]
+#[path = "../src/body.rs"]
+mod body;
+
 #[path = "support/baseline.rs"]
 mod baseline;
 #[allow(dead_code)]
@@ -113,16 +117,25 @@ fn compare(name: &str, iterations: usize, mut old: impl FnMut(), mut new: impl F
         old();
         new();
     }
-    let mut old_samples = Vec::new();
+    let mut a1 = Vec::new();
+    let mut a2 = Vec::new();
     let mut new_samples = Vec::new();
     // Interleave A/B/B/A to reduce drift, then report medians from 18 samples.
     for _ in 0..9 {
-        old_samples.push(elapsed(iterations, &mut old));
+        a1.push(elapsed(iterations, &mut old));
         new_samples.push(elapsed(iterations, &mut new));
         new_samples.push(elapsed(iterations, &mut new));
-        old_samples.push(elapsed(iterations, &mut old));
+        a2.push(elapsed(iterations, &mut old));
     }
+    fn median(values: &mut [f64]) -> f64 {
+        values.sort_by(f64::total_cmp);
+        (values[(values.len() - 1) / 2] + values[values.len() / 2]) / 2.
+    }
+    let drift = (median(&mut a2) / median(&mut a1) - 1.) * 100.;
+    let mut old_samples = a1;
+    old_samples.extend(a2);
     old_samples.sort_by(f64::total_cmp);
+
     new_samples.sort_by(f64::total_cmp);
     let old = (old_samples[8] + old_samples[9]) / 2.;
     let new = (new_samples[8] + new_samples[9]) / 2.;
@@ -131,9 +144,114 @@ fn compare(name: &str, iterations: usize, mut old: impl FnMut(), mut new: impl F
         old / new,
         (1. - new / old) * 100.
     );
+    println!("Baseline drift: {drift:+.1}%");
+    assert!(
+        drift.abs() <= 10.,
+        "baseline drift exceeds 10%; reject timing conclusion"
+    );
+}
+
+// Match the body assembly in client.rs at 9d2cab1, including the initial
+// 64 KiB reservation cap and streamed length checks. Both paths receive and
+// release the same owned shared chunks; fixture construction is not timed.
+#[expect(
+    clippy::unnecessary_to_owned,
+    reason = "Both collectors consume owned chunks to match transport ownership"
+)]
+fn body_old(chunks: &[std::sync::Arc<[u8]>], hint: usize, limit: usize) -> Vec<u8> {
+    let mut bytes = Vec::with_capacity(hint.min(64 * 1024));
+    for chunk in chunks.iter().cloned() {
+        assert!(chunk.len() <= limit.saturating_sub(bytes.len()));
+        bytes.extend_from_slice(&chunk);
+    }
+    bytes
+}
+
+fn body_new(
+    chunks: &[std::sync::Arc<[u8]>],
+    hint: usize,
+    limit: usize,
+) -> body::ResponseBody<std::sync::Arc<[u8]>> {
+    let mut bytes = body::ResponseBody::new();
+    for chunk in chunks.iter().cloned() {
+        assert!(bytes.append(chunk, limit, hint));
+    }
+    bytes
+}
+
+fn body_benchmarks() {
+    use std::sync::Arc;
+    println!(
+        "Body assembly reference 9d2cab1; identical chunks, output drop, ABBA drift gate; no HTTP I/O"
+    );
+    for (name, size, chunk_size, known_length) in [
+        ("64 B single chunk", 64, 64, true),
+        ("4 KiB single chunk", 4096, 4096, true),
+        ("64 KiB single chunk", 65536, 65536, true),
+        ("64 KiB / four chunks", 65536, 16384, true),
+        ("64 KiB / unknown length", 65536, 16384, false),
+    ] {
+        let payload = vec![b'x'; size];
+        let chunks: Vec<Arc<[u8]>> = payload.chunks(chunk_size).map(Arc::from).collect();
+        let hint = if known_length { size } else { 0 };
+        assert_eq!(
+            body_old(&chunks, hint, size),
+            body_new(&chunks, hint, size).as_slice()
+        );
+        compare(
+            name,
+            20_000,
+            || {
+                black_box(body_old(black_box(&chunks), hint, size));
+            },
+            || {
+                black_box(body_new(black_box(&chunks), hint, size));
+            },
+        );
+    }
+    let fixture = serde_json::to_vec(&json!({"response": {"games": (0..100).map(|appid| json!({
+        "appid": appid, "name": format!("Game {appid}"), "description": "A representative game description. ".repeat(16)
+    })).collect::<Vec<_>>()}})).unwrap();
+    for (name, chunk_size) in [
+        ("typed response / one chunk", fixture.len()),
+        ("typed response / 8 KiB chunks", 8192),
+    ] {
+        let chunks: Vec<Arc<[u8]>> = fixture.chunks(chunk_size).map(Arc::from).collect();
+        let reference: Page = parsed(&body_old(&chunks, fixture.len(), fixture.len()))
+            .decode("bench/v1/", &["response"])
+            .unwrap()
+            .1;
+        let current: Page = parsed(body_new(&chunks, fixture.len(), fixture.len()).as_slice())
+            .decode("bench/v1/", &["response"])
+            .unwrap()
+            .1;
+        assert_eq!(reference, current);
+        compare(
+            name,
+            500,
+            || {
+                black_box(
+                    parsed(&body_old(black_box(&chunks), fixture.len(), fixture.len()))
+                        .decode::<Page>("bench/v1/", &["response"])
+                        .unwrap(),
+                );
+            },
+            || {
+                black_box(
+                    parsed(body_new(black_box(&chunks), fixture.len(), fixture.len()).as_slice())
+                        .decode::<Page>("bench/v1/", &["response"])
+                        .unwrap(),
+                );
+            },
+        );
+    }
 }
 
 fn main() {
+    if std::env::args().any(|arg| arg == "--body-only") {
+        body_benchmarks();
+        return;
+    }
     assert_eq!(form_old(), form_new());
     let service_value = |form: String| -> Value {
         let pairs: Vec<_> = url::form_urlencoded::parse(form.as_bytes())

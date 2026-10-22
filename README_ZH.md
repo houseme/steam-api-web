@@ -72,6 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 | 主题 | 文档 |
 | --- | --- |
 | 配置、可靠性、数据处理、steamworks-rs 互操作 | [使用指南](https://github.com/houseme/steam-api-web/blob/main/docs/usage_ZH.md) |
+| 全局请求链路审查与实测重构 | [全局审查](https://github.com/houseme/steam-api-web/blob/main/docs/review-global_ZH.md) |
 | 设计分析与验证层次 | [设计分析](https://github.com/houseme/steam-api-web/blob/main/docs/design_ZH.md) |
 | Cloud、库存、经济与 Workshop 契约 | [P2 契约](https://github.com/houseme/steam-api-web/blob/main/docs/p2_ZH.md) |
 | 计费、反作弊与会话契约 | [P3 契约](https://github.com/houseme/steam-api-web/blob/main/docs/p3_ZH.md) |

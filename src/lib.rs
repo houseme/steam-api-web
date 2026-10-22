@@ -40,6 +40,7 @@
 //! pool and shared limits; selecting an accessor performs no network operation.
 
 pub mod apps;
+mod body;
 pub mod broadcast;
 pub mod cheat_reporting;
 mod client;

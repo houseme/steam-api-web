@@ -33,6 +33,8 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ### 调整
 
+- HTTP 单块正文直接复用，仅多块时合并；保留逻辑长度限制、响应校验及取消行为。
+- CSV 标量与旧式资产键统一写入最终表单，消除剩余 collect/join 和格式化键分配；增加有界所有权回归及带漂移门槛的 CPU 基准。
 - 全部直接依赖版本与公共配置集中到根 workspace manifest，保留成员专用 feature 及发布包的独立构建能力。
 - 将注册表已撤回的 Tokio 1.54.0 升级为 1.54.1，同步锁文件与依赖审计记录。
 - 修复下游 arbitrary_precision 特性统一时，Value→类型解码误拒绝合法 128 位统计值的问题；范围与精度由 Number 自身处理。
