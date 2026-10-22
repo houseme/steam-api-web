@@ -11,7 +11,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 核对日期：2026-10-22。范围覆盖[官方 Web API 索引](https://partner.steamgames.com/doc/webapi)的全部 **33 个接口**，包含 **157 个显式 HTTP 签名**，以及 Sandbox 从 ISteamMicroTxn 继承的 **10 个签名**。清单范围为伙伴参考目录；源码/fixture 映射与运行验收分别追踪。
 
-共享机器清单：[api-inventory.json](api-inventory.json)。0.5.0 开发版已封装此快照的 P0–P4 全部路径：33 个接口、167 条路径，包括 157 条显式签名及 10 条继承 Sandbox 路径，并有本地契约测试；未公开协议与真实权限仍分别验证。
+共享机器清单：[api-inventory.json](api-inventory.json)。0.5.0 已封装此快照的 P0–P4 全部路径：33 个接口、167 条路径，包括 157 条显式签名及 10 条继承 Sandbox 路径，并有本地契约测试；未公开协议与真实权限仍分别验证。
 
 ## 推进阶段
 
@@ -33,7 +33,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 ## 完整性与后续验收
 
-[本轮 API 审计](api-audit_ZH.md)核对 732 行正式参数、全部路径与 fixture 引用，区分 29 个类型化结果、2 个空确认和 136 个 opaque 结果。匿名发现额外的 53 条观察签名、P0–P4 凭据/业务验收及 P5 实现均保留为未完成，不把 167/167 绑定等同于全部 Steam 功能完成。
+[本轮 API 审计](api-audit_ZH.md)核对 735 行正式参数、全部路径与 fixture 引用，区分 29 个类型化结果、2 个空确认和 136 个 opaque 结果。匿名发现额外的 53 条观察签名、P0–P4 凭据/业务验收及 P5 实现均保留为未完成，不把 167/167 绑定等同于全部 Steam 功能完成。
 
 ## 全部 Web API 接口
 

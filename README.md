@@ -34,9 +34,8 @@ Steam client and native SDK, with **Rustls + AWS-LC** configured per client.
 [Credentials](#credentials) · [Reliability](#reliability-and-performance) ·
 [Documentation](#documentation) · [Roadmap](#roadmap)
 
-> **Version status:** `main` targets **0.5.0, currently unreleased**. The coverage
-> above describes this development tree. The registry badge and docs.rs refer to
-> published releases; installation choices are shown below.
+> **Version scope:** This README describes **0.5.0**. The registry badge and
+> docs.rs report published versions; the Git dependency below follows `main`.
 
 ## Quick start
 
@@ -48,7 +47,7 @@ cargo add tokio --features macros,rt-multi-thread
 ```
 
 <details>
-<summary>Use the 0.5.0 development APIs from GitHub</summary>
+<summary>Follow the main branch from GitHub</summary>
 
 Use this dependency configuration instead of the registry dependency above:
 

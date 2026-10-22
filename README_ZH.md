@@ -29,8 +29,8 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 [快速开始](#quick-start) · [接口覆盖](#api-coverage) · [凭据](#credentials) ·
 [可靠性](#reliability-and-performance) · [文档导航](#documentation) · [路线图](#roadmap)
 
-> **版本状态：**`main` 面向 **0.5.0，目前尚未发布**。上述覆盖范围对应当前开发源码。
-> crates.io 徽章与 docs.rs 指向已发布版本；下方分别给出 registry 和开发版的安装方式。
+> **版本范围：**本文对应 **0.5.0**。crates.io 徽章与 docs.rs 反映已发布版本；
+> 下方的 Git 依赖用于跟踪 `main` 分支。
 
 <a id="quick-start"></a>
 
@@ -44,7 +44,7 @@ cargo add tokio --features macros,rt-multi-thread
 ```
 
 <details>
-<summary>从 GitHub 使用 0.5.0 开发版 API</summary>
+<summary>从 GitHub 跟踪 main 分支</summary>
 
 将上面的 registry 依赖替换为以下配置：
 

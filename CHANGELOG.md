@@ -18,7 +18,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Extend coverage according to the complete Web API and native SDK interoperability roadmap.
 - Validate Publisher-only contracts, deletion cursors, write results, and ownership v5 with authorized credentials.
 
-## [0.5.0] - Unreleased
+## [0.5.0] - 2026-10-22
 
 ### Added
 
@@ -33,6 +33,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 
 ### Changed
 
+- Rebuild both READMEs around feature workflows, credential choices, reliability controls and focused documentation; separate registry installation from GitHub development dependencies.
 - Reuse single-chunk HTTP bodies and buffer only multiple chunks; keep logical length limits, response validation and cancellation behavior.
 - Stream CSV scalars and legacy asset keys into the shared form encoder, removing remaining collect/join and formatted-key allocations; add bounded ownership tests and drift-gated CPU benchmarks.
 - Centralize all direct dependency versions and shared options in the root workspace manifest, preserving member-specific features and standalone package builds.
@@ -46,7 +47,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 ### Validation boundaries
 
 - No financial account data, Site credentials or live broadcast operations were used. Financial permissions, Site response wrapping/array omission and production availability still require credentialed integration.
-- Version 0.5.0 is unreleased. Existing tags and registry versions remain separate from this development work.
+- Publication is confirmed by the Release workflow completing registry checksum verification and creating the GitHub release; a version entry or tag alone does not establish publication.
 
 ## [0.4.0] - 2026-10-22
 
