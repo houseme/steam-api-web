@@ -77,6 +77,35 @@ pub struct PublishedFileSubscriptionRequest {
 
 impl RemoteStorage<'_> {
     /// Enumerate subscribed files (publisher POST v1), without automatic replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [EnumerateUserSubscribedFiles](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage#EnumerateUserSubscribedFiles): `POST ISteamRemoteStorage/EnumerateUserSubscribedFiles/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/remote_file_details.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::remote_storage::EnumerateSubscribedFilesRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &EnumerateSubscribedFilesRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.remote_storage().enumerate_user_subscribed_files(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn enumerate_user_subscribed_files(
         &self,
         request: &EnumerateSubscribedFilesRequest,
@@ -99,6 +128,35 @@ impl RemoteStorage<'_> {
 
     /// Read collections (anonymous POST v1) using indexed `publishedfileids[i]`.
     /// The count is derived from the slice, so the wire count cannot disagree.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetCollectionDetails](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage#GetCollectionDetails): `POST ISteamRemoteStorage/GetCollectionDetails/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/remote_file_details.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::remote_storage::PublishedFileIdsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: PublishedFileIdsRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.remote_storage().get_collection_details(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_collection_details(
         &self,
         request: PublishedFileIdsRequest<'_>,
@@ -115,6 +173,35 @@ impl RemoteStorage<'_> {
     }
 
     /// Read published files (anonymous POST v1) using indexed IDs and itemcount.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetPublishedFileDetails](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage#GetPublishedFileDetails): `POST ISteamRemoteStorage/GetPublishedFileDetails/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/remote_file_details.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::remote_storage::PublishedFileIdsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: PublishedFileIdsRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.remote_storage().get_published_file_details(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_published_file_details(
         &self,
         request: PublishedFileIdsRequest<'_>,
@@ -131,6 +218,35 @@ impl RemoteStorage<'_> {
     }
 
     /// Read UGC metadata (user or publisher GET v1), optionally requiring an owner.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetUGCFileDetails](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage#GetUGCFileDetails): `GET ISteamRemoteStorage/GetUGCFileDetails/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/remote_file_details.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::remote_storage::UgcFileDetailsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &UgcFileDetailsRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.remote_storage().get_ugc_file_details(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_ugc_file_details(
         &self,
         request: &UgcFileDetailsRequest,
@@ -153,6 +269,35 @@ impl RemoteStorage<'_> {
     }
 
     /// Change a UGC use flag (publisher POST v1), without automatic replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [SetUGCUsedByGC](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage#SetUGCUsedByGC): `POST ISteamRemoteStorage/SetUGCUsedByGC/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/remote_file_details.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::remote_storage::SetUgcUsedByGcRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &SetUgcUsedByGcRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.remote_storage().set_ugc_used_by_gc(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn set_ugc_used_by_gc(
         &self,
         request: &SetUgcUsedByGcRequest,
@@ -170,6 +315,35 @@ impl RemoteStorage<'_> {
     }
 
     /// Subscribe a user to a Workshop file (publisher POST v1), sent once.
+    ///
+    /// # HTTP contract
+    ///
+    /// [SubscribePublishedFile](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage#SubscribePublishedFile): `POST ISteamRemoteStorage/SubscribePublishedFile/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/remote_file_details.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::remote_storage::PublishedFileSubscriptionRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &PublishedFileSubscriptionRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.remote_storage().subscribe_published_file(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn subscribe_published_file(
         &self,
         request: &PublishedFileSubscriptionRequest,
@@ -179,6 +353,35 @@ impl RemoteStorage<'_> {
     }
 
     /// Unsubscribe a user from a Workshop file (publisher POST v1), sent once.
+    ///
+    /// # HTTP contract
+    ///
+    /// [UnsubscribePublishedFile](https://partner.steamgames.com/doc/webapi/ISteamRemoteStorage#UnsubscribePublishedFile): `POST ISteamRemoteStorage/UnsubscribePublishedFile/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/remote_file_details.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::remote_storage::PublishedFileSubscriptionRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &PublishedFileSubscriptionRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.remote_storage().unsubscribe_published_file(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn unsubscribe_published_file(
         &self,
         request: &PublishedFileSubscriptionRequest,

@@ -204,6 +204,32 @@ pub struct ModifyItemsRequest<'a> {
 impl Inventory<'_> {
     /// Grant items without automatic replay. Existing request IDs return current
     /// item state after a prior success; a previously failed request may run again.
+    ///
+    /// # HTTP contract
+    ///
+    /// [AddItem](https://partner.steamgames.com/doc/webapi/IInventoryService#AddItem): `POST IInventoryService/AddItem/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::inventory::AddItemRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: &AddItemRequest<'_>) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().add_item(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn add_item(&self, request: &AddItemRequest<'_>) -> Result<OpaqueResponse> {
         validate_user_app(request.steamid, request.appid)?;
         validate_ids(request.itemdefid)?;
@@ -219,6 +245,32 @@ impl Inventory<'_> {
     }
 
     /// Grant a specific promo or all eligible promos without automatic replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [AddPromoItem](https://partner.steamgames.com/doc/webapi/IInventoryService#AddPromoItem): `POST IInventoryService/AddPromoItem/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::inventory::AddPromoItemRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: &AddPromoItemRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().add_promo_item(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn add_promo_item(&self, request: &AddPromoItemRequest) -> Result<OpaqueResponse> {
         validate_user_app(request.steamid, request.appid)?;
         if let Some(itemdefid) = request.itemdefid {
@@ -233,6 +285,32 @@ impl Inventory<'_> {
 
     /// Irreversibly consume inventory without automatic replay, even with a
     /// request ID. Reconcile ambiguous outcomes before manually resubmitting.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ConsumeItem](https://partner.steamgames.com/doc/webapi/IInventoryService#ConsumeItem): `POST IInventoryService/ConsumeItem/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::inventory::ConsumeItemRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: &ConsumeItemRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().consume_item(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn consume_item(&self, request: &ConsumeItemRequest) -> Result<OpaqueResponse> {
         validate_user_app(request.steamid, request.appid)?;
         nonzero(request.itemid, "itemid must not be zero")?;
@@ -246,6 +324,35 @@ impl Inventory<'_> {
 
     /// Exchange material items under a server-defined crafting recipe. An empty
     /// returned item_json array can mean an unsuccessful exchange; inspect it.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ExchangeItem](https://partner.steamgames.com/doc/webapi/IInventoryService#ExchangeItem): `POST IInventoryService/ExchangeItem/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::inventory::ExchangeItemRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &ExchangeItemRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().exchange_item(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn exchange_item(&self, request: &ExchangeItemRequest<'_>) -> Result<OpaqueResponse> {
         validate_user_app(request.steamid, request.appid)?;
         validate_ids(request.materialsitemid)?;
@@ -271,6 +378,31 @@ impl Inventory<'_> {
     }
 
     /// Read an inventory, retaining encoded item_json and any unknown metadata.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetInventory](https://partner.steamgames.com/doc/webapi/IInventoryService#GetInventory): `GET IInventoryService/GetInventory/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, appid: u32, steamid: SteamId) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().get_inventory(appid, steamid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_inventory(&self, appid: u32, steamid: SteamId) -> Result<OpaqueResponse> {
         validate_user_app(steamid, appid)?;
         self.service(
@@ -281,6 +413,36 @@ impl Inventory<'_> {
     }
 
     /// Read item definitions with scalar filters and a UTC modification boundary.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetItemDefs](https://partner.steamgames.com/doc/webapi/IInventoryService#GetItemDefs): `GET IInventoryService/GetItemDefs/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::inventory::ItemDefsOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     options: ItemDefsOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().get_item_defs(appid, options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_item_defs(
         &self,
         appid: u32,
@@ -310,6 +472,31 @@ impl Inventory<'_> {
 
     /// Read the price sheet for a numeric ECurrency value. The reference declares
     /// no appid parameter; the key must have Economy permissions.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetPriceSheet](https://partner.steamgames.com/doc/webapi/IInventoryService#GetPriceSheet): `GET IInventoryService/GetPriceSheet/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, ecurrency: i32) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().get_price_sheet(ecurrency).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_price_sheet(&self, ecurrency: i32) -> Result<OpaqueResponse> {
         #[derive(Serialize)]
         struct Request {
@@ -324,6 +511,35 @@ impl Inventory<'_> {
 
     /// Consolidate item stacks without automatic replay. Steam applies the most
     /// restrictive market and trade restrictions when stacks are combined.
+    ///
+    /// # HTTP contract
+    ///
+    /// [Consolidate](https://partner.steamgames.com/doc/webapi/IInventoryService#Consolidate): `POST IInventoryService/Consolidate/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::inventory::ItemTypesRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &ItemTypesRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().consolidate(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn consolidate(&self, request: &ItemTypesRequest<'_>) -> Result<OpaqueResponse> {
         validate_user_app(request.steamid, request.appid)?;
         validate_ids(request.itemdefid)?;
@@ -336,6 +552,35 @@ impl Inventory<'_> {
 
     /// Query available totals for item definitions. This read does not reserve
     /// inventory or establish atomicity with a later mutation.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetQuantity](https://partner.steamgames.com/doc/webapi/IInventoryService#GetQuantity): `GET IInventoryService/GetQuantity/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::inventory::ItemTypesRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &ItemTypesRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().get_quantity(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_quantity(&self, request: &ItemTypesRequest<'_>) -> Result<OpaqueResponse> {
         validate_user_app(request.steamid, request.appid)?;
         validate_ids(request.itemdefid)?;
@@ -348,6 +593,35 @@ impl Inventory<'_> {
 
     /// Modify dynamic properties without automatic replay. Steam enforces the
     /// supplied timestamp and the final 1024-byte property limit for each item.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ModifyItems](https://partner.steamgames.com/doc/webapi/IInventoryService#ModifyItems): `POST IInventoryService/ModifyItems/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/inventory_items.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::inventory::ModifyItemsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &ModifyItemsRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.inventory().modify_items(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn modify_items(&self, request: &ModifyItemsRequest<'_>) -> Result<OpaqueResponse> {
         validate_user_app(request.steamid, request.appid)?;
         if request.updates.is_empty() {

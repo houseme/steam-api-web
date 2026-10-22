@@ -46,6 +46,35 @@ impl BroadcastService<'_> {
     /// Submit one metadata frame as form-encoded input_json, without replaying
     /// failures or inspecting the undocumented successful response schema.
     /// Steam separately validates publisher permission for the app/broadcast.
+    ///
+    /// # HTTP contract
+    ///
+    /// [PostGameDataFrame](https://partner.steamgames.com/doc/webapi/IBroadcastService#PostGameDataFrame): `POST IBroadcastService/PostGameDataFrame/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/broadcast_frame.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::broadcast::PostGameDataFrameRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &PostGameDataFrameRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.broadcast().post_game_data_frame(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn post_game_data_frame(
         &self,
         request: &PostGameDataFrameRequest<'_>,

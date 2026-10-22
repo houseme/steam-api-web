@@ -123,6 +123,35 @@ pub struct DeleteSessionRequest {
 impl GameNotificationsService<'_> {
     /// Create a new asynchronous session once. Store Steam's returned session ID
     /// explicitly; this method does not dispatch a separate opt-in request.
+    ///
+    /// # HTTP contract
+    ///
+    /// [CreateSession](https://partner.steamgames.com/doc/webapi/IGameNotificationsService#CreateSession): `POST IGameNotificationsService/CreateSession/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/notification_sessions.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_notifications::CreateSessionRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &CreateSessionRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.game_notifications().create_session(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn create_session(
         &self,
         request: &CreateSessionRequest<'_>,
@@ -144,6 +173,35 @@ impl GameNotificationsService<'_> {
 
     /// Replace session state once; supply the complete intended user state.
     /// Omitted fields remain omitted, and an explicit empty user array survives.
+    ///
+    /// # HTTP contract
+    ///
+    /// [UpdateSession](https://partner.steamgames.com/doc/webapi/IGameNotificationsService#UpdateSession): `POST IGameNotificationsService/UpdateSession/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/notification_sessions.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_notifications::UpdateSessionRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &UpdateSessionRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.game_notifications().update_session(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn update_session(
         &self,
         request: &UpdateSessionRequest<'_>,
@@ -168,6 +226,35 @@ impl GameNotificationsService<'_> {
     }
 
     /// Read a user's notification sessions with optional localization (GET v1).
+    ///
+    /// # HTTP contract
+    ///
+    /// [EnumerateSessionsForApp](https://partner.steamgames.com/doc/webapi/IGameNotificationsService#EnumerateSessionsForApp): `GET IGameNotificationsService/EnumerateSessionsForApp/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/notification_sessions.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_notifications::EnumerateSessionsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &EnumerateSessionsRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.game_notifications().enumerate_sessions_for_app(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn enumerate_sessions_for_app(
         &self,
         request: &EnumerateSessionsRequest<'_>,
@@ -192,6 +279,35 @@ impl GameNotificationsService<'_> {
 
     /// Read a nonempty batch of session IDs (GET v1), retaining full uint64 IDs.
     /// Steam's unspecified response envelope remains opaque.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetSessionDetailsForApp](https://partner.steamgames.com/doc/webapi/IGameNotificationsService#GetSessionDetailsForApp): `GET IGameNotificationsService/GetSessionDetailsForApp/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/notification_sessions.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_notifications::SessionDetailsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &SessionDetailsRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.game_notifications().get_session_details_for_app(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_session_details_for_app(
         &self,
         request: &SessionDetailsRequest<'_>,
@@ -221,6 +337,31 @@ impl GameNotificationsService<'_> {
     /// Explicitly request notification opt-in for a signed-in user (POST v1).
     /// Call at most once per game launch, as required by Valve. This method is
     /// never replayed automatically and does not infer consent or delivery.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RequestNotifications](https://partner.steamgames.com/doc/webapi/IGameNotificationsService#RequestNotifications): `POST IGameNotificationsService/RequestNotifications/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/notification_sessions.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamid: SteamId, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.game_notifications().request_notifications(steamid, appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn request_notifications(
         &self,
         steamid: SteamId,
@@ -245,6 +386,35 @@ impl GameNotificationsService<'_> {
     }
 
     /// Delete one active asynchronous session once, removing its notifications.
+    ///
+    /// # HTTP contract
+    ///
+    /// [DeleteSession](https://partner.steamgames.com/doc/webapi/IGameNotificationsService#DeleteSession): `POST IGameNotificationsService/DeleteSession/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/notification_sessions.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_notifications::DeleteSessionRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &DeleteSessionRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.game_notifications().delete_session(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn delete_session(&self, request: &DeleteSessionRequest) -> Result<OpaqueResponse> {
         validate_session(request.appid, request.sessionid)?;
         validate_actor(request.steamid)?;
@@ -262,6 +432,31 @@ impl GameNotificationsService<'_> {
     /// Invoke DeleteSessionBatch once using its documented scalar `sessionid`.
     /// Despite the method's name, Valve supplies no multi-ID array or count
     /// contract. This binding does not invent one or fan out additional calls.
+    ///
+    /// # HTTP contract
+    ///
+    /// [DeleteSessionBatch](https://partner.steamgames.com/doc/webapi/IGameNotificationsService#DeleteSessionBatch): `POST IGameNotificationsService/DeleteSessionBatch/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/notification_sessions.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, sessionid: u64, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.game_notifications().delete_session_batch(sessionid, appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn delete_session_batch(&self, sessionid: u64, appid: u32) -> Result<OpaqueResponse> {
         validate_session(appid, sessionid)?;
         #[derive(Serialize)]

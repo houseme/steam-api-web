@@ -9,7 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 English | [简体中文](api-audit_ZH.md)
 
-Audited on 2026-10-22 against the [official partner reference](https://partner.steamgames.com/doc/webapi), all 33 interface pages, a keyless [GetSupportedAPIList observation](https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/), and the fixed steamworks-rs source tree. The executable report is `cargo xtask audit-api --json`; its data lives in [api-inventory.json](api-inventory.json) and [api-discovery.json](api-discovery.json).
+Rechecked on 2026-10-22 against a freshly downloaded [official partner index](https://partner.steamgames.com/doc/webapi) and all 33 interface pages. Anonymous discovery and the fixed steamworks-rs tree retain the previously reviewed snapshots; the direct discovery refresh failed at the network layer. The executable report is `cargo xtask audit-api --json`, with captured-page rechecks through `--reference-dir`; data lives in [api-inventory.json](api-inventory.json) and [api-discovery.json](api-discovery.json).
 
 ## Conclusion and evidence levels
 
@@ -18,7 +18,7 @@ The partner-directory signature bindings are complete: **33 interfaces, 157 expl
 | Layer | Result | Meaning |
 | --- | --- | --- |
 | Partner reference | 167/167 routes mapped | Exact methods, verbs, versions and paths; numeric versions do not erase v001/v0001 spelling or trailing-slash differences. |
-| Formal request tables | 732 rows: 585 required, 146 optional, one conditional | Source facts, not automatic proof of request semantics. Prose/example contradictions remain explicitly reviewed. Two methods publish no parameter table. |
+| Formal request tables | 735 rows: 585 required, 149 optional, one conditional | Source facts, not automatic proof of request semantics. Prose/example contradictions remain explicitly reviewed. Two methods publish no parameter table. |
 | Protocol fixtures | 167 static method/interface references | The workspace executes aggregate wire/error/replay tests; this number is not per-method live-test coverage. |
 | Response handling | 29 typed, two empty acknowledgements, 136 validated opaque | Opaque schemas remain inspectable JSON, with shared errors checked; they do not invent a successful business result. |
 | Anonymous discovery | 27 interfaces / 63 signatures, ten overlap | 53 observed signatures are outside the bound reference set. Discovery depends on visibility and is not an authenticated/complete catalogue. |
@@ -76,6 +76,10 @@ T = typed model; A = explicit empty acknowledgement; O = validated opaque JSON. 
 | IStoreService | 1 | Filtered and paginated store catalogue | O1 |
 | IUserReviewsService | 1 | Review filters, hardware/playtime selectors and cursor pages | T1 |
 | IWorkshopService | 4 | Payment rules, contributors, revenue and localized descriptions | O4 |
+
+## Examples and public documentation
+
+The [example guide](examples.md) maps 38 runnable programs to all 33 interfaces. All 160 public async methods have English error contracts and compile-checked rustdoc call examples. A fresh index/all-page recheck found the three optional GetPlayersBanned filters missing from the reviewed baseline; BannedPlayersOptions now supplies starttime, endtime and continue_token without changing the existing convenience method. Protected execution remains a separate acceptance step. Anonymous discovery and SDK facts below retain the prior reviewed snapshot; this recheck refreshed the reference pages independently after a direct discovery network failure.
 
 ## Contract details checked
 

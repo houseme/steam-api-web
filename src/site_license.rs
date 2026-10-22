@@ -210,6 +210,31 @@ redacted_debug!(
 impl SiteLicenseService<'_> {
     /// Read current activity. Omitted and zero site filters both mean all sites;
     /// this method never changes host or broadens a supplied nonzero filter.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetCurrentClientConnections](https://partner.steamgames.com/doc/webapi/ISiteLicenseService#GetCurrentClientConnections): `GET ISiteLicenseService/GetCurrentClientConnections/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/site_connections.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, siteid: Option<u64>) -> steam_api_web::Result<()> {
+    ///     let response = client.site_license().get_current_client_connections(siteid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_current_client_connections(
         &self,
         siteid: Option<u64>,
@@ -235,6 +260,35 @@ impl SiteLicenseService<'_> {
     /// Boundaries, fractional precision, and the caller's site filter are sent
     /// unchanged. Equal boundaries describe an empty interval; no polling or
     /// report chunking is performed automatically.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetTotalPlaytime](https://partner.steamgames.com/doc/webapi/ISiteLicenseService#GetTotalPlaytime): `GET ISiteLicenseService/GetTotalPlaytime/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/site_connections.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::site_license::TotalPlaytimeRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &TotalPlaytimeRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.site_license().get_total_playtime(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_total_playtime(
         &self,
         request: &TotalPlaytimeRequest<'_>,

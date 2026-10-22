@@ -39,6 +39,10 @@ pub struct OAuthAccessToken(Zeroizing<String>);
 
 impl OAuthAccessToken {
     /// Validate and own a nonempty token without imposing a hexadecimal format.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::Error::InvalidParameter`] if the token is empty, whitespace-only, or contains a NUL byte.
     pub fn new(value: impl Into<String>) -> Result<Self> {
         let value = Zeroizing::new(value.into());
         text(&value, "access_token must not be empty or contain NUL")?;
@@ -288,6 +292,36 @@ pub struct DeleteCloudFileRequest<'a> {
 
 impl Cloud<'_> {
     /// Enumerate one page of files using a `read_cloud` token (GET v1).
+    ///
+    /// # HTTP contract
+    ///
+    /// [EnumerateUserFiles](https://partner.steamgames.com/doc/webapi/ICloudService#EnumerateUserFiles): `GET ICloudService/EnumerateUserFiles/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cloud_files.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cloud::{EnumerateUserFilesRequest, OAuthAccessToken};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     token: &OAuthAccessToken,
+    ///     request: &EnumerateUserFilesRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cloud().enumerate_user_files(token, request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn enumerate_user_files(
         &self,
         token: &OAuthAccessToken,
@@ -309,6 +343,36 @@ impl Cloud<'_> {
 
     /// Begin a batch (POST v1), without automatic replay. Keep its ID until
     /// CompleteAppUploadBatch succeeds, including when a later operation fails.
+    ///
+    /// # HTTP contract
+    ///
+    /// [BeginAppUploadBatch](https://partner.steamgames.com/doc/webapi/ICloudService#BeginAppUploadBatch): `POST ICloudService/BeginAppUploadBatch/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cloud_files.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cloud::{BeginAppUploadBatchRequest, OAuthAccessToken};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     token: &OAuthAccessToken,
+    ///     request: &BeginAppUploadBatchRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cloud().begin_app_upload_batch(token, request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn begin_app_upload_batch(
         &self,
         token: &OAuthAccessToken,
@@ -342,6 +406,36 @@ impl Cloud<'_> {
 
     /// Stage an upload (POST v1), returning instructions for a separate PUT.
     /// This method never transfers bytes or follows the returned destination.
+    ///
+    /// # HTTP contract
+    ///
+    /// [BeginHTTPUpload](https://partner.steamgames.com/doc/webapi/ICloudService#BeginHTTPUpload): `POST ICloudService/BeginHTTPUpload/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cloud_files.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cloud::{BeginHttpUploadRequest, OAuthAccessToken};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     token: &OAuthAccessToken,
+    ///     request: &BeginHttpUploadRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cloud().begin_http_upload(token, request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn begin_http_upload(
         &self,
         token: &OAuthAccessToken,
@@ -373,6 +467,36 @@ impl Cloud<'_> {
 
     /// Report a successful or failed PUT (POST v1), without replay. Inspect
     /// `file_committed`; HTTP success alone does not establish file persistence.
+    ///
+    /// # HTTP contract
+    ///
+    /// [CommitHTTPUpload](https://partner.steamgames.com/doc/webapi/ICloudService#CommitHTTPUpload): `POST ICloudService/CommitHTTPUpload/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cloud_files.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cloud::{CommitHttpUploadRequest, OAuthAccessToken};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     token: &OAuthAccessToken,
+    ///     request: &CommitHttpUploadRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cloud().commit_http_upload(token, request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn commit_http_upload(
         &self,
         token: &OAuthAccessToken,
@@ -393,6 +517,36 @@ impl Cloud<'_> {
     /// Complete a batch (POST v1), reporting its actual aggregate outcome.
     /// Steam requires completion even after individual file operations fail.
     /// A successful bodyless acknowledgement is authenticated by x-eresult=1.
+    ///
+    /// # HTTP contract
+    ///
+    /// [CompleteAppUploadBatch](https://partner.steamgames.com/doc/webapi/ICloudService#CompleteAppUploadBatch): `POST ICloudService/CompleteAppUploadBatch/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cloud_files.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cloud::{CompleteAppUploadBatchRequest, OAuthAccessToken};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     token: &OAuthAccessToken,
+    ///     request: &CompleteAppUploadBatchRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cloud().complete_app_upload_batch(token, request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn complete_app_upload_batch(
         &self,
         token: &OAuthAccessToken,
@@ -415,6 +569,36 @@ impl Cloud<'_> {
 
     /// Permanently delete one Cloud file (POST v1), without automatic replay.
     /// A successful deletion has no body and is authenticated by x-eresult=1.
+    ///
+    /// # HTTP contract
+    ///
+    /// [Delete](https://partner.steamgames.com/doc/webapi/ICloudService#Delete): `POST ICloudService/Delete/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cloud_files.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cloud::{DeleteCloudFileRequest, OAuthAccessToken};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     token: &OAuthAccessToken,
+    ///     request: &DeleteCloudFileRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cloud().delete(token, request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn delete(
         &self,
         token: &OAuthAccessToken,

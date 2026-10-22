@@ -9,10 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](api-audit.md) | 简体中文
 
-核对日期：2026-10-22。来源为[官方伙伴目录](https://partner.steamgames.com/doc/webapi)、
-全部 33 个接口页面、无 key 的 [GetSupportedAPIList 实时观察](https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/)
-及固定 steamworks-rs 源码树。可执行报告为 `cargo xtask audit-api --json`；事实数据见
-[api-inventory.json](api-inventory.json) 和 [api-discovery.json](api-discovery.json)。
+2026-10-22 重新下载[官方伙伴索引](https://partner.steamgames.com/doc/webapi)及全部 33 个接口页进行核查。匿名发现与固定 steamworks-rs 源码树沿用此前审阅的快照，本次直接刷新匿名发现时遭遇网络层失败。可执行报告为 `cargo xtask audit-api --json`，下载页面通过 `--reference-dir` 复核；数据见 [api-inventory.json](api-inventory.json) 和 [api-discovery.json](api-discovery.json)。
 
 ## 结论与证据层次
 
@@ -23,7 +20,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | 层次 | 核对结果 | 含义 |
 | --- | --- | --- |
 | 伙伴目录 | 167/167 路径映射 | 方法、动词、版本及路径准确；版本数字不抹掉 v001/v0001 或尾斜杠差异。 |
-| 正式请求表 | 732 行：585 必填、146 可选、1 条件必填 | 是来源事实，不自动证明请求语义；正文/示例与标记矛盾仍单独复核。两个方法没有参数表。 |
+| 正式请求表 | 735 行：585 必填、149 可选、1 条件必填 | 是来源事实，不自动证明请求语义；正文/示例与标记矛盾仍单独复核。两个方法没有参数表。 |
 | 协议 fixture | 167 条方法/接口静态引用 | workspace 运行聚合 wire/错误/重放测试；这不是逐方法线上测试覆盖率。 |
 | 响应处理 | 29 类型化、2 空确认、136 校验后 opaque | 公开完整 JSON、统一检查错误，不虚构业务执行成功。 |
 | 匿名发现 | 27 接口 / 63 签名，与绑定重叠 10 条 | 53 条观察签名在当前绑定目录之外；发现结果受可见性影响，不是认证后的完整目录。 |
@@ -79,6 +76,10 @@ T = 类型化模型，A = 明确空确认，O = 校验后的 opaque JSON。这�
 | IStoreService | 1 | 商店目录过滤与分页 | O1 |
 | IUserReviewsService | 1 | 评论过滤、硬件/时长筛选、cursor 分页 | T1 |
 | IWorkshopService | 4 | 付款规则、贡献者、收益、本地化描述 | O4 |
+
+## 示例与公开文档
+
+[示例指南](examples_ZH.md)将 38 个可运行程序映射到全部 33 个接口族；全部 160 个公开异步方法均有英文错误说明及可编译 rustdoc 调用示例。本次重新读取索引和全部方法页，发现基线缺少 GetPlayersBanned 的三个可选过滤参数；现已通过 BannedPlayersOptions 补齐 starttime、endtime、continue_token，原便捷方法保持兼容。受保护操作的真实执行仍单独验收。匿名发现直接刷新遭遇网络失败，本次独立更新参考页面，下文发现及 SDK 数据保留此前快照。
 
 ## 已核对的契约细节
 

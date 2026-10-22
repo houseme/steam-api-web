@@ -201,6 +201,35 @@ redacted_debug!(
 
 impl CheatReportingService<'_> {
     /// Submit only an incident report. It does not call the separate ban method.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ReportPlayerCheating](https://partner.steamgames.com/doc/webapi/ICheatReportingService#ReportPlayerCheating): `POST ICheatReportingService/ReportPlayerCheating/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cheating_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cheat_reporting::ReportPlayerCheatingRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &ReportPlayerCheatingRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cheat_reporting().report_player_cheating(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn report_player_cheating(
         &self,
         request: &ReportPlayerCheatingRequest,
@@ -221,6 +250,35 @@ impl CheatReportingService<'_> {
 
     /// Request a reviewed game ban once, without inferring adjudication or app
     /// permission. There is no documented idempotency identifier for this write.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RequestPlayerGameBan](https://partner.steamgames.com/doc/webapi/ICheatReportingService#RequestPlayerGameBan): `POST ICheatReportingService/RequestPlayerGameBan/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cheating_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cheat_reporting::RequestPlayerGameBanRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &RequestPlayerGameBanRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cheat_reporting().request_player_game_ban(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn request_player_game_ban(
         &self,
         request: &RequestPlayerGameBanRequest<'_>,
@@ -247,6 +305,31 @@ impl CheatReportingService<'_> {
     }
 
     /// Remove a game ban determined to be a false positive. Never replayed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RemovePlayerGameBan](https://partner.steamgames.com/doc/webapi/ICheatReportingService#RemovePlayerGameBan): `POST ICheatReportingService/RemovePlayerGameBan/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cheating_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamid: SteamId, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.cheat_reporting().remove_player_game_ban(steamid, appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn remove_player_game_ban(
         &self,
         steamid: SteamId,
@@ -265,6 +348,35 @@ impl CheatReportingService<'_> {
 
     /// Read one report range for independent review. No ban decision, cursor
     /// advancement, or partial-result recovery is synthesized by this method.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetCheatingReports](https://partner.steamgames.com/doc/webapi/ICheatReportingService#GetCheatingReports): `GET ICheatReportingService/GetCheatingReports/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cheating_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cheat_reporting::CheatingReportsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &CheatingReportsRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cheat_reporting().get_cheating_reports(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_cheating_reports(
         &self,
         request: &CheatingReportsRequest,
@@ -295,6 +407,32 @@ impl CheatReportingService<'_> {
 
     /// Read VAC readiness and session verification once. This POST is never
     /// automatically retried, including when VAC reports it is not ready yet.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RequestVacStatusForUser](https://partner.steamgames.com/doc/webapi/ICheatReportingService#RequestVacStatusForUser): `POST ICheatReportingService/RequestVacStatusForUser/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cheating_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cheat_reporting::VacStatusRequest;
+    ///
+    /// async fn example(client: &SteamClient, request: &VacStatusRequest) -> steam_api_web::Result<()> {
+    ///     let response = client.cheat_reporting().request_vac_status_for_user(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn request_vac_status_for_user(
         &self,
         request: &VacStatusRequest,
@@ -318,6 +456,37 @@ impl CheatReportingService<'_> {
 
     /// Start a Valve-enabled Web API session once. For games with Steam
     /// Authentication, use Steam's native authentication session flow instead.
+    ///
+    /// # HTTP contract
+    ///
+    /// [StartSecureMultiplayerSession](https://partner.steamgames.com/doc/webapi/ICheatReportingService#StartSecureMultiplayerSession): `POST ICheatReportingService/StartSecureMultiplayerSession/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cheating_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamid: SteamId, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .cheat_reporting()
+    ///         .start_secure_multiplayer_session(
+    ///             steamid,
+    ///             appid,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn start_secure_multiplayer_session(
         &self,
         steamid: SteamId,
@@ -335,6 +504,35 @@ impl CheatReportingService<'_> {
     }
 
     /// End the exact previously established Web API session without replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [EndSecureMultiplayerSession](https://partner.steamgames.com/doc/webapi/ICheatReportingService#EndSecureMultiplayerSession): `POST ICheatReportingService/EndSecureMultiplayerSession/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/cheating_reports.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::cheat_reporting::EndSecureMultiplayerSessionRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &EndSecureMultiplayerSessionRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.cheat_reporting().end_secure_multiplayer_session(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn end_secure_multiplayer_session(
         &self,
         request: &EndSecureMultiplayerSessionRequest,

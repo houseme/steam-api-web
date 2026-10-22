@@ -76,6 +76,35 @@ pub struct ItemDailyRevenueRequest {
 impl WorkshopService<'_> {
     /// Send payment rules once, including validation-only requests.
     /// The opaque result must be checked against the publisher's Steam contract.
+    ///
+    /// # HTTP contract
+    ///
+    /// [SetItemPaymentRules](https://partner.steamgames.com/doc/webapi/IWorkshopService#SetItemPaymentRules): `POST IWorkshopService/SetItemPaymentRules/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_contributors.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::workshop::ItemPaymentRulesRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: ItemPaymentRulesRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.workshop().set_item_payment_rules(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn set_item_payment_rules(
         &self,
         request: ItemPaymentRulesRequest<'_>,
@@ -95,6 +124,31 @@ impl WorkshopService<'_> {
     }
 
     /// Read the finalized contributor data without assuming an undocumented envelope.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetFinalizedContributors](https://partner.steamgames.com/doc/webapi/IWorkshopService#GetFinalizedContributors): `GET IWorkshopService/GetFinalizedContributors/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_contributors.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32, gameitemid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.workshop().get_finalized_contributors(appid, gameitemid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_finalized_contributors(
         &self,
         appid: u32,
@@ -119,6 +173,35 @@ impl WorkshopService<'_> {
 
     /// Read daily revenue over an ordered, half-open date interval.
     /// Callers select the date-boundary timezone required by their Steam agreement.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetItemDailyRevenue](https://partner.steamgames.com/doc/webapi/IWorkshopService#GetItemDailyRevenue): `GET IWorkshopService/GetItemDailyRevenue/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_contributors.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::workshop::ItemDailyRevenueRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: ItemDailyRevenueRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.workshop().get_item_daily_revenue(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_item_daily_revenue(
         &self,
         request: ItemDailyRevenueRequest,
@@ -140,6 +223,32 @@ impl WorkshopService<'_> {
 
     /// Send a reviewed raw language message once. Its nested schema is not
     /// documented; object and object-array fields are retained unchanged.
+    ///
+    /// # HTTP contract
+    ///
+    /// [PopulateItemDescriptions](https://partner.steamgames.com/doc/webapi/IWorkshopService#PopulateItemDescriptions): `POST IWorkshopService/PopulateItemDescriptions/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_contributors.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use serde_json::Value;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32, languages: &Value) -> steam_api_web::Result<()> {
+    ///     let response = client.workshop().populate_item_descriptions(appid, languages).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn populate_item_descriptions(
         &self,
         appid: u32,

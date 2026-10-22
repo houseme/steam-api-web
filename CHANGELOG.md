@@ -22,7 +22,9 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 
 ### Added
 
-- Rust API completeness auditing for 732 parameter rows and 167 binding/fixture mappings, with 53 discovery-only candidates and separate response/acceptance states; add bilingual feature matrices and P5 native interoperability design.
+- Complete GetPlayersBanned time filtering and cursor pagination while preserving its existing convenience method; add six protocol regressions.
+- Add 33 standalone examples for 38 total programs covering all 33 interface families, compile-checked English call examples for all 160 public async methods, and enforced public/error documentation.
+- Rust API completeness auditing for 735 parameter rows and 167 binding/fixture mappings, with 53 discovery-only candidates and separate response/acceptance states; add bilingual feature matrices and P5 native interoperability design.
 - Public User-key ticket and conditional build-confirmation protocol fixtures; CI retains offline audit reports. HTML5 parsing is confined to the unpublished xtask.
 - All six P4 methods for financial reports, PC Cafe site activity/playtime and broadcast frames; the documented snapshot now binds all 33 interfaces and 167 routes (157 explicit, ten inherited Sandbox routes).
 - A dedicated Financial API Group key kind and isolated access policy, lossless report money/cursors, conditional sales/wishlist models and a read-only change-batch example.

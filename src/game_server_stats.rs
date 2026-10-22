@@ -38,6 +38,40 @@ pub struct GameServerPlayerStatsRequest<'a> {
 impl GameServerStats<'_> {
     /// Read historical player stats (publisher GET v1).
     /// Valve does not document the response schema, so its JSON remains opaque.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetGameServerPlayerStatsForGame](https://partner.steamgames.com/doc/webapi/ISteamGameServerStats#GetGameServerPlayerStatsForGame): `GET ISteamGameServerStats/GetGameServerPlayerStatsForGame/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/game_server_stats.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::game_server_stats::GameServerPlayerStatsRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &GameServerPlayerStatsRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .game_server_stats()
+    ///         .get_game_server_player_stats_for_game(
+    ///             request,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_game_server_player_stats_for_game(
         &self,
         request: &GameServerPlayerStatsRequest<'_>,

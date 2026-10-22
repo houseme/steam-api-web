@@ -78,11 +78,12 @@ harness = false
 
 [lints.rust]
 unsafe_code = "forbid"
-missing_docs = "warn"
+missing_docs = "deny"
 
 [lints.clippy]
 unwrap_used = "warn"
 expect_used = "warn"
+missing_errors_doc = "warn"
 
 [package.metadata.docs.rs]
 all-features = true

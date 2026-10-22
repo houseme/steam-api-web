@@ -67,7 +67,7 @@ Reuse or clone `SteamClient`: all clones share the connection pool, concurrency
 limit, request pacing, server cooldown and metrics. Runnable examples:
 [current players](examples/current_players.rs), [ticket verification](examples/verify_ticket.rs),
 [Cloud files](examples/cloud_files.rs), [Sandbox transaction query](examples/query_sandbox_transaction.rs),
-[financial change batch](examples/financial_changed_dates.rs).
+[financial change batch](examples/financial_changed_dates.rs). The [complete example guide](https://github.com/houseme/steam-api-web/blob/main/docs/examples.md) maps runnable programs to all 33 interface families.
 
 ## API coverage
 
@@ -90,6 +90,7 @@ and the complete [roadmap inventory](https://github.com/houseme/steam-api-web/bl
 
 | Topic | Document |
 | --- | --- |
+| Runnable examples for every interface and documentation checks | [Examples](https://github.com/houseme/steam-api-web/blob/main/docs/examples.md) |
 | Configuration, reliability, data handling, steamworks-rs interop | [Usage guide](https://github.com/houseme/steam-api-web/blob/main/docs/usage.md) |
 | Design analysis and verification layers | [Design](https://github.com/houseme/steam-api-web/blob/main/docs/design.md) |
 | Cloud, inventory, economy and Workshop contracts | [P2 contracts](https://github.com/houseme/steam-api-web/blob/main/docs/p2.md) |

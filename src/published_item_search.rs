@@ -47,6 +47,35 @@ pub struct PublishedItemSearchRequest<'a> {
 
 impl PublishedItemSearch<'_> {
     /// Search by publication date. The documented POST is sent at most once.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RankedByPublicationOrder](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch#RankedByPublicationOrder): `POST ISteamPublishedItemSearch/RankedByPublicationOrder/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/published_item_search.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::published_item_search::PublishedItemSearchRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: PublishedItemSearchRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.published_item_search().ranked_by_publication_order(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn ranked_by_publication_order(
         &self,
         request: PublishedItemSearchRequest<'_>,
@@ -61,6 +90,36 @@ impl PublishedItemSearch<'_> {
 
     /// Search by recent votes, optionally selecting a one-to-seven-day window.
     /// Omission retains Steam's default; this POST is never automatically replayed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RankedByTrend](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch#RankedByTrend): `POST ISteamPublishedItemSearch/RankedByTrend/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/published_item_search.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::published_item_search::PublishedItemSearchRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: PublishedItemSearchRequest<'_>,
+    ///     days: Option<u32>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.published_item_search().ranked_by_trend(request, days).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn ranked_by_trend(
         &self,
         request: PublishedItemSearchRequest<'_>,
@@ -74,6 +133,35 @@ impl PublishedItemSearch<'_> {
     }
 
     /// Search by votes. The documented POST is sent at most once.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RankedByVote](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch#RankedByVote): `POST ISteamPublishedItemSearch/RankedByVote/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/published_item_search.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::published_item_search::PublishedItemSearchRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: PublishedItemSearchRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.published_item_search().ranked_by_vote(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn ranked_by_vote(
         &self,
         request: PublishedItemSearchRequest<'_>,
@@ -84,6 +172,44 @@ impl PublishedItemSearch<'_> {
 
     /// Summarize the result set. This endpoint uniquely documents a 64-bit app ID,
     /// which is preserved without narrowing to the ranked endpoints' 32-bit field.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ResultSetSummary](https://partner.steamgames.com/doc/webapi/ISteamPublishedItemSearch#ResultSetSummary): `POST ISteamPublishedItemSearch/ResultSetSummary/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/published_item_search.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    /// use steam_api_web::published_item_search::PublishedItemSearchOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: SteamId,
+    ///     appid: u64,
+    ///     options: PublishedItemSearchOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_item_search()
+    ///         .result_set_summary(
+    ///             steamid,
+    ///             appid,
+    ///             options,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn result_set_summary(
         &self,
         steamid: SteamId,

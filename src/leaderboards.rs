@@ -111,6 +111,31 @@ pub struct LeaderboardScoreUpdate<'a> {
 
 impl Leaderboards<'_> {
     /// Delete a named leaderboard. Never automatically replayed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [DeleteLeaderboard](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards#DeleteLeaderboard): `POST ISteamLeaderboards/DeleteLeaderboard/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/leaderboard_list.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32, name: &str) -> steam_api_web::Result<()> {
+    ///     let response = client.leaderboards().delete_leaderboard(appid, name).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn delete_leaderboard(&self, appid: u32, name: &str) -> Result<OpaqueResponse> {
         validate_name(appid, name)?;
         self.0
@@ -125,6 +150,43 @@ impl Leaderboards<'_> {
     }
 
     /// Remove a user's score without automatic replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [DeleteLeaderboardScore](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards#DeleteLeaderboardScore): `POST ISteamLeaderboards/DeleteLeaderboardScore/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/leaderboard_list.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     leaderboardid: u32,
+    ///     steamid: SteamId,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .leaderboards()
+    ///         .delete_leaderboard_score(
+    ///             appid,
+    ///             leaderboardid,
+    ///             steamid,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn delete_leaderboard_score(
         &self,
         appid: u32,
@@ -147,6 +209,37 @@ impl Leaderboards<'_> {
 
     /// Find or create a leaderboard using v2. Even a lookup-only request is sent
     /// once because the method is a POST with conditional creation semantics.
+    ///
+    /// # HTTP contract
+    ///
+    /// [FindOrCreateLeaderboard](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards#FindOrCreateLeaderboard): `POST ISteamLeaderboards/FindOrCreateLeaderboard/v2/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/leaderboard_list.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::leaderboards::FindLeaderboardOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     name: &str,
+    ///     options: FindLeaderboardOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.leaderboards().find_or_create_leaderboard(appid, name, options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn find_or_create_leaderboard(
         &self,
         appid: u32,
@@ -184,6 +277,35 @@ impl Leaderboards<'_> {
     }
 
     /// Read entries, retaining signed around-user offsets and exact Steam IDs.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetLeaderboardEntries](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards#GetLeaderboardEntries): `GET ISteamLeaderboards/GetLeaderboardEntries/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/leaderboard_list.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::leaderboards::LeaderboardEntriesRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: LeaderboardEntriesRequest,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.leaderboards().get_leaderboard_entries(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_leaderboard_entries(
         &self,
         request: LeaderboardEntriesRequest,
@@ -229,6 +351,31 @@ impl Leaderboards<'_> {
     }
 
     /// List a game's leaderboards through the latest documented v2 method.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetLeaderboardsForGame](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards#GetLeaderboardsForGame): `GET ISteamLeaderboards/GetLeaderboardsForGame/v2/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/leaderboard_list.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32) -> steam_api_web::Result<()> {
+    ///     let response = client.leaderboards().get_leaderboards_for_game(appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_leaderboards_for_game(&self, appid: u32) -> Result<OpaqueResponse> {
         nonzero(appid.into(), "appid must not be zero")?;
         self.0
@@ -243,6 +390,35 @@ impl Leaderboards<'_> {
     }
 
     /// Clear a leaderboard without automatic replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [ResetLeaderboard](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards#ResetLeaderboard): `POST ISteamLeaderboards/ResetLeaderboard/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/leaderboard_list.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     leaderboardid: u32,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.leaderboards().reset_leaderboard(appid, leaderboardid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn reset_leaderboard(
         &self,
         appid: u32,
@@ -258,6 +434,35 @@ impl Leaderboards<'_> {
     }
 
     /// Set a score and up to 256 raw detail bytes without automatic replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [SetLeaderboardScore](https://partner.steamgames.com/doc/webapi/ISteamLeaderboards#SetLeaderboardScore): `POST ISteamLeaderboards/SetLeaderboardScore/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/leaderboard_list.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::leaderboards::LeaderboardScoreUpdate;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     update: LeaderboardScoreUpdate<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.leaderboards().set_leaderboard_score(update).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn set_leaderboard_score(
         &self,
         update: LeaderboardScoreUpdate<'_>,

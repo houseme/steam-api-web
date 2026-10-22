@@ -44,6 +44,31 @@ pub struct PopularMarketOptions<'a> {
 impl EconMarketService<'_> {
     /// Check a user's market eligibility (publisher GET v1).
     /// A successful request does not imply eligibility; inspect Steam's result.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetMarketEligibility](https://partner.steamgames.com/doc/webapi/IEconMarketService#GetMarketEligibility): `GET IEconMarketService/GetMarketEligibility/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/market_popular.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamid: SteamId) -> steam_api_web::Result<()> {
+    ///     let response = client.econ_market().get_market_eligibility(steamid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_market_eligibility(&self, steamid: SteamId) -> Result<OpaqueResponse> {
         nonzero(steamid.raw(), "steamid must not be zero")?;
         #[derive(Serialize)]
@@ -63,6 +88,43 @@ impl EconMarketService<'_> {
 
     /// Cancel every listing for one user and application (publisher POST v1).
     /// Sent once. `synchronous` asks Steam to wait for cancellation completion.
+    ///
+    /// # HTTP contract
+    ///
+    /// [CancelAppListingsForUser](https://partner.steamgames.com/doc/webapi/IEconMarketService#CancelAppListingsForUser): `POST IEconMarketService/CancelAppListingsForUser/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/market_popular.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     steamid: SteamId,
+    ///     synchronous: bool,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .econ_market()
+    ///         .cancel_app_listings_for_user(
+    ///             appid,
+    ///             steamid,
+    ///             synchronous,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn cancel_app_listings_for_user(
         &self,
         appid: u32,
@@ -94,6 +156,31 @@ impl EconMarketService<'_> {
 
     /// Read the asset ID belonging to a sold listing (publisher GET v1).
     /// Both application ownership and listing/app agreement are checked by Steam.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetAssetID](https://partner.steamgames.com/doc/webapi/IEconMarketService#GetAssetID): `GET IEconMarketService/GetAssetID/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/market_popular.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(client: &SteamClient, appid: u32, listingid: u64) -> steam_api_web::Result<()> {
+    ///     let response = client.econ_market().get_asset_id(appid, listingid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_asset_id(&self, appid: u32, listingid: u64) -> Result<OpaqueResponse> {
         nonzero(appid.into(), "appid must not be zero")?;
         nonzero(listingid, "listingid must not be zero")?;
@@ -112,6 +199,35 @@ impl EconMarketService<'_> {
 
     /// Read one popular-items page (publisher GET v1).
     /// Offsets and opaque response price data are returned without inference.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetPopular](https://partner.steamgames.com/doc/webapi/IEconMarketService#GetPopular): `GET IEconMarketService/GetPopular/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/market_popular.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::econ_market::PopularMarketOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     options: PopularMarketOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.econ_market().get_popular(options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_popular(&self, options: PopularMarketOptions<'_>) -> Result<OpaqueResponse> {
         text(
             options.language,

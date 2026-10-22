@@ -36,6 +36,35 @@ pub struct OwnedGamesOptions<'a> {
 
 impl PlayerService<'_> {
     /// Read recently played games. A count of zero requests all recent games.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetRecentlyPlayedGames](https://partner.steamgames.com/doc/webapi/IPlayerService#GetRecentlyPlayedGames): `GET IPlayerService/GetRecentlyPlayedGames/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/player_library.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     count: u32,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.player().get_recently_played_games(steamid, count).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_recently_played_games(
         &self,
         steamid: impl Into<SteamId>,
@@ -53,6 +82,35 @@ impl PlayerService<'_> {
 
     /// Read playtime for one app. Steam requires a key associated with the app;
     /// the client validates the key's presence and Steam validates its scope.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetSingleGamePlaytime](https://partner.steamgames.com/doc/webapi/IPlayerService#GetSingleGamePlaytime): `GET IPlayerService/GetSingleGamePlaytime/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/player_library.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     appid: u32,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.player().get_single_game_playtime(steamid, appid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_single_game_playtime(
         &self,
         steamid: impl Into<SteamId>,
@@ -70,6 +128,36 @@ impl PlayerService<'_> {
 
     /// Read a visible owned-game library. Privacy may suppress the fields in a
     /// successful response; callers must not interpret missing fields as zero.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetOwnedGames](https://partner.steamgames.com/doc/webapi/IPlayerService#GetOwnedGames): `GET IPlayerService/GetOwnedGames/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/player_library.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    /// use steam_api_web::player::OwnedGamesOptions;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     options: OwnedGamesOptions<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.player().get_owned_games(steamid, options).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_owned_games(
         &self,
         steamid: impl Into<SteamId>,
@@ -95,6 +183,31 @@ impl PlayerService<'_> {
     }
 
     /// Read the user's Steam level.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetSteamLevel](https://partner.steamgames.com/doc/webapi/IPlayerService#GetSteamLevel): `GET IPlayerService/GetSteamLevel/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/player_library.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamid: impl Into<SteamId>) -> steam_api_web::Result<()> {
+    ///     let response = client.player().get_steam_level(steamid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_steam_level(&self, steamid: impl Into<SteamId>) -> Result<OpaqueResponse> {
         let steamid = steamid.into();
         nonzero(steamid.0, "steamid must not be zero")?;
@@ -107,6 +220,31 @@ impl PlayerService<'_> {
     }
 
     /// Read badges owned by the user.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetBadges](https://partner.steamgames.com/doc/webapi/IPlayerService#GetBadges): `GET IPlayerService/GetBadges/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/player_library.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(client: &SteamClient, steamid: impl Into<SteamId>) -> steam_api_web::Result<()> {
+    ///     let response = client.player().get_badges(steamid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_badges(&self, steamid: impl Into<SteamId>) -> Result<OpaqueResponse> {
         let steamid = steamid.into();
         nonzero(steamid.0, "steamid must not be zero")?;
@@ -120,6 +258,35 @@ impl PlayerService<'_> {
 
     /// Read quests and completion state for a community badge. The badge ID is
     /// signed on the wire; this method preserves the documented `int32` range.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetCommunityBadgeProgress](https://partner.steamgames.com/doc/webapi/IPlayerService#GetCommunityBadgeProgress): `GET IPlayerService/GetCommunityBadgeProgress/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/player_library.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     steamid: impl Into<SteamId>,
+    ///     badgeid: i32,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.player().get_community_badge_progress(steamid, badgeid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_community_badge_progress(
         &self,
         steamid: impl Into<SteamId>,

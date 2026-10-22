@@ -32,6 +32,10 @@ impl WebApiTicket {
     /// Copy only the effective bytes from a steamworks-rs Web API callback.
     /// Its `ticket` vector can contain the whole SDK buffer; `ticket_len` is the
     /// valid prefix length. Reject negative, zero and out-of-bounds lengths.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::Error::InvalidParameter`] if the effective length is negative, zero, or greater than the callback buffer length.
     pub fn from_callback_bytes(buffer: &[u8], ticket_len: i32) -> Result<Self> {
         let len = usize::try_from(ticket_len)
             .map_err(|_| Error::InvalidParameter("invalid callback ticket length"))?;
@@ -41,6 +45,10 @@ impl WebApiTicket {
         Self::from_bytes(bytes)
     }
     /// Encode raw GetAuthTicketForWebApi callback bytes as lowercase hex.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::Error::InvalidParameter`] if no ticket bytes are supplied.
     pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
         if bytes.is_empty() {
             return Err(Error::InvalidParameter("ticket must not be empty"));
@@ -54,6 +62,10 @@ impl WebApiTicket {
         Ok(Self(value))
     }
     /// Validate an already encoded ticket without decoding or changing its bytes.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`crate::Error::InvalidParameter`] if the ticket is empty, has odd length, or contains a non-hexadecimal byte.
     pub fn from_hex(value: impl Into<String>) -> Result<Self> {
         let value = Zeroizing::new(value.into());
         if value.is_empty() || value.len() % 2 != 0 || !value.bytes().all(|b| b.is_ascii_hexdigit())
@@ -136,6 +148,37 @@ impl UserAuth<'_> {
     /// Verify a GetAuthTicketForWebApi ticket bound to a nonempty service identity.
     /// User keys work on the public host; Partner always needs a publisher key.
     /// No automatic retry is performed, even though the wire method is GET.
+    ///
+    /// # HTTP contract
+    ///
+    /// [AuthenticateUserTicket](https://partner.steamgames.com/doc/webapi/ISteamUserAuth#AuthenticateUserTicket): `GET ISteamUserAuth/AuthenticateUserTicket/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/verify_ticket.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::user_auth::WebApiTicket;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     ticket: &WebApiTicket,
+    ///     identity: &str,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user_auth().authenticate_user_ticket(appid, ticket, identity).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn authenticate_user_ticket(
         &self,
         appid: u32,
@@ -173,6 +216,35 @@ impl UserAuth<'_> {
     /// Send prepared encrypted legacy credentials, with no automatic retry.
     /// Raw bytes use percent encoding, never a lossy UTF-8 or hex conversion.
     /// For new integrations prefer `authenticate_user_ticket`.
+    ///
+    /// # HTTP contract
+    ///
+    /// [AuthenticateUser](https://partner.steamgames.com/doc/webapi/ISteamUserAuth#AuthenticateUser): `POST ISteamUserAuth/AuthenticateUser/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/verify_ticket.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::user_auth::AuthenticateUserRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &AuthenticateUserRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.user_auth().authenticate_user(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn authenticate_user(
         &self,
         request: &AuthenticateUserRequest<'_>,

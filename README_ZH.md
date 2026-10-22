@@ -53,7 +53,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-复用或 clone `SteamClient`：所有 clone 共享连接池、并发限制、请求节奏、服务端冷却和指标。可运行示例：[当前玩家数](examples/current_players.rs)、[票据验证](examples/verify_ticket.rs)、[Cloud 文件](examples/cloud_files.rs)、[Sandbox 交易查询](examples/query_sandbox_transaction.rs)、[财务变更批次](examples/financial_changed_dates.rs)。
+复用或 clone `SteamClient`：所有 clone 共享连接池、并发限制、请求节奏、服务端冷却和指标。可运行示例：[当前玩家数](examples/current_players.rs)、[票据验证](examples/verify_ticket.rs)、[Cloud 文件](examples/cloud_files.rs)、[Sandbox 交易查询](examples/query_sandbox_transaction.rs)、[财务变更批次](examples/financial_changed_dates.rs)。[完整示例指南](https://github.com/houseme/steam-api-web/blob/main/docs/examples_ZH.md)将可运行程序映射到全部 33 个接口族。
 
 ## 接口覆盖
 

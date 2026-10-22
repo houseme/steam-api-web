@@ -111,6 +111,35 @@ pub struct QueryFilesRequest<'a> {
 impl PublishedFileService<'_> {
     /// Delete an item through Valve's documented GET mutation.
     /// A publisher key is required; this request is never automatically replayed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [Delete](https://partner.steamgames.com/doc/webapi/IPublishedFileService#Delete): `GET IPublishedFileService/Delete/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_query.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     publishedfileid: u64,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.published_file().delete(appid, publishedfileid).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn delete(&self, appid: u32, publishedfileid: u64) -> Result<OpaqueResponse> {
         validate_item(appid, publishedfileid)?;
         self.0
@@ -126,6 +155,35 @@ impl PublishedFileService<'_> {
 
     /// Search for published files. Inspect the opaque response's `next_cursor`
     /// without changing or decoding it before constructing the next request.
+    ///
+    /// # HTTP contract
+    ///
+    /// [QueryFiles](https://partner.steamgames.com/doc/webapi/IPublishedFileService#QueryFiles): `GET IPublishedFileService/QueryFiles/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_query.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::published_file::QueryFilesRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: QueryFilesRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.published_file().query_files(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn query_files(&self, request: QueryFilesRequest<'_>) -> Result<OpaqueResponse> {
         nonzero(request.appid.into(), "appid must not be zero")?;
         nonzero(
@@ -191,6 +249,43 @@ impl PublishedFileService<'_> {
     }
 
     /// Replace or clear developer metadata without automatic replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [SetDeveloperMetadata](https://partner.steamgames.com/doc/webapi/IPublishedFileService#SetDeveloperMetadata): `POST IPublishedFileService/SetDeveloperMetadata/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_query.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     publishedfileid: u64,
+    ///     metadata: &str,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_file()
+    ///         .set_developer_metadata(
+    ///             appid,
+    ///             publishedfileid,
+    ///             metadata,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn set_developer_metadata(
         &self,
         appid: u32,
@@ -222,6 +317,45 @@ impl PublishedFileService<'_> {
 
     /// Set a user's app-specific UGC ban; an expiration of zero removes it.
     /// An omitted reason is left for Steam to interpret. Never automatically replayed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [UpdateAppUGCBan](https://partner.steamgames.com/doc/webapi/IPublishedFileService#UpdateAppUGCBan): `POST IPublishedFileService/UpdateAppUGCBan/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_query.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     steamid: SteamId,
+    ///     expiration_time: u32,
+    ///     reason: Option<&str>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_file()
+    ///         .update_app_ugc_ban(
+    ///             appid,
+    ///             steamid,
+    ///             expiration_time,
+    ///             reason,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn update_app_ugc_ban(
         &self,
         appid: u32,
@@ -259,6 +393,45 @@ impl PublishedFileService<'_> {
     }
 
     /// Change an item's ban state and administrator-visible reason without replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [UpdateBanStatus](https://partner.steamgames.com/doc/webapi/IPublishedFileService#UpdateBanStatus): `POST IPublishedFileService/UpdateBanStatus/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_query.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     publishedfileid: u64,
+    ///     banned: bool,
+    ///     reason: &str,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_file()
+    ///         .update_ban_status(
+    ///             appid,
+    ///             publishedfileid,
+    ///             banned,
+    ///             reason,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn update_ban_status(
         &self,
         appid: u32,
@@ -292,6 +465,43 @@ impl PublishedFileService<'_> {
     }
 
     /// Change whether an item is hidden as incompatible, without automatic replay.
+    ///
+    /// # HTTP contract
+    ///
+    /// [UpdateIncompatibleStatus](https://partner.steamgames.com/doc/webapi/IPublishedFileService#UpdateIncompatibleStatus): `POST IPublishedFileService/UpdateIncompatibleStatus/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_query.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     publishedfileid: u64,
+    ///     incompatible: bool,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_file()
+    ///         .update_incompatible_status(
+    ///             appid,
+    ///             publishedfileid,
+    ///             incompatible,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn update_incompatible_status(
         &self,
         appid: u32,
@@ -322,6 +532,45 @@ impl PublishedFileService<'_> {
 
     /// Add and remove tags; an empty list leaves that operation unset.
     /// Existing tags outside `remove_tags` are preserved by Steam. Never replayed.
+    ///
+    /// # HTTP contract
+    ///
+    /// [UpdateTags](https://partner.steamgames.com/doc/webapi/IPublishedFileService#UpdateTags): `POST IPublishedFileService/UpdateTags/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/workshop_query.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     publishedfileid: u64,
+    ///     add_tags: &[&str],
+    ///     remove_tags: &[&str],
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .published_file()
+    ///         .update_tags(
+    ///             appid,
+    ///             publishedfileid,
+    ///             add_tags,
+    ///             remove_tags,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn update_tags(
         &self,
         appid: u32,

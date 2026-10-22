@@ -48,7 +48,7 @@
     "binding_validation": "Local protocol contracts only; live credentials, remote permissions, financial reconciliation, and production behavior remain unverified.",
     "bound_explicit_methods": 157,
     "bound_inherited_methods": 10,
-    "reference_parameter_rows": 732
+    "reference_parameter_rows": 735
   },
   "interfaces": [
     {
@@ -3030,7 +3030,7 @@
           "name": "GetPlayersBanned",
           "version": 1,
           "http_method": "GET",
-          "rust_method": "get_players_banned",
+          "rust_method": "get_players_banned_with_options",
           "path": "ISteamApps/GetPlayersBanned/v1/",
           "reference_parameters": [
             {
@@ -3042,6 +3042,21 @@
               "name": "appid",
               "requirement": "required",
               "type": "uint32"
+            },
+            {
+              "name": "starttime",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "endtime",
+              "requirement": "optional",
+              "type": "uint32"
+            },
+            {
+              "name": "continue_token",
+              "requirement": "optional",
+              "type": "string"
             }
           ],
           "reference_parameter_table": true,
@@ -3156,7 +3171,7 @@
       "phase": "P1",
       "binding_status": "bound_contract_tests_only",
       "rust_module": "apps",
-      "documentation_sha256": "f4d4c22f07c85d9bb83d6ddb7f3f194036550a506c0a26c3f8ef3920b690c957"
+      "documentation_sha256": "768dcc80d25d4b3343f46c3db530d2451fdc13dfbb6c8a1906428b499c905502"
     },
     {
       "interface": "ISteamCommunity",

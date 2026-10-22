@@ -62,6 +62,35 @@ impl LobbyMatchmakingService<'_> {
     /// Create or update the complete membership of a named lobby (POST v1).
     /// The user-key requirement follows Valve's parameter table; publisher keys
     /// are also accepted by the shared client. No native lobby calls are made.
+    ///
+    /// # HTTP contract
+    ///
+    /// [CreateLobby](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService#CreateLobby): `POST ILobbyMatchmakingService/CreateLobby/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/lobby_data.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::SteamClient;
+    /// use steam_api_web::lobby_matchmaking::CreateLobbyRequest;
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     request: &CreateLobbyRequest<'_>,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.lobby_matchmaking().create_lobby(request).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn create_lobby(&self, request: &CreateLobbyRequest<'_>) -> Result<OpaqueResponse> {
         nonzero(request.appid.into(), "appid must not be zero")?;
         if request.max_members <= 0 {
@@ -111,6 +140,43 @@ impl LobbyMatchmakingService<'_> {
     }
 
     /// Remove a user or their offline reserved slot (publisher POST v1), once.
+    ///
+    /// # HTTP contract
+    ///
+    /// [RemoveUserFromLobby](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService#RemoveUserFromLobby): `POST ILobbyMatchmakingService/RemoveUserFromLobby/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/lobby_data.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     steamid_to_remove: SteamId,
+    ///     steamid_lobby: SteamId,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client
+    ///         .lobby_matchmaking()
+    ///         .remove_user_from_lobby(
+    ///             appid,
+    ///             steamid_to_remove,
+    ///             steamid_lobby,
+    ///         )
+    ///         .await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn remove_user_from_lobby(
         &self,
         appid: u32,
@@ -145,6 +211,35 @@ impl LobbyMatchmakingService<'_> {
 
     /// Read lobby metadata and members (publisher GET v1), preserving the opaque
     /// result without inferring presence or cross-service membership.
+    ///
+    /// # HTTP contract
+    ///
+    /// [GetLobbyData](https://partner.steamgames.com/doc/webapi/ILobbyMatchmakingService#GetLobbyData): `GET ILobbyMatchmakingService/GetLobbyData/v1/`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error for invalid arguments or credentials, transport/HTTP failures,
+    /// Steam business errors, or invalid/oversized responses.
+    /// See the [shared error contract](crate#error-handling).
+    ///
+    /// # Examples
+    ///
+    /// See also the [standalone interface example](https://github.com/houseme/steam-api-web/blob/main/examples/lobby_data.rs).
+    ///
+    /// ```no_run
+    /// use steam_api_web::{SteamClient, SteamId};
+    ///
+    /// async fn example(
+    ///     client: &SteamClient,
+    ///     appid: u32,
+    ///     steamid_lobby: SteamId,
+    /// ) -> steam_api_web::Result<()> {
+    ///     let response = client.lobby_matchmaking().get_lobby_data(appid, steamid_lobby).await?;
+    ///     // Inspect the returned business fields before updating application state.
+    ///     # let _ = response;
+    ///     Ok(())
+    /// }
+    /// ```
     pub async fn get_lobby_data(
         &self,
         appid: u32,
