@@ -7,7 +7,7 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    request::{Access, Endpoint, Params},
+    request::{Access, CommaSeparated, Endpoint, Params},
     types::{integer, nonzero, text},
     user_auth::OpaqueResponse,
 };
@@ -297,7 +297,7 @@ impl User<'_> {
                 Endpoint::get("ISteamUser/GetAppPriceInfo/v1/", Access::Publisher),
                 Params::new()
                     .with("steamid", steamid)
-                    .with("appids", comma_list(appids)),
+                    .with("appids", CommaSeparated(appids)),
                 &["price_info"],
             )
             .await
@@ -421,7 +421,7 @@ impl User<'_> {
             .0
             .call(
                 Endpoint::get("ISteamUser/GetPlayerBans/v1/", Access::User),
-                Params::new().with("steamids", comma_list(steamids)),
+                Params::new().with("steamids", CommaSeparated(steamids)),
                 &[],
             )
             .await?;
@@ -459,7 +459,7 @@ impl User<'_> {
             .0
             .call(
                 Endpoint::get("ISteamUser/GetPlayerSummaries/v2/", Access::User),
-                Params::new().with("steamids", comma_list(steamids)),
+                Params::new().with("steamids", CommaSeparated(steamids)),
                 &["response"],
             )
             .await?;
@@ -702,11 +702,4 @@ fn validate_steamids(ids: &[SteamId]) -> Result<()> {
         nonzero(id.0, "steamid must not be zero")?;
     }
     Ok(())
-}
-fn comma_list<T: std::fmt::Display>(values: &[T]) -> String {
-    values
-        .iter()
-        .map(ToString::to_string)
-        .collect::<Vec<_>>()
-        .join(",")
 }

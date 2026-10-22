@@ -6,6 +6,7 @@
 use crate::{
     Error, Result,
     apps::Apps,
+    body::ResponseBody,
     broadcast::BroadcastService,
     cheat_reporting::CheatReportingService,
     cloud::Cloud,
@@ -765,20 +766,19 @@ impl SteamClient {
                 limit,
             });
         }
-        let mut bytes =
-            Vec::with_capacity(response.content_length().unwrap_or(0).min(64 * 1024) as usize);
+        let capacity_hint = response.content_length().unwrap_or(0).min(64 * 1024) as usize;
+        let mut bytes = ResponseBody::new();
         while let Some(chunk) = response.chunk().await.map_err(transport)? {
-            if chunk.len() > limit.saturating_sub(bytes.len()) {
+            if !bytes.append(chunk, limit, capacity_hint) {
                 return Err(Error::ResponseTooLarge {
                     endpoint: endpoint.path,
                     limit,
                 });
             }
-            bytes.extend_from_slice(&chunk);
         }
         endpoint
             .response
-            .parse(endpoint.path, status.as_u16(), &bytes)
+            .parse(endpoint.path, status.as_u16(), bytes.as_slice())
     }
 }
 

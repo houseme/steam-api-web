@@ -10,7 +10,7 @@
 
 use crate::{
     Error, Result, SteamClient, SteamId,
-    request::{Access, Endpoint, Params},
+    request::{Access, CommaSeparated, Endpoint, FormValue, Params},
     types::{nonzero, text},
     user_auth::OpaqueResponse,
 };
@@ -48,6 +48,12 @@ impl AppType {
             Self::Dlc => "dlc",
             Self::Music => "music",
         }
+    }
+}
+
+impl FormValue for AppType {
+    fn encode(&self, output: &mut String) {
+        self.as_str().encode(output);
     }
 }
 
@@ -304,14 +310,7 @@ impl Apps<'_> {
         let params = if type_filter.is_empty() {
             Params::new()
         } else {
-            Params::new().with(
-                "type_filter",
-                type_filter
-                    .iter()
-                    .map(|kind| kind.as_str())
-                    .collect::<Vec<_>>()
-                    .join(","),
-            )
+            Params::new().with("type_filter", CommaSeparated(type_filter))
         };
         self.0
             .call(

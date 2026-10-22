@@ -471,8 +471,8 @@ impl Economy<'_> {
         for (index, asset) in request.assets.iter().enumerate() {
             text(asset.assetid, "assetid must not be empty or contain NUL")?;
             nonzero(asset.quantity.into(), "asset quantity must not be zero")?;
-            params.push(&format!("assetid{index}"), asset.assetid);
-            params.push(&format!("assetquantity{index}"), asset.quantity);
+            params.push_suffixed("assetid", index, asset.assetid);
+            params.push_suffixed("assetquantity", index, asset.quantity);
         }
         if let Some(referrer) = request.referrer {
             text(referrer, "referrer must not be empty or contain NUL")?;

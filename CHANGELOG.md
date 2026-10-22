@@ -33,6 +33,8 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 
 ### Changed
 
+- Reuse single-chunk HTTP bodies and buffer only multiple chunks; keep logical length limits, response validation and cancellation behavior.
+- Stream CSV scalars and legacy asset keys into the shared form encoder, removing remaining collect/join and formatted-key allocations; add bounded ownership tests and drift-gated CPU benchmarks.
 - Centralize all direct dependency versions and shared options in the root workspace manifest, preserving member-specific features and standalone package builds.
 - Update Tokio to 1.54.1 after the registry withdrew 1.54.0; refresh the lockfile and dependency audit record.
 - Fix valid 128-bit statistics being rejected during Value-to-typed decoding when downstream arbitrary_precision is enabled; delegate range and precision behavior to Number.

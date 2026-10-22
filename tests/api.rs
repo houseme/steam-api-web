@@ -1120,3 +1120,56 @@ async fn public_game_server_user_key_verifies_tickets_without_replaying_failures
         assert!(!request.url.query_pairs().any(|(name, _)| name == "key"));
     }
 }
+
+#[tokio::test]
+async fn chunked_success_at_the_exact_limit_preserves_split_utf8() {
+    use tokio::{
+        io::{AsyncReadExt, AsyncWriteExt},
+        net::TcpListener,
+    };
+    let text = "split UTF-8 雪 and embedded \0 data";
+    let payload = serde_json::to_vec(&json!({"response":{"data":text}})).unwrap();
+    let limit = payload.len();
+    let split = payload
+        .windows(3)
+        .position(|bytes| bytes == "雪".as_bytes())
+        .unwrap()
+        + 1;
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    let server = tokio::spawn(async move {
+        let (mut socket, _) = listener.accept().await.unwrap();
+        let mut request = Vec::new();
+        let mut buffer = [0_u8; 4096];
+        while !request.windows(4).any(|bytes| bytes == b"\r\n\r\n") {
+            let received = socket.read(&mut buffer).await.unwrap();
+            assert_ne!(received, 0, "request headers ended unexpectedly");
+            request.extend_from_slice(&buffer[..received]);
+            assert!(request.len() <= 4096, "unexpectedly large request headers");
+        }
+        socket
+            .write_all(
+                b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n",
+            )
+            .await
+            .unwrap();
+        for chunk in [&payload[..split], &payload[split..]] {
+            socket
+                .write_all(format!("{:x}\r\n", chunk.len()).as_bytes())
+                .await
+                .unwrap();
+            socket.write_all(chunk).await.unwrap();
+            socket.write_all(b"\r\n").await.unwrap();
+            tokio::time::sleep(Duration::from_millis(2)).await;
+        }
+        socket.write_all(b"0\r\n\r\n").await.unwrap();
+    });
+    let client = SteamClient::builder()
+        .base_url(format!("http://{address}/"))
+        .max_response_bytes(limit)
+        .build()
+        .unwrap();
+    let response = client.web_api_util().get_server_info().await.unwrap();
+    assert_eq!(response.as_json()["response"]["data"], text);
+    server.await.unwrap();
+}
