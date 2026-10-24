@@ -23,7 +23,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | 共享路径 | 决策与依据 |
 | --- | --- |
 | 公开接口适配与兼容辅助方法 | 保留类型化参数和薄 future，复用统一客户端，没有 boxed future 分配或额外 runtime。 |
-| `call_with` / `execute` / `attempt` | 保留 key 类型隔离、无查询参数的 URL 缓存、AWS-LC 连接池、整体预算、信号量、节奏和冷却；本次没有增加重试或主机回退策略。 |
+| `call_with` / `execute` / `attempt` | 保留 key 类型隔离、无查询参数的 URL 缓存、AWS-LC 连接池、整体预算、信号量、节奏和冷却；本次没有增加重试或主机回退策略。未配置请求间隔且共享原子量报告无冷却时，节奏检查现在只需一次 acquire 载入即可返回，不再获取共享锁（无竞争锁往返 127 ns，原子载入 0.2 ns）；该标志仅在持锁时设置和清除，与该载入并发写入的冷却由下一次调用遵守，与仅用锁时的顺序窗口一致。 |
 | 响应策略及类型化/opaque 解码 | 保留完整标准错误外层检查和自有数据解码；各协议的确认规则继续执行。 |
 | CSV 与数字后缀字段 | 用户/应用过滤与资产字段直接写最终表单，移除临时标量字符串、collect/join 容器及逐资产格式化键。 |
 | HTTP 正文收集 | 单块直接持有原始数据块，第二个非空块到来时才合并，保留流式长度检查及受限容量提示。 |
@@ -61,9 +61,16 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 ## 可复跑测量
 
 ```sh
-cargo bench --bench request --locked --offline -- --lists-only
+cargo bench --bench request --locked --offline
+cargo bench --bench request_lists --locked --offline
 cargo bench --bench codec --locked --offline -- --body-only
 ```
+
+每个基准族运行在独立二进制中。列表编码场景最初位于 request 二进制内的
+`--lists-only` 开关之后；后续复测发现，仅因为列表代码链接进同一二进制并移动了
+单态化与 codegen-unit 布局，JSON definitions 场景的读数就慢了约 24%。生产编码器
+并未受影响——仅应用库改动无法复现变慢——因此拆分场景，避免无关代码移动彼此的
+读数。漂移门无法发现这种跨场景干扰，因为同一场景的两种实现会一起移动。
 
 基线复现 `9d2cab1` 的算法，候选直接包含生产源码模块。测试数据在计时外构造，
 先核对表单字节及解码模型相等。每项运行九轮 A/B/B/A，分别取 18 个样本中位数，

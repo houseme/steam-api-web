@@ -50,7 +50,7 @@ use std::{
     net::IpAddr,
     sync::{
         Arc, Mutex as SyncMutex,
-        atomic::{AtomicU64, Ordering},
+        atomic::{AtomicBool, AtomicU64, Ordering},
     },
     time::{Duration, SystemTime},
 };
@@ -361,6 +361,7 @@ impl ClientBuilder {
                 retry: self.retry,
                 min_request_interval: self.min_request_interval,
                 pacing: Mutex::new(Pacing::default()),
+                cooldown_active: AtomicBool::new(false),
                 urls: SyncMutex::new(HashMap::new()),
                 metrics: Metrics::default(),
             }),
@@ -383,6 +384,9 @@ struct Inner {
     retry: RetryPolicy,
     min_request_interval: Duration,
     pacing: Mutex<Pacing>,
+    /// Mirrors `Pacing::cooldown.is_some()` so the common pacing path can skip
+    /// the shared lock entirely. Stored and cleared only while holding it.
+    cooldown_active: AtomicBool,
     /// Endpoint paths are a fixed internal set, so each joined URL is parsed
     /// once and cloned per call. The guard is never held across an await.
     urls: SyncMutex<HashMap<&'static str, Url>>,
@@ -692,6 +696,15 @@ impl SteamClient {
         Ok(url)
     }
     async fn pace(&self) {
+        // With no configured interval and no cooldown, no synchronization is
+        // needed at all. A cooldown stored concurrently with this load is
+        // honored by the next call; the lock-based path had the same ordering
+        // window between its own lock acquisition and the sender's store.
+        if self.inner.min_request_interval.is_zero()
+            && !self.inner.cooldown_active.load(Ordering::Acquire)
+        {
+            return;
+        }
         loop {
             let mut state = self.inner.pacing.lock().await;
             let now = Instant::now();
@@ -705,6 +718,10 @@ impl SteamClient {
                 drop(state);
                 tokio::time::sleep_until(due).await;
             } else {
+                if state.cooldown.is_some_and(|due| due <= now) {
+                    state.cooldown = None;
+                    self.inner.cooldown_active.store(false, Ordering::Release);
+                }
                 state.next_start = now.checked_add(self.inner.min_request_interval);
                 return;
             }
@@ -746,6 +763,7 @@ impl SteamClient {
                 let due = Instant::now() + delay.min(Duration::from_secs(366 * 86400));
                 let mut state = self.inner.pacing.lock().await;
                 state.cooldown = Some(state.cooldown.map_or(due, |old| old.max(due)));
+                self.inner.cooldown_active.store(true, Ordering::Release);
             }
             return Err(Error::Http {
                 endpoint: endpoint.path,

@@ -73,6 +73,10 @@ name = "request"
 harness = false
 
 [[bench]]
+name = "request_lists"
+harness = false
+
+[[bench]]
 name = "integer"
 harness = false
 

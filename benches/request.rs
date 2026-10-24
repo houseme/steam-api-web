@@ -7,7 +7,7 @@
 #![allow(clippy::unwrap_used)]
 
 use serde::Serialize;
-use std::{fmt::Debug, hint::black_box, time::Instant};
+use std::hint::black_box;
 use steam_api_web::{Error, Result, SteamId};
 
 #[allow(dead_code)]
@@ -104,59 +104,10 @@ macro_rules! binary_form {
     }};
 }
 
-fn elapsed(iterations: usize, operation: &mut impl FnMut()) -> f64 {
-    let start = Instant::now();
-    for _ in 0..iterations {
-        operation();
-    }
-    start.elapsed().as_nanos() as f64 / iterations as f64
-}
-fn median(values: &mut [f64]) -> f64 {
-    values.sort_by(f64::total_cmp);
-    (values[(values.len() - 1) / 2] + values[values.len() / 2]) / 2.
-}
-fn compare<T: PartialEq + Debug>(
-    name: &str,
-    iterations: usize,
-    mut old: impl FnMut() -> T,
-    mut new: impl FnMut() -> T,
-) {
-    assert_eq!(old(), new(), "wire mismatch: {name}");
-    for _ in 0..100 {
-        black_box(old());
-        black_box(new());
-    }
-    let mut a1 = Vec::new();
-    let mut a2 = Vec::new();
-    let mut b = Vec::new();
-    for _ in 0..9 {
-        a1.push(elapsed(iterations, &mut || {
-            black_box(old());
-        }));
-        b.push(elapsed(iterations, &mut || {
-            black_box(new());
-        }));
-        b.push(elapsed(iterations, &mut || {
-            black_box(new());
-        }));
-        a2.push(elapsed(iterations, &mut || {
-            black_box(old());
-        }));
-    }
-    let drift = (median(&mut a2) / median(&mut a1) - 1.) * 100.;
-    let mut a = a1;
-    a.extend(a2);
-    let old = median(&mut a);
-    let new = median(&mut b);
-    println!(
-        "{name}: baseline {old:.0} ns/op, current {new:.0} ns/op, {:.1}% less time, baseline drift {drift:+.1}%",
-        (1. - new / old) * 100.
-    );
-    assert!(
-        drift.abs() <= 10.,
-        "baseline drift exceeds 10%; rerun before interpreting {name}"
-    );
-}
+#[path = "support/harness.rs"]
+mod harness;
+
+use harness::compare;
 
 #[derive(Debug)]
 struct WireRequest(reqwest::Request);
@@ -235,93 +186,7 @@ fn preparation() {
     }
 }
 
-#[expect(
-    clippy::iter_cloned_collect,
-    reason = "Preserve the reviewed collect-and-join publisher filter baseline"
-)]
-fn lists() {
-    println!("List encoding reference 9d2cab1; exact wire equality and output drop; no network");
-    for count in [1, 100] {
-        let ids: Vec<_> = (0..count).map(|index| SteamId(u64::MAX - index)).collect();
-        compare(
-            &format!("{count} CSV Steam IDs"),
-            20_000,
-            || {
-                let joined = black_box(&ids)
-                    .iter()
-                    .map(ToString::to_string)
-                    .collect::<Vec<_>>()
-                    .join(",");
-                request::Params::new()
-                    .with("steamids", joined)
-                    .with("format", "json")
-                    .finish()
-            },
-            || {
-                request::Params::new()
-                    .with(
-                        "steamids",
-                        request::CommaSeparated(black_box(ids.as_slice())),
-                    )
-                    .with("format", "json")
-                    .finish()
-            },
-        );
-    }
-    let types = ["game", "application", "tool", "demo", "dlc", "music"];
-    compare(
-        "six CSV app types",
-        20_000,
-        || {
-            let joined = black_box(&types)
-                .iter()
-                .copied()
-                .collect::<Vec<_>>()
-                .join(",");
-            request::Params::new()
-                .with("type_filter", joined)
-                .with("format", "json")
-                .finish()
-        },
-        || {
-            request::Params::new()
-                .with("type_filter", request::CommaSeparated(black_box(&types)))
-                .with("format", "json")
-                .finish()
-        },
-    );
-    let assets: Vec<_> = (0..100).map(|index| format!("asset-{index}")).collect();
-    compare(
-        "100 legacy asset lines",
-        2_000,
-        || {
-            let mut params = request::Params::new()
-                .with("appid", 480)
-                .with("steamid", SteamId(u64::MAX));
-            for (index, asset) in black_box(&assets).iter().enumerate() {
-                params.push(&format!("assetid{index}"), asset);
-                params.push(&format!("assetquantity{index}"), 1_u32);
-            }
-            params.with("format", "json").finish()
-        },
-        || {
-            let mut params = request::Params::new()
-                .with("appid", 480)
-                .with("steamid", SteamId(u64::MAX));
-            for (index, asset) in black_box(&assets).iter().enumerate() {
-                params.push_suffixed("assetid", index, asset);
-                params.push_suffixed("assetquantity", index, 1_u32);
-            }
-            params.with("format", "json").finish()
-        },
-    );
-}
-
 fn main() {
-    if std::env::args().any(|arg| arg == "--lists-only") {
-        lists();
-        return;
-    }
     if std::env::args().any(|arg| arg == "--preparation-only") {
         preparation();
         return;

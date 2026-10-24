@@ -26,7 +26,7 @@ transport chunk. Both now use a shared implementation. These are informational p
 | Shared path | Decision and evidence |
 | --- | --- |
 | Public endpoint adapters and compatibility helpers | Retain their typed parameters and thin futures. They reuse the common client without allocating boxed futures or creating another runtime. |
-| `call_with` / `execute` / `attempt` | Retain key-kind isolation, the query-free URL cache, pooled AWS-LC client, operation budget, semaphore, pacing and cooldown. The refactor adds no retry or host-fallback policy. |
+| `call_with` / `execute` / `attempt` | Retain key-kind isolation, the query-free URL cache, pooled AWS-LC client, operation budget, semaphore, pacing and cooldown. The refactor adds no retry or host-fallback policy. When no request interval is configured and a shared atomic reports no cooldown, pacing now returns after one acquire load instead of taking the shared lock (127 ns uncontended lock and unlock versus 0.2 ns); the flag is set and cleared only while holding the lock, and a cooldown stored concurrently with that load is honored by the next call, matching the lock-only ordering window. |
 | Response policy and typed/opaque decoding | Retain the complete standard error-envelope checks and owned model decoding. The existing policy-specific acknowledgement rules remain enforced. |
 | CSV and numbered fields | Route all affected users/app filters and asset fields through the existing final form buffer; remove intermediate owned scalar strings, collect/join vectors and per-asset formatted keys. |
 | HTTP body collection | Retain one owned chunk directly; concatenate only when a second nonempty chunk arrives, preserving streamed size checks and bounded capacity hints. |
@@ -72,9 +72,20 @@ The collector owns no tasks, credentials, connections or shared synchronization.
 ## Reproducible measurements
 
 ```sh
-cargo bench --bench request --locked --offline -- --lists-only
+cargo bench --bench request --locked --offline
+cargo bench --bench request_lists --locked --offline
 cargo bench --bench codec --locked --offline -- --body-only
 ```
+
+Each benchmark family runs in its own binary. The list-encoding cases
+originally lived behind a `--lists-only` flag inside the request binary; a
+later rerun showed the JSON-definitions case measured about 24% slower merely
+because the list code was linked into the same binary, shifting
+monomorphization and codegen-unit placement. The production encoder was
+unaffected — applying only the library changes reproduced no slowdown — so the
+cases were split to keep unrelated code from moving each other's readings.
+The drift gate cannot catch this cross-case interference because both
+implementations of a case shift together.
 
 The baselines reproduce the algorithms from `9d2cab1`; the candidate code is
 included directly from the production source modules. Fixtures are constructed
