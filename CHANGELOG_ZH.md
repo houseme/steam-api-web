@@ -44,6 +44,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - MicroTxn、财务日期及站点报表复用日历/UTC 校验，保留原始日期拼写和任意小数精度。
 - 未配置请求间隔且无冷却时，节奏检查以一次原子载入替代共享锁；镜像标志仅在持锁时设置与清除。
 - 列表编码基准移入独立二进制；无关场景链接进同一二进制会移动 codegen 布局，使其他场景读数出现两位数百分比偏移。
+- 刷新传递依赖锁文件版本（ICU 2.4、cc、smallvec、tinystr、yoke、zerovec、webpki-root-certs）；全部直接依赖保持最新稳定版，版本要求未变。
 - 维护工具继续使用 Rust，保留发布白名单；测试、基准、工具、工作流、覆盖数据及文档均留在 GitHub。
 
 ### 验证边界

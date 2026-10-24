@@ -34,7 +34,7 @@ The highest Rustls version is **0.24.0-dev.2**, while reqwest 0.13.5 uses Rustls
 
 The normal dependency graph uses AWS-LC without ring or native-tls. The provider is explicitly configured per client rather than inherited globally. macOS Security.framework is used for certificate verification, not as a native-tls transport backend.
 
-Cargo.lock was refreshed with online cargo update to the newest versions compatible with existing constraints and the compiler. Cargo does not automatically cross incompatible major versions or opt into unrequested transitive prereleases; forcing every transitive dependency to a globally highest version would break upstream contracts. ICU 2.3 requires Rust 1.88. Local checks used stable 1.99.1.
+Cargo.lock was refreshed with online cargo update to the newest versions compatible with existing constraints and the compiler. Cargo does not automatically cross incompatible major versions or opt into unrequested transitive prereleases; forcing every transitive dependency to a globally highest version would break upstream contracts. The 2026-10-22 refresh moved the ICU family to 2.4 plus cc, smallvec, tinystr, yoke, zerovec and webpki-root-certs patch releases; all fourteen direct dependencies were already at their latest stable versions, so no manifest requirement changed. ICU 2.4 still requires Rust 1.88. Local checks used stable 1.99.1.
 
 ```sh
 cargo xtask check-dependencies

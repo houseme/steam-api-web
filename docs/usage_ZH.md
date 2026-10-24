@@ -143,7 +143,7 @@ SDK 的 `AuthTicket` 是取消句柄而非票据字节。P2P/服务器 `GetAuthS
 
 Cargo.toml 使用显式 `include` 白名单，发布包仅保留 Rust 库源码、示例、LICENSE、双语 README/changelog，以及 Cargo 必需的 manifest、lockfile 和版本元数据。`.github/`、`xtask/`、`scripts/`、`tests/`、`docs/` 和参考 JSON 留在 GitHub，不进入下载的 crate。仓库维护使用 Rust `xtask`，无 Python 维护文件；通过 crates.io 使用库不需要这些工具。仓库文档链接指向 GitHub，精简归档后仍然有效。
 
-依赖按 **2026-10-21** crates.io 最新非 yanked 版本核对（含预发布版本），并保留 Cargo.lock。Rustls 使用 reqwest 兼容范围内最新的 0.23.46；更高的 0.24.0-dev.2 开发预览版类型不兼容，是最高版本要求的文档化例外。其余直接依赖采用最高语义版本。显式按客户端设置 AWS-LC provider，不受宿主 Rustls 全局 provider 影响。详见[依赖记录](dependencies_ZH.md)。
+依赖按 **2026-10-22** crates.io 最新非 yanked 版本核对（含预发布版本），并保留 Cargo.lock。Rustls 使用 reqwest 兼容范围内最新的 0.23.46；更高的 0.24.0-dev.2 开发预览版类型不兼容，是最高版本要求的文档化例外。其余直接依赖采用最高语义版本。显式按客户端设置 AWS-LC provider，不受宿主 Rustls 全局 provider 影响。详见[依赖记录](dependencies_ZH.md)。
 
 贡献者检查命令，在 GitHub checkout 中运行（本地协议测试不会执行 Steam 管理写入）：
 

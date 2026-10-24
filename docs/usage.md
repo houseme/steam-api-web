@@ -216,7 +216,7 @@ documentation links point to GitHub so they remain usable after packaging
 exclusions.
 
 Dependencies were checked against the latest non-yanked crates.io versions on
-**2026-10-21**, including prereleases, with Cargo.lock retained. Rustls uses
+**2026-10-22**, including prereleases, with Cargo.lock retained. Rustls uses
 **0.23.46**, the latest version compatible with reqwest; the newer
 **0.24.0-dev.2** preview has incompatible types and is the documented
 exception. Other direct dependencies use the highest semantic version found.

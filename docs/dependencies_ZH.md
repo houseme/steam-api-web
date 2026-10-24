@@ -34,7 +34,7 @@ Rustls 的最高版本为 **0.24.0-dev.2**，但 reqwest 0.13.5 使用 Rustls 0.
 
 正常依赖图使用 AWS-LC，不含 ring 或 native-tls；按客户端显式绑定 AWS-LC，不依赖全局 provider。macOS 的 platform verifier 使用 Security.framework 进行证书验证，它不是 native-tls 传输后端。
 
-Cargo.lock 已在线 cargo update，传递依赖取当前约束及工具链允许的最新兼容版本。Cargo 不会自动越过类型不兼容的大版本，也不自动选择未显式要求的传递预发布包；强行替换所有传递依赖会破坏上游约束。最新 ICU 2.3 要求 Rust 1.88；本次验证使用 stable 1.99.1。
+Cargo.lock 已在线 cargo update，传递依赖取当前约束及工具链允许的最新兼容版本。Cargo 不会自动越过类型不兼容的大版本，也不自动选择未显式要求的传递预发布包；强行替换所有传递依赖会破坏上游约束。2026-10-22 刷新将 ICU 系列升至 2.4，并更新 cc、smallvec、tinystr、yoke、zerovec 与 webpki-root-certs 的补丁版本；14 个直接依赖已全部处于最新稳定版，manifest 版本要求未变。ICU 2.4 仍要求 Rust 1.88；本次验证使用 stable 1.99.1。
 
 ```sh
 cargo xtask check-dependencies
