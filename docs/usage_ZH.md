@@ -79,7 +79,7 @@ Site 方法页展示 Public，可由 Publisher 客户端显式选择；概览仍
 | --- | --- | --- |
 | connect_timeout | 3 秒 | 建连超时 |
 | request_timeout | 10 秒 | 单次 HTTP 尝试（含响应体读取）超时 |
-| operation_timeout | 30 秒 | 排队、限流、网络与退避总预算 |
+| operation_timeout | 30 秒 | 排队、限流、网络、退避与解码总预算 |
 | max_in_flight | 32 | clone 共享并发上限 |
 | max_response_bytes | 8 MiB | 同时检查 Content-Length 与实际分块累计大小 |
 | RetryPolicy.max_retries | 2 | 安全 GET 的额外尝试次数，最大 10 |

@@ -34,8 +34,8 @@ explain the refactor, compatibility checks and reproducible local benchmarks.
 3. Send through the connection pool with separate connection and per-attempt timeouts.
 4. Convert unsuccessful HTTP responses into structured errors. Parse Retry-After as seconds or an HTTP date and establish a shared cooldown for retryable statuses. Stored Instants cap extreme server delays at one year; each operation still has a much shorter deadline.
 5. Check both declared and accumulated response lengths. Decode JSON, inspect business errors, and select the expected envelope.
-6. Retry only replay-safe GET transport errors and HTTP 408/429/500/502/503/504, within a finite budget. Release the permit during exponential backoff with AWS-LC jitter, and honor the shared cooldown before another send.
-7. Do not retry parameter, JSON, or business errors. Authentication and writes are never replayed automatically. Cancellation releases the permit. Response size and parser depth constrain synchronous JSON decoding, but Tokio timeouts cannot preempt synchronous CPU work.
+6. Retry only replay-safe GET transport errors and HTTP 408/429/500/502/503/504, within a finite budget. Release the permit during exponential backoff with AWS-LC jitter, and honor the shared cooldown before another send. A zero backoff proceeds directly to shared pacing and cooldown checks.
+7. Parameter, JSON, and business errors end the operation. Authentication and writes use a single attempt. Cancellation releases the permit. Response size and parser depth constrain synchronous JSON decoding, which runs to completion. The client rechecks the absolute operation deadline afterward and returns `Error::Deadline` for late results, counting them as failed operations.
 
 These are client isolation and resource controls, not a Steam availability SLA. Applications manage distributed quotas, redundant deployments, circuit breaking, and alerts. Identity, authorization, and ban decisions are not implicitly cached. Persistent failures return explicit errors so applications can reject login, queue work, or offer a retry.
 

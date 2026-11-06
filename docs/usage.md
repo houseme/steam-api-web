@@ -99,7 +99,7 @@ Contract notes by phase:
 | --- | --- | --- |
 | connect_timeout | 3 seconds | Connection establishment deadline |
 | request_timeout | 10 seconds | One HTTP attempt, including reading its response body |
-| operation_timeout | 30 seconds | Overall queueing, pacing, network and backoff budget |
+| operation_timeout | 30 seconds | Overall queueing, pacing, network, backoff and decoding budget |
 | max_in_flight | 32 | Concurrency limit shared by clones |
 | max_response_bytes | 8 MiB | Checks both Content-Length and accumulated response chunks |
 | RetryPolicy.max_retries | 2 | Additional replay-safe GET attempts; maximum 10 |

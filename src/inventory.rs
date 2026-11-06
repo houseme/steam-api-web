@@ -18,7 +18,7 @@
 use crate::{
     Error, Result, SteamClient, SteamId,
     request::{Access, Endpoint, Params},
-    types::{nonzero, text},
+    types::{nonzero, text, valid_calendar_date},
     user::validate_user_app,
     user_auth::OpaqueResponse,
 };
@@ -719,18 +719,7 @@ fn valid_compact_timestamp(value: &str) -> bool {
             .iter()
             .fold(0_u32, |value, byte| value * 10 + u32::from(byte - b'0'))
     };
-    let year = number(0, 4);
-    let days = match number(4, 6) {
-        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-        4 | 6 | 9 | 11 => 30,
-        2 if year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400)) => {
-            29
-        }
-        2 => 28,
-        _ => return false,
-    };
-    year != 0
-        && (1..=days).contains(&number(6, 8))
+    valid_calendar_date(number(0, 4), number(4, 6), number(6, 8))
         && number(9, 11) <= 23
         && number(11, 13) <= 59
         && number(13, 15) <= 59

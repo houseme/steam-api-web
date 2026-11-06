@@ -8,7 +8,7 @@
 use crate::{
     Error, Result, SteamClient,
     request::{Access, Endpoint, Params},
-    types::nonzero,
+    types::{nonzero, valid_calendar_date},
     user_auth::OpaqueResponse,
 };
 
@@ -134,19 +134,7 @@ fn valid_local_time(value: &str) -> bool {
             .iter()
             .fold(0_u32, |value, byte| value * 10 + u32::from(byte - b'0'))
     };
-    let year = number(0, 4);
-    let month = number(5, 7);
-    let day = number(8, 10);
-    let leap = year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400));
-    let days = match month {
-        1 | 3 | 5 | 7 | 8 | 10 | 12 => 31,
-        4 | 6 | 9 | 11 => 30,
-        2 if leap => 29,
-        2 => 28,
-        _ => return false,
-    };
-    year != 0
-        && (1..=days).contains(&day)
+    valid_calendar_date(number(0, 4), number(5, 7), number(8, 10))
         && number(11, 13) <= 23
         && number(14, 16) <= 59
         && number(17, 19) <= 59

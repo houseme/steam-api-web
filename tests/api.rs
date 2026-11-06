@@ -34,6 +34,21 @@ fn no_backoff(retries: u32) -> RetryPolicy {
         max_backoff: Duration::ZERO,
     }
 }
+
+// Keep paused time under explicit control while real mock-server I/O runs.
+// Tokio suppresses automatic clock advancement while a blocking task is active.
+async fn controlled_clock() -> std::sync::mpsc::Sender<()> {
+    let (release, wait) = std::sync::mpsc::channel();
+    let (ready, started) = tokio::sync::oneshot::channel();
+    tokio::task::spawn_blocking(move || {
+        ready.send(()).unwrap();
+        let _ = wait.recv();
+    });
+    started.await.unwrap();
+    tokio::time::pause();
+    release
+}
+
 fn count_response() -> Value {
     json!({"response":{"player_count":12,"result":1}})
 }
@@ -546,7 +561,6 @@ async fn retry_after_creates_shared_cooldown_even_when_retries_disabled() {
         .await;
     let client = builder(&server)
         .retry_policy(no_backoff(0))
-        .operation_timeout(Duration::from_millis(250))
         .build()
         .unwrap();
     assert!(matches!(
@@ -557,6 +571,9 @@ async fn retry_after_creates_shared_cooldown_even_when_retries_disabled() {
             ..
         })
     ));
+    // The first response has established the cooldown. The second call only
+    // waits on client timers, so automatic clock advancement is sufficient.
+    tokio::time::pause();
     assert!(matches!(
         client
             .clone()
@@ -570,12 +587,25 @@ async fn retry_after_creates_shared_cooldown_even_when_retries_disabled() {
 #[tokio::test]
 async fn operation_deadline_includes_retry_backoff() {
     let server = MockServer::start().await;
+    let (received, response) = tokio::sync::oneshot::channel();
+    let received = std::sync::Mutex::new(Some(received));
     Mock::given(method("GET"))
-        .respond_with(ResponseTemplate::new(503))
+        .and(query_param("appid", "480"))
+        .respond_with(move |_: &Request| {
+            received.lock().unwrap().take().unwrap().send(()).unwrap();
+            ResponseTemplate::new(503)
+        })
+        .expect(1)
+        .mount(&server)
+        .await;
+    Mock::given(method("GET"))
+        .and(query_param("appid", "481"))
+        .respond_with(ResponseTemplate::new(200).set_body_json(count_response()))
         .expect(1)
         .mount(&server)
         .await;
     let client = builder(&server)
+        .max_in_flight(1)
         .retry_policy(RetryPolicy {
             max_retries: 2,
             initial_backoff: Duration::from_secs(1),
@@ -584,10 +614,22 @@ async fn operation_deadline_includes_retry_backoff() {
         .operation_timeout(Duration::from_millis(100))
         .build()
         .unwrap();
-    assert!(matches!(
-        client.user_stats().get_number_of_current_players(480).await,
-        Err(Error::Deadline { .. })
-    ));
+    let _clock = controlled_clock().await;
+    let caller = client.clone();
+    let call =
+        tokio::spawn(async move { caller.user_stats().get_number_of_current_players(480).await });
+    response.await.unwrap();
+    // This probe can finish only after the first response releases its permit
+    // for backoff. Keep the clock frozen through both real HTTP exchanges.
+    client
+        .user_stats()
+        .get_number_of_current_players(481)
+        .await
+        .unwrap();
+    assert!(!call.is_finished());
+    tokio::time::advance(Duration::from_millis(101)).await;
+    assert!(matches!(call.await.unwrap(), Err(Error::Deadline { .. })));
+    assert_eq!(client.metrics().retries, 0);
 }
 #[tokio::test]
 async fn private_friend_list_is_an_error_and_vanity_no_match_is_none() {
@@ -737,7 +779,7 @@ async fn client_clones_share_concurrency_and_cancellation_releases_permits() {
             tx.send(()).unwrap();
             ResponseTemplate::new(200)
                 .set_body_json(count_response())
-                .set_delay(Duration::from_secs(10))
+                .set_delay(Duration::from_secs(3600))
         })
         .expect(1)
         .mount(&server)
@@ -747,11 +789,7 @@ async fn client_clones_share_concurrency_and_cancellation_releases_permits() {
         .expect(1)
         .mount(&server)
         .await;
-    let client = builder(&server)
-        .max_in_flight(1)
-        .operation_timeout(Duration::from_secs(1))
-        .build()
-        .unwrap();
+    let client = builder(&server).max_in_flight(1).build().unwrap();
     let first = client.clone();
     let first =
         tokio::spawn(async move { first.user_stats().get_number_of_current_players(1).await });
@@ -969,12 +1007,14 @@ async fn chunked_body_limit_is_enforced_without_content_length() {
 #[tokio::test]
 async fn per_attempt_timeouts_retry_reads_but_never_authentication() {
     let server = MockServer::start().await;
+    let (received, mut requests) = tokio::sync::mpsc::unbounded_channel();
     Mock::given(method("GET"))
-        .respond_with(
+        .respond_with(move |_: &Request| {
+            received.send(()).unwrap();
             ResponseTemplate::new(200)
                 .set_body_json(count_response())
-                .set_delay(Duration::from_secs(1)),
-        )
+                .set_delay(Duration::from_secs(3600))
+        })
         .expect(3)
         .mount(&server)
         .await;
@@ -983,27 +1023,44 @@ async fn per_attempt_timeouts_retry_reads_but_never_authentication() {
         .retry_policy(no_backoff(2))
         .build()
         .unwrap();
+    let _clock = controlled_clock().await;
+    let caller = client.clone();
+    let call =
+        tokio::spawn(async move { caller.user_stats().get_number_of_current_players(480).await });
+    for _ in 0..3 {
+        requests.recv().await.unwrap();
+        tokio::time::advance(Duration::from_millis(101)).await;
+    }
     assert!(matches!(
-        client.user_stats().get_number_of_current_players(480).await,
+        call.await.unwrap(),
         Err(Error::Transport { timeout: true, .. })
     ));
     assert_eq!(client.metrics().attempts, 3);
     server.reset().await;
+    let (received, response) = tokio::sync::oneshot::channel();
+    let received = std::sync::Mutex::new(Some(received));
     Mock::given(method("GET"))
-        .respond_with(
+        .respond_with(move |_: &Request| {
+            received.lock().unwrap().take().unwrap().send(()).unwrap();
             ResponseTemplate::new(200)
                 .set_body_json(json!({}))
-                .set_delay(Duration::from_secs(1)),
-        )
+                .set_delay(Duration::from_secs(3600))
+        })
         .expect(1)
         .mount(&server)
         .await;
     let ticket = WebApiTicket::from_hex("aabb").unwrap();
-    assert!(matches!(
-        client
+    let caller = client.clone();
+    let call = tokio::spawn(async move {
+        caller
             .user_auth()
             .authenticate_user_ticket(480, &ticket, "service")
-            .await,
+            .await
+    });
+    response.await.unwrap();
+    tokio::time::advance(Duration::from_millis(101)).await;
+    assert!(matches!(
+        call.await.unwrap(),
         Err(Error::Transport { timeout: true, .. })
     ));
     assert_eq!(client.metrics().attempts, 4);

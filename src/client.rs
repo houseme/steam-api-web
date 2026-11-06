@@ -224,7 +224,9 @@ impl ClientBuilder {
         self.request_timeout = timeout;
         self
     }
-    /// Overall deadline, including queueing, pacing and retries.
+    /// Overall deadline, including queueing, pacing, retries and decoding.
+    /// Synchronous decoding may finish after the deadline, returning
+    /// [`Error::Deadline`] when control returns to the client.
     pub fn operation_timeout(mut self, timeout: Duration) -> Self {
         self.operation_timeout = timeout;
         self
@@ -625,13 +627,19 @@ impl SteamClient {
         }
         params.push("format", "json");
         let encoded = params.finish();
-        let result = tokio::time::timeout(self.inner.operation_timeout, async {
+        let deadline = Instant::now() + self.inner.operation_timeout;
+        let result = match tokio::time::timeout_at(deadline, async {
             decode(self.execute(endpoint, encoded).await?)
         })
         .await
-        .unwrap_or(Err(Error::Deadline {
-            endpoint: endpoint.path,
-        }));
+        {
+            // A ready future can finish synchronous decoding after its timer
+            // expires. Check the same deadline before accepting that result.
+            Ok(result) if Instant::now() < deadline => result,
+            _ => Err(Error::Deadline {
+                endpoint: endpoint.path,
+            }),
+        };
         if result.is_ok() {
             self.inner.metrics.succeeded.fetch_add(1, Ordering::Relaxed);
         } else {
@@ -672,7 +680,9 @@ impl SteamClient {
                     .saturating_mul(1_u32 << attempt.min(30))
                     .min(self.inner.retry.max_backoff),
             )?;
-            tokio::time::sleep(delay).await;
+            if !delay.is_zero() {
+                tokio::time::sleep(delay).await;
+            }
         }
         self.attempt(endpoint, self.inner.http.get(url), true).await
     }
@@ -826,6 +836,64 @@ fn jitter(cap: Duration) -> Result<Duration> {
 mod tests {
     #![allow(clippy::unwrap_used)]
     use super::*;
+
+    #[tokio::test]
+    async fn synchronous_decoding_past_the_deadline_counts_as_failure() {
+        use wiremock::{Mock, MockServer, ResponseTemplate, matchers::method};
+
+        let server = MockServer::start().await;
+        Mock::given(method("GET"))
+            .respond_with(ResponseTemplate::new(200).set_body_string("{}"))
+            .expect(2)
+            .mount(&server)
+            .await;
+        let client = SteamClient::builder()
+            .base_url(server.uri())
+            .build()
+            .unwrap();
+        let endpoint = Endpoint::get("test/Decode/v1/", Access::Anonymous);
+
+        for fail_decode in [false, true] {
+            let mut decoded = false;
+            let result = client
+                .call_with(endpoint, Params::new(), |_| {
+                    decoded = true;
+                    // Freeze only after HTTP completes. Advance this runtime's
+                    // clock from another thread while the decoder holds its
+                    // poll, reproducing synchronous CPU work without sleeping.
+                    tokio::time::pause();
+                    let runtime = tokio::runtime::Handle::current();
+                    std::thread::spawn(move || {
+                        runtime.block_on(tokio::time::advance(Duration::from_secs(31)));
+                    })
+                    .join()
+                    .unwrap();
+                    if fail_decode {
+                        Err(Error::Decode {
+                            endpoint: endpoint.path,
+                            line: 0,
+                            column: 0,
+                        })
+                    } else {
+                        Ok(())
+                    }
+                })
+                .await;
+            tokio::time::resume();
+            assert!(decoded);
+            assert!(matches!(result, Err(Error::Deadline { .. })));
+        }
+        assert_eq!(
+            client.metrics(),
+            ClientMetrics {
+                attempts: 2,
+                retries: 0,
+                succeeded: 0,
+                failed: 2,
+            }
+        );
+    }
+
     #[test]
     fn single_send_preparation_moves_post_storage_without_mutating_cached_urls() {
         let client = SteamClient::builder()
