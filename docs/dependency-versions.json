@@ -6,9 +6,9 @@
     "license_url": "https://www.apache.org/licenses/LICENSE-2.0"
   },
   "aws-lc-rs": {
-    "latest_including_prerelease": "1.18.2",
+    "latest_including_prerelease": "1.19.0",
     "latest_rust_version": "1.71.0",
-    "manifest_minimum": "1.18.2",
+    "manifest_minimum": "1.19.0",
     "source": "https://crates.io/api/v1/crates/aws-lc-rs",
     "status": "current"
   },
@@ -20,9 +20,9 @@
     "status": "current"
   },
   "itoa": {
-    "latest_including_prerelease": "1.0.18",
+    "latest_including_prerelease": "1.0.19",
     "latest_rust_version": "1.68",
-    "manifest_minimum": "1.0.18",
+    "manifest_minimum": "1.0.19",
     "source": "https://crates.io/api/v1/crates/itoa",
     "status": "current"
   },
