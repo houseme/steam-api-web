@@ -9,7 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 [English](dependencies.md) | 简体中文
 
-核对日期为 2026-11-12。来源为各 crate 的 crates.io API，排除 yanked，按语义版本排序，包含 rc、beta、alpha 和 dev 预发布。可复核快照见 [dependency-versions.json](dependency-versions.json)。
+核对日期为 2026-11-22。来源为各 crate 的 crates.io API，排除 yanked，按语义版本排序，包含 rc、beta、alpha 和 dev 预发布。可复核快照见 [dependency-versions.json](dependency-versions.json)。
 
 全部直接依赖的版本与公共配置统一定义在根目录 `Cargo.toml` 的 `[workspace.dependencies]` 中，运行库和 `xtask` 通过 `workspace = true` 继承。成员专用 feature 按需启用，例如 `xtask` 的 blocking HTTP 客户端及 Tokio 的测试运行时。Cargo 会将继承配置展开到发布 manifest，确保 crate 脱离仓库工作区后仍可独立编译。
 
@@ -34,7 +34,7 @@ Rustls 的最高版本为 **0.24.0-dev.2**，但 reqwest 0.13.5 使用 Rustls 0.
 
 正常依赖图使用 AWS-LC，不含 ring 或 native-tls；按客户端显式绑定 AWS-LC，不依赖全局 provider。macOS 的 platform verifier 使用 Security.framework 进行证书验证，它不是 native-tls 传输后端。
 
-Cargo.lock 已在线 cargo update，传递依赖取当前约束及工具链允许的最新兼容版本。Cargo 不会自动越过类型不兼容的大版本，也不自动选择未显式要求的传递预发布包；强行替换所有传递依赖会破坏上游约束。2026-11-12 连续执行了两轮 `cargo update --verbose && cargo upgrade --verbose`。直接依赖要求升至 aws-lc-rs 1.19.0 和 itoa 1.0.19，锁文件更新 18 个包，并通过 utf8_iter 1.1.0 新增 utf_types 1.0.0。第二轮没有进一步变更。ICU 2.4 仍要求 Rust 1.88。本次验证使用 stable 1.99.1。
+Cargo.lock 已在线 cargo update，传递依赖取当前约束及工具链允许的最新兼容版本。Cargo 不会自动越过类型不兼容的大版本，也不自动选择未显式要求的传递预发布包；强行替换所有传递依赖会破坏上游约束。2026-11-22 刷新将直接依赖要求升至 url 2.5.9 和 zeroize 1.9.2，并在现有约束内更新 16 个锁文件包；`cargo upgrade --incompatible` 确认不存在可跨大版本的更新稳定版，rustls 例外保持不变。完整审计响应在核查网络下被截断，故变更的 url 与 zeroize 记录已逐项对照 crates.io API 复核，两者均无更新的预发布版本。ICU 2.4 仍要求 Rust 1.88。本次验证使用 stable 1.100.0。
 
 ```sh
 cargo xtask check-dependencies

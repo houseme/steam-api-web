@@ -83,9 +83,9 @@
     "status": "current"
   },
   "url": {
-    "latest_including_prerelease": "2.5.8",
+    "latest_including_prerelease": "2.5.9",
     "latest_rust_version": "1.63",
-    "manifest_minimum": "2.5.8",
+    "manifest_minimum": "2.5.9",
     "source": "https://crates.io/api/v1/crates/url",
     "status": "current"
   },
@@ -97,9 +97,9 @@
     "status": "current"
   },
   "zeroize": {
-    "latest_including_prerelease": "1.9.1",
+    "latest_including_prerelease": "1.9.2",
     "latest_rust_version": "1.85",
-    "manifest_minimum": "1.9.1",
+    "manifest_minimum": "1.9.2",
     "source": "https://crates.io/api/v1/crates/zeroize",
     "status": "current"
   }

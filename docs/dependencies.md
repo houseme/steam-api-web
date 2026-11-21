@@ -9,7 +9,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 
 English | [简体中文](dependencies_ZH.md)
 
-Checked on 2026-11-12 using each crate's crates.io API, excluding yanked versions and sorting semantic versions including rc, beta, alpha, and dev previews. The shared, language-neutral [dependency-versions.json](dependency-versions.json) records the evidence.
+Checked on 2026-11-22 using each crate's crates.io API, excluding yanked versions and sorting semantic versions including rc, beta, alpha, and dev previews. The shared, language-neutral [dependency-versions.json](dependency-versions.json) records the evidence.
 
 All direct dependency versions and shared options are defined once in the root `Cargo.toml` under `[workspace.dependencies]`. The library and `xtask` inherit them through `workspace = true`; member-specific features, such as `xtask`'s blocking HTTP client and Tokio's test runtime, are enabled only where needed. Cargo resolves inherited settings into the published manifest so the crate builds independently of the repository workspace.
 
@@ -34,7 +34,7 @@ The highest Rustls version is **0.24.0-dev.2**, while reqwest 0.13.5 uses Rustls
 
 The normal dependency graph uses AWS-LC without ring or native-tls. The provider is explicitly configured per client rather than inherited globally. macOS Security.framework is used for certificate verification, not as a native-tls transport backend.
 
-Cargo.lock was refreshed with online cargo update to the newest versions compatible with existing constraints and the compiler. Cargo does not automatically cross incompatible major versions or opt into unrequested transitive prereleases; forcing every transitive dependency to a globally highest version would break upstream contracts. The 2026-11-12 refresh ran `cargo update --verbose && cargo upgrade --verbose` twice. Direct requirements advanced to aws-lc-rs 1.19.0 and itoa 1.0.19, while the lockfile updated 18 packages and added utf_types 1.0.0 through utf8_iter 1.1.0. The second round produced no further changes. ICU 2.4 still requires Rust 1.88. Local checks used stable 1.99.1.
+Cargo.lock was refreshed with online cargo update to the newest versions compatible with existing constraints and the compiler. Cargo does not automatically cross incompatible major versions or opt into unrequested transitive prereleases; forcing every transitive dependency to a globally highest version would break upstream contracts. The 2026-11-22 refresh advanced direct requirements to url 2.5.9 and zeroize 1.9.2 and updated 16 locked packages within existing requirements; `cargo upgrade --incompatible` confirmed no incompatible newer stable releases exist, leaving the rustls exception unchanged. Full-audit responses truncated mid-body from the review network, so the changed url and zeroize entries were re-verified individually against the crates.io API, which also reports no newer prerelease for either crate. ICU 2.4 still requires Rust 1.88. Local checks used stable 1.100.0.
 
 ```sh
 cargo xtask check-dependencies

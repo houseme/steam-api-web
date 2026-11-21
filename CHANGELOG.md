@@ -45,6 +45,7 @@ All notable user-facing changes are recorded here. Versions follow Semantic Vers
 - Skip the shared pacing lock with one atomic load when no request interval is configured and no cooldown is active; set and clear the mirror flag only under the lock.
 - Move list-encoding benchmarks into their own binary; linking unrelated cases into one binary shifted codegen placement enough to move other cases' readings by double-digit percentages.
 - Refresh transitive lockfile versions (ICU 2.4, cc, smallvec, tinystr, yoke, zerovec, webpki-root-certs); all direct dependencies remain at their latest stable versions with unchanged requirements.
+- Advance url to 2.5.9 and zeroize to 1.9.2, update 16 more locked packages within existing requirements, and confirm via the incompatible upgrade pass that no newer incompatible stable releases exist.
 - Keep repository maintenance in Rust and preserve the package allowlist; tests, benchmarks, tooling, workflows, coverage data and prose docs remain on GitHub.
 
 ### Validation boundaries
