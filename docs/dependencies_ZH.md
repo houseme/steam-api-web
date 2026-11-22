@@ -30,11 +30,11 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 | wiremock（测试） | 0.6.5 | HTTP 协议与故障测试 |
 | scraper（仅 xtask） | 0.29.0 | 维护工具 HTML5 契约审计，关闭默认 feature |
 
-Rustls 的最高版本为 **0.24.0-dev.2**，但 reqwest 0.13.5 使用 Rustls 0.23；`tls_backend_preconfigured` 根据类型识别 ClientConfig。将两个版本同时编入不能让其互操作，会在构造 client 时失败。采用同一条 0.23 的最新版本 0.23.46 是最高版本要求的兼容性例外；后续 reqwest 支持时同步升级。其余直接依赖均为查询时的最高语义版本，当前没有更高 rc/beta。
+Rustls 的最高版本为 **0.24.0-dev.3**，但 reqwest 0.13.5 使用 Rustls 0.23；`tls_backend_preconfigured` 根据类型识别 ClientConfig。将两个版本同时编入不能让其互操作，会在构造 client 时失败。采用同一条 0.23 的最新版本 0.23.46 是最高版本要求的兼容性例外；后续 reqwest 支持时同步升级。其余直接依赖均为查询时的最高语义版本，当前没有更高 rc/beta。
 
 正常依赖图使用 AWS-LC，不含 ring 或 native-tls；按客户端显式绑定 AWS-LC，不依赖全局 provider。macOS 的 platform verifier 使用 Security.framework 进行证书验证，它不是 native-tls 传输后端。
 
-Cargo.lock 已在线 cargo update，传递依赖取当前约束及工具链允许的最新兼容版本。Cargo 不会自动越过类型不兼容的大版本，也不自动选择未显式要求的传递预发布包；强行替换所有传递依赖会破坏上游约束。2026-11-22 刷新将直接依赖要求升至 url 2.5.9 和 zeroize 1.9.2，并在现有约束内更新 16 个锁文件包；`cargo upgrade --incompatible` 确认不存在可跨大版本的更新稳定版，rustls 例外保持不变。完整审计响应在核查网络下被截断，故变更的 url 与 zeroize 记录已逐项对照 crates.io API 复核，两者均无更新的预发布版本。ICU 2.4 仍要求 Rust 1.88。本次验证使用 stable 1.100.0。
+Cargo.lock 已在线 cargo update，传递依赖取当前约束及工具链允许的最新兼容版本。Cargo 不会自动越过类型不兼容的大版本，也不自动选择未显式要求的传递预发布包；强行替换所有传递依赖会破坏上游约束。2026-11-22 刷新将直接依赖要求升至 url 2.5.9 和 zeroize 1.9.2，并在现有约束内更新 16 个锁文件包；同日第二轮锁定 hashbrown 0.17.2，cssparser-macros 在自身约束内改解析 syn 3.0.10，`cargo upgrade --incompatible` 在两轮中均确认不存在可跨大版本的更新稳定版。rustls 在两次审计之间发布了 0.24.0-dev.3 预览版，文档化例外随之覆盖全部 0.24.0-dev 预览版。完整审计响应在核查网络下被截断，故变更的 url 与 zeroize 记录已逐项对照 crates.io API 复核，两者均无更新的预发布版本。ICU 2.4 仍要求 Rust 1.88。本次验证使用 stable 1.100.0。
 
 ```sh
 cargo xtask check-dependencies

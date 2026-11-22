@@ -218,7 +218,7 @@ exclusions.
 Dependencies were checked against the latest non-yanked crates.io versions on
 **2026-11-22**, including prereleases, with Cargo.lock retained. Rustls uses
 **0.23.46**, the latest version compatible with reqwest; the newer
-**0.24.0-dev.2** preview has incompatible types and is the documented
+**0.24.0-dev.3** preview has incompatible types and is the documented
 exception. Other direct dependencies use the highest semantic version found.
 An explicit per-client AWS-LC provider prevents a host application's Rustls
 global provider from overriding this choice. See the

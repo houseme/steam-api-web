@@ -31,9 +31,9 @@ fn audit(client: &reqwest::blocking::Client, name: &str, requirements: &[String]
         .iter()
         .map(|req| req.trim_start_matches(['^', '=']))
         .collect();
-    // Reqwest downcasts a concrete Rustls configuration; a different preview cannot substitute for its Rustls dependency.
+    // Reqwest downcasts a concrete Rustls configuration; any 0.24.0-dev preview cannot substitute for its Rustls dependency.
     let exception = name == "rustls"
-        && latest_number == "0.24.0-dev.2"
+        && latest_number.starts_with("0.24.0-dev.")
         && selected.iter().all(|version| *version == "0.23.46");
     let status = if exception {
         "compatible_exception"

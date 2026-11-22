@@ -46,6 +46,7 @@ See LICENSE or https://www.apache.org/licenses/LICENSE-2.0 for details.
 - 列表编码基准移入独立二进制；无关场景链接进同一二进制会移动 codegen 布局，使其他场景读数出现两位数百分比偏移。
 - 刷新传递依赖锁文件版本（ICU 2.4、cc、smallvec、tinystr、yoke、zerovec、webpki-root-certs）；全部直接依赖保持最新稳定版，版本要求未变。
 - url 升至 2.5.9、zeroize 升至 1.9.2，另在现有约束内更新 16 个锁文件包，并通过不兼容升级通道确认不存在更新的不兼容稳定版本。
+- 锁定 hashbrown 0.17.2（cssparser-macros 在自身约束内改解析 syn 3.0.10），并在 rustls 发布 0.24.0-dev.3 后将审计例外放宽为覆盖全部 0.24.0-dev 预览版；不兼容升级通道再次确认不存在更新的不兼容稳定版本。
 - 维护工具继续使用 Rust，保留发布白名单；测试、基准、工具、工作流、覆盖数据及文档均留在 GitHub。
 
 ### 验证边界

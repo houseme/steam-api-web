@@ -34,7 +34,7 @@
     "status": "current"
   },
   "rustls": {
-    "latest_including_prerelease": "0.24.0-dev.2",
+    "latest_including_prerelease": "0.24.0-dev.3",
     "latest_rust_version": "1.85",
     "manifest_minimum": "0.23.46",
     "source": "https://crates.io/api/v1/crates/rustls",
